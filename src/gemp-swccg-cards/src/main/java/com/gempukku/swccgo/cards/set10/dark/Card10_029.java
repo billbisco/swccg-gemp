@@ -48,7 +48,7 @@ public class Card10_029 extends AbstractObjective {
     public Card10_029() {
         super(Side.DARK, 0, Title.Agents_Of_Black_Sun, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy Imperial City (With Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun Agents. You may not deploy cards with ability except Black Sun Agents, Emperor, or Independent starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.");
+        setGameText("Deploy Imperial City (with Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun agents. You may not deploy cards with ability except Black Sun agents, Emperor or [Independent] starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.");
         addIcons(Icon.REFLECTIONS_II);
     }
 

@@ -54,7 +54,7 @@ import java.util.List;
 public class Card10_029_BACK extends AbstractObjective {
     public Card10_029_BACK() {
         super(Side.DARK, 7, Title.Vengeance_Of_The_Dark_Prince, ExpansionSet.REFLECTIONS_II, Rarity.PM);
-        setGameText("While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun Agent in battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor not on table.");
+        setGameText("While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun agent in a battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor is not on table.");
         addIcons(Icon.REFLECTIONS_II);
     }
 
