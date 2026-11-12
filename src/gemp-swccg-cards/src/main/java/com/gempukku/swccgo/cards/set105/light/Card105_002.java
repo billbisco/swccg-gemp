@@ -26,12 +26,14 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Lost
  * Title: Hit And Run
+ * <p>
+ * Text as printed on the white-border First Anthology preview card (May 1997), which differs from the later Special Edition printing (Bill 2026-11-12; wiki: First Anthology). "Weapons phase" is the 1997 name of the weapons segment of a battle; a move away is paid at normal use of the Force, so the card plays as the earlier implementation.
  */
 public class Card105_002 extends AbstractLostInterrupt {
     public Card105_002() {
         super(Side.LIGHT, 3, "Hit And Run", Uniqueness.UNIQUE, ExpansionSet.FIRST_ANTHOLOGY, Rarity.PV);
         setLore("Many pilots for the Rebellion learned their skills using modified T-47s and other airspeeders. Being able to weave in and out of combat has become second nature to them.");
-        setGameText("Just after the weapons segment of a battle, you may move any or all of your starships there away. ('Hit' cards must still be lost.)");
+        setGameText("Just after the weapons phase of a battle, you may move any or all of your starships there away, at normal use of the Force. ('Hit' cards must still be lost.)");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

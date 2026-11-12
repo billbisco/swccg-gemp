@@ -5,14 +5,20 @@ package com.gempukku.swccgo.game.formats;
  * for that table, on top of the format's own rules. Built by {@link SwccgoFormatLibrary#effectiveFormat}.
  */
 public final class DeckRules {
-    public static final DeckRules NONE = new DeckRules(false, false, false, 1);
+    public static final DeckRules NONE = new DeckRules(false, false, false, 1, false);
 
     private final boolean _noShields;
     private final boolean _multipleObjectives;
     private final boolean _uncappedShields;
     private final int _startingEffects;
+    private final boolean _fourTwenty;
 
     public DeckRules(boolean noShields, boolean multipleObjectives, boolean uncappedShields, int startingEffects) {
+        this(noShields, multipleObjectives, uncappedShields, startingEffects, false);
+    }
+
+    public DeckRules(boolean noShields, boolean multipleObjectives, boolean uncappedShields, int startingEffects, boolean fourTwenty) {
+        _fourTwenty = fourTwenty;
         _noShields = noShields;
         _multipleObjectives = multipleObjectives;
         _uncappedShields = uncappedShields;
@@ -31,5 +37,8 @@ public final class DeckRules {
     /** "Starting: Objective optional" (#142): a deck may hold several Objectives. */
     public boolean isMultipleObjectives() { return _multipleObjectives; }
 
-    public boolean isNone() { return !_noShields && !_multipleObjectives && !_uncappedShields && _startingEffects == 1; }
+    /** "Deck: 420" (#224): no Objectives; locations count as destiny 0; every other card needs printed destiny 0, 2 or 4. */
+    public boolean isFourTwenty() { return _fourTwenty; }
+
+    public boolean isNone() { return !_noShields && !_multipleObjectives && !_uncappedShields && _startingEffects == 1 && !_fourTwenty; }
 }

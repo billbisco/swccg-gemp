@@ -334,7 +334,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     /**
      * The base blueprint id that identifies the card for deck counts and bans: a pre-errata Legacy version
-     * (sets 2200-2292) counts as its current printing, so mixing versions never adds copies.
+     * (sets 2200-2292) counts as its current printing, so mixing versions never adds copies. A white-border anthology
+     * preview (105_x, 107_x and their 57_/58_/59_ ids) counts as its black-border card.
      */
     String sameCardBlueprintId(String blueprintId) {
         String current = LegacyVersion.currentPrintingIdOf(blueprintId);
@@ -344,7 +345,9 @@ public class DefaultSwccgFormat implements SwccgFormat {
         String printing = current != null ? current : _library.stripBlueprintModifiers(blueprintId);
         // An AI printing (with or without a class of its own) counts as its base printing
         String base = _library.getBaseBlueprintId(printing);
-        return base.equals(printing) ? _library.getBaseBlueprintId(LegacyIds.withoutAlternateImageSuffix(printing)) : base;
+        String sameCard = base.equals(printing) ? _library.getBaseBlueprintId(LegacyIds.withoutAlternateImageSuffix(printing)) : base;
+        // A white-border anthology preview counts as its black-border card (AnthologyPreviewCards)
+        return AnthologyPreviewCards.sameCardId(sameCard);
     }
 
     /** Rules source hashed into the deck-format index stamp; the format library adds a chosen deck size to it. */
@@ -489,6 +492,18 @@ public class DefaultSwccgFormat implements SwccgFormat {
                         throw new DeckInvalidException("<span class=\"validate-invalid-icon\">" + Icon.DEFENSIVE_SHIELD.getHumanReadable()
                                 + "</span> icon, from card <span class=\"validate-invalid-icon-cardname\">" + GameUtils.getFullName(card)
                                 + "</span> not permitted at this table (Shields: none).");
+                }
+            }
+        }
+        if (rules.isFourTwenty()) {
+            // "Deck: 420" (#224): inside and outside the deck
+            for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
+                for (String blueprintId : cards) {
+                    SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(blueprintId);
+                    String violation = FourTwenty.violation(card);
+                    if (violation != null)
+                        throw new DeckInvalidException("Card <span class=\"validate-invalid-icon-cardname\">" + GameUtils.getFullName(card)
+                                + "</span> not permitted at this table (Deck: 420): " + violation + ".");
                 }
             }
         }

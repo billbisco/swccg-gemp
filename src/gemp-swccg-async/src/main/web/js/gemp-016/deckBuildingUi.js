@@ -47,6 +47,10 @@ var GempSwccgDeckBuildingUI = Class.extend({
     autoZoom: null,
     cardInfoDialog: null,
 
+    // work#221: set when the page is the join screen's deck editor (deckBuild.html?joinFix=1&deckName=..&format=..)
+    _joinFix: null,
+    _joinFixState: null,
+
 
     init:function () {
         var that = this;
@@ -63,6 +67,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
         this._deepLinkCollection = deepLinkParams.collection || null;
         this._deepLinkProduct = deepLinkParams.product || null;
         this._collectionFetchGen = 0;
+        this._joinFix = (deepLinkParams.joinFix === "1" && deepLinkParams.deckName) ? deepLinkParams : null;
 
         var deferInitialCollection = !!this._deepLinkCollection;
 
@@ -157,6 +162,14 @@ var GempSwccgDeckBuildingUI = Class.extend({
         this.manageDecksDiv.append(browseInputDeckInput);
         this.manageDecksDiv.append("<span id='editingDeck'>New deck</span>");
         this.deckDiv.append(this.manageDecksDiv);
+
+        if (this._joinFix != null) {
+            // The join editor edits one deck and saves only through its own Save changes / Save as new deck buttons.
+            var standaloneOnly = [newDeckBut, saveDeckBut, renameDeckBut, copyDeckBut, deckListBut, deckLibraryBut, importDeckBut];
+            for (var b = 0; b < standaloneOnly.length; b++)
+                standaloneOnly[b].hide();
+            $(".page-hall-links").hide();
+        }
 
         newDeckBut.click(
                 function () {
@@ -373,6 +386,207 @@ var GempSwccgDeckBuildingUI = Class.extend({
         this.getCollectionTypes(false);
 
         this.checkDeckStatsDirty();
+
+        if (this._joinFix != null)
+            this.initJoinFix(this._joinFix);
+    },
+
+    /*
+     * work#221: the deck editor opened from a failed join (in a frame over the hall's join screen). It edits the
+     * player's saved deck with the Deckbuilder's own search, filter and card editing, keeps undo/redo of unsaved edits,
+     * shows legality for the table's format, and saves as changes (checked against the revision it opened) or as a new
+     * deck. The hall is told through postMessage: {type:"gemp-join-fix", action:"saved"|"cancel", deckName}.
+     */
+    initJoinFix:function (params) {
+        var that = this;
+        var fix = {
+            deckName: params.deckName,
+            format: params.format || "",
+            formatName: params.formatName || "",
+            revision: null,
+            history: new DeckDraftHistory({deck: [], outside: []}),
+            restoring: false,
+            loaded: false
+        };
+        this._joinFixState = fix;
+
+        var bar = $("<div id='joinFixBar' style='font-size:12px;line-height:16px;margin-top:2px'></div>");
+        var buttons = $("<div></div>");
+        fix.undoBut = $("<button type='button'>Undo</button>").button();
+        fix.redoBut = $("<button type='button'>Redo</button>").button();
+        fix.saveBut = $("<button type='button'>Save changes</button>").button();
+        fix.saveAsBut = $("<button type='button'>Save as new deck</button>").button();
+        fix.cancelBut = $("<button type='button'>Cancel</button>").button();
+        buttons.append(fix.undoBut, fix.redoBut, fix.saveBut, fix.saveAsBut, fix.cancelBut);
+        fix.reasonDiv = $("<div id='joinFixReason' class='deckstats-format-invalid'></div>");
+        if (params.reason)
+            fix.reasonDiv.text("Join failed: " + params.reason);
+        fix.legalityDiv = $("<div id='joinFixLegality'></div>");
+        fix.statusDiv = $("<div id='joinFixStatus'></div>");
+        var hint = $("<div style='opacity:0.8'></div>").text(
+            "Click a card in the collection to add it; click a deck card to remove it; Alt+click a deck card to move it between the deck and outside of deck. Saving does not need the deck to be legal for this table.");
+        bar.append(buttons, fix.reasonDiv, fix.legalityDiv, fix.statusDiv, hint);
+        this.manageDecksDiv.append(bar);
+        this.manageDecksDiv.css({overflow:"auto"});
+
+        fix.undoBut.click(function () { that.joinFixRestore(fix.history.undo()); });
+        fix.redoBut.click(function () { that.joinFixRestore(fix.history.redo()); });
+        fix.saveBut.click(function () { that.joinFixSave(false); });
+        fix.saveAsBut.click(function () { that.joinFixSave(true); });
+        fix.cancelBut.click(function () {
+            if (fix.history.isDirty() && !confirm("Discard your unsaved edits to this deck?"))
+                return;
+            that.joinFixNotify("cancel", fix.deckName);
+        });
+
+        this.comm.getDeck(fix.deckName, function (xml) {
+            var root = xml.documentElement;
+            if (root == null || root.getElementsByTagName("card").length + root.getElementsByTagName("cardOutsideDeck").length === 0) {
+                fix.statusDiv.text("Could not load deck \"" + fix.deckName + "\". It may have been renamed or deleted.");
+                return;
+            }
+            fix.revision = root.getAttribute("revision");
+            fix.restoring = true;
+            that.setupDeck(xml, fix.deckName, false);
+            fix.restoring = false;
+            fix.history.reset(that.snapshotDeck());
+            fix.loaded = true;
+            that.joinFixRefresh();
+        }, {
+            "0": function () { fix.statusDiv.text("Server unavailable or connection problem. Close and try again."); }
+        });
+        this.joinFixRefresh();
+    },
+
+    /** The deck as shown: cards in the deck and outside of it, in display order. */
+    snapshotDeck:function () {
+        var collect = function (container) {
+            var cards = [];
+            $(".card", container).each(function () {
+                var data = $(this).data("card");
+                cards.push({blueprintId: data.blueprintId, testingText: data.testingText,
+                    backSideTestingText: data.backSideTestingText,
+                    horizontal: data.blueprintHorizontal != null ? data.blueprintHorizontal : data.horizontal});
+            });
+            return cards;
+        };
+        return {deck: collect(this.drawDeckDiv), outside: collect(this.outsideDeckDiv)};
+    },
+
+    joinFixRestore:function (state) {
+        var fix = this._joinFixState;
+        if (state == null || fix == null)
+            return;
+        fix.restoring = true;
+        this.clearDeck();
+        for (var i = 0; i < state.deck.length; i++)
+            this.addCardToDeck(state.deck[i].blueprintId, state.deck[i].testingText, state.deck[i].backSideTestingText, state.deck[i].horizontal);
+        for (var j = 0; j < state.outside.length; j++)
+            this.addCardToContainer(state.outside[j].blueprintId, state.outside[j].testingText, state.outside[j].backSideTestingText, state.outside[j].horizontal, "outsideDeck", this.outsideDeckDiv, false).addClass("cardOutsideDeck");
+        this.layoutUI(false);
+        this.cardFilter.getCollection();
+        this.deckDirty = true;
+        fix.restoring = false;
+        this.joinFixRefresh();
+    },
+
+    joinFixRefresh:function () {
+        var fix = this._joinFixState;
+        if (fix == null)
+            return;
+        fix.undoBut.button(fix.history.canUndo() ? "enable" : "disable");
+        fix.redoBut.button(fix.history.canRedo() ? "enable" : "disable");
+        fix.saveBut.button(fix.loaded ? "enable" : "disable");
+        fix.saveAsBut.button(fix.loaded ? "enable" : "disable");
+        $("#editingDeck").text(fix.deckName + (fix.history.isDirty() ? " - modified (unsaved)" : ""));
+    },
+
+    /** Legality for the table's format, read from the Deckbuilder's own validation of the current draft. */
+    joinFixShowLegality:function (statsHtml) {
+        var fix = this._joinFixState;
+        if (fix == null || !fix.formatName)
+            return;
+        var found = null;
+        $("<div></div>").html(statsHtml).find(".deckstats-format-container").each(function () {
+            var name = $(this).find(".deckstats-format-name").text();
+            if (name === fix.formatName + ":")
+                found = $(this).find(".deckstats-format-valid, .deckstats-format-invalid");
+        });
+        if (found == null || found.length === 0) {
+            fix.legalityDiv.text("Rules for " + fix.formatName + ": see the format list below; the table rechecks the deck when you retry.");
+        } else if (found.hasClass("deckstats-format-valid")) {
+            fix.legalityDiv.text("Draft is legal for " + fix.formatName + " (the table rechecks the saved deck when you retry).");
+        } else {
+            fix.legalityDiv.text("Draft is not legal for " + fix.formatName + ": " + found.text());
+        }
+    },
+
+    joinFixSave:function (asNew) {
+        var that = this;
+        var fix = this._joinFixState;
+        if (fix == null || !fix.loaded)
+            return;
+        var targetName = fix.deckName;
+        if (asNew) {
+            targetName = prompt("Name for the new deck (the original \"" + fix.deckName + "\" stays unchanged)", fix.deckName + " (copy)");
+            if (targetName == null)
+                return;
+            var problem = DeckDraftHistory.deckNameProblem(targetName, fix.deckName);
+            if (problem != null) {
+                fix.statusDiv.text(problem);
+                return;
+            }
+        }
+        var contents = this.getDeckContents();
+        var options = asNew ? {createOnly: true} : {expectedRevision: fix.revision};
+        var failed = function (text) {
+            // The draft stays on screen untouched, so nothing is lost.
+            fix.statusDiv.text("Not saved: " + text + " Your edits are still here.");
+        };
+        fix.statusDiv.text("Saving...");
+        this.comm.saveDeck(targetName, contents, function (xml) {
+            var root = xml != null ? xml.documentElement : null;
+            if (root != null && root.getAttribute("revision"))
+                fix.revision = root.getAttribute("revision");
+            fix.deckName = targetName;
+            that.deckName = targetName;
+            fix.history.markSaved();
+            that.deckModified(false);
+            that.joinFixRefresh();
+            fix.statusDiv.text("Saved \"" + targetName + "\".");
+            that.joinFixNotify("saved", targetName);
+        }, {
+            "0": function () { failed("server unavailable or connection problem."); },
+            "400": function (xhr) { failed(xhr.getResponseHeader("message") || "the server could not read this deck."); },
+            "401": function () { failed("you are not logged in."); },
+            "409": function (xhr) { failed(xhr.getResponseHeader("message") || "the deck changed on the server."); },
+            "500": function () { failed("server error."); }
+        }, this.collectionType, options);
+    },
+
+    joinFixNotify:function (action, deckName) {
+        if (window.parent != null && window.parent !== window)
+            window.parent.postMessage({type: "gemp-join-fix", action: action, deckName: deckName}, window.location.origin);
+    },
+
+    /** Alt+click in the join editor: move one copy of a card between the deck and outside of deck (one undo step). */
+    moveCardBetweenZones:function (cardDiv) {
+        var cardData = cardDiv.data("card");
+        var toOutside = cardDiv.hasClass("cardInDeck");
+        var horizontal = cardData.blueprintHorizontal != null ? cardData.blueprintHorizontal : cardData.horizontal;
+        if (cardData.attachedCards.length > 0) {
+            cardData.attachedCards[0].remove();
+            cardData.attachedCards.splice(0, 1);
+        } else {
+            cardDiv.remove();
+        }
+        if (toOutside)
+            this.addCardToContainer(cardData.blueprintId, cardData.testingText, cardData.backSideTestingText, horizontal, "outsideDeck", this.outsideDeckDiv, false).addClass("cardOutsideDeck");
+        else
+            this.addCardToDeck(cardData.blueprintId, cardData.testingText, cardData.backSideTestingText, horizontal);
+        this.layoutDeck();
+        this.deckDirty = true;
+        this.deckModified(true);
     },
 
     parseDeckBuildQueryParams:function () {
@@ -887,6 +1101,8 @@ var GempSwccgDeckBuildingUI = Class.extend({
                         }
                         openSizeDialog(that.selectionDialog);
                         selectionDialogResize();
+                    } else if (this._joinFix != null && event.altKey && (selectedCardElem.hasClass("cardInDeck") || selectedCardElem.hasClass("cardOutsideDeck"))) {
+                        this.moveCardBetweenZones(selectedCardElem);
                     } else if (selectedCardElem.hasClass("cardInDeck") || selectedCardElem.hasClass("cardOutsideDeck")) {
                         this.removeCardFromDeckOrOutsideDeck(selectedCardElem);
                     }
@@ -1026,6 +1242,14 @@ var GempSwccgDeckBuildingUI = Class.extend({
           });
     },
     deckModified:function (value) {
+        var fix = this._joinFixState;
+        if (fix != null && !fix.restoring) {
+            // Every Deckbuilder edit ends here; each call is one undo step (work#221).
+            if (value)
+                fix.history.record(this.snapshotDeck());
+            this.joinFixRefresh();
+            return;
+        }
         var name = (this.deckName == null) ? "New deck" : this.deckName;
         if (this.sampleDeck) {
             name = "[Sample Deck] " + name;
@@ -1077,6 +1301,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
             this.comm.getDeckStats(deckContents,
                     function (html) {
                         $("#deckStats").html(html);
+                        that.joinFixShowLegality(html);
                         setTimeout(
                                 function () {
                                     that.checkDeckStatsDirty();
@@ -1207,7 +1432,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
 
     layoutUI:function (layoutDivs) {
         if (layoutDivs) {
-            var manageHeight = 23;
+            var manageHeight = this._joinFix != null ? 96 : 23;
 
             var padding = 5;
             var collectionWidth = this.collectionDiv.width();

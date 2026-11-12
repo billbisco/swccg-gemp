@@ -241,3 +241,10 @@ that add power only to "any starship he pilots" (`2_3o 2_8o 2_21o 2_23o 2_85o 2_
 says "anything", so vehicles too), Grabbers printed without the Grabber icon (`2_33o 2_41o 2_127o 2_128o`), Undercover
 printed without "(Immune to Alter.)" (`2_40o 2_129o`, `removeImmuneToCardTitle`), and Stunning Leader excluding only
 the characters in the battle when it resolves (`2_140o`, as `2_45o`).
+Done (TS-LATE, Reflections II through Theed Palace and the premium sets; tests
+`cards/set106/Card_106_TextStates_Tests.java`, `cards/textstates/LateSetsTextStatesTests.java`): printed (`o`) states
+`106_1o` Arleil Schous and `106_11o` Chall Bekan (add 2 to power of starships they pilot only), `106_7o`, `106_10o`,
+`106_13o`, `106_15o`, `110_7o`, `11_71o`, `11_88o`, `11_25o`, `14_66o`, `10_15o` (wording only),
+`12_37o`, `12_128o`, `12_131o` (no Grabber icon), `13_29o` Leia, Rebel Princess (non-alien must be present),
+`13_62o` Conduct Your Search (takes a 'door' card into hand once per turn) and `13_92o` Thok & Thug (any battle
+opponent initiates; adds to his own power).

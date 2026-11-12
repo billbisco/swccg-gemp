@@ -20,12 +20,14 @@ import java.util.List;
  * Type: Starship
  * Subtype: Squadron
  * Title: X-wing Assault Squadron
+ * <p>
+ * Text as printed on the white-border First Anthology preview card (May 1997), which differs from the later Special Edition printing (Bill 2026-11-12; wiki: First Anthology).
  */
 public class Card105_003 extends AbstractSquadron {
     public Card105_003() {
         super(Side.LIGHT, 2, null, 9, null, 4, 5, 12, "X-wing Assault Squadron", Uniqueness.UNRESTRICTED, ExpansionSet.FIRST_ANTHOLOGY, Rarity.PV);
         setLore("A squadron of X-wings ran interference for Y-wings during their assault on the Death Star. Keeping a tight formation dramatically increased the squadron's efficiency.");
-        setGameText("* Replaces 3 X-wings at one location (X-wings go to Used Pile). Permanent pilots provide total ability of 3.");
+        setGameText("*Replaces 3 X-wings at one location (X-wings go to Used Pile). Permanent pilots aboard provide total ability of 3.");
         addIcons(Icon.SPECIAL_EDITION);
         addIcon(Icon.PILOT, 3);
         addIcon(Icon.NAV_COMPUTER, 3);
