@@ -137905,7 +137905,7 @@
     ],
     "cardSubtype": "COMBAT",
     "lore": "Enclosed.",
-    "gameText": "May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. Unless this card 'hit', other T-47s here may not be targeted by Crash Landing, High-speed Tactics, or weapons. Immune to attrition < 4.",
+    "gameText": "May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. Unless this card 'hit,' other T-47s here may not be targeted by Crash Landing, High-speed Tactics, or weapons. Immune to attrition < 4.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -140567,7 +140567,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Tatooine (with Tantive IV, non-[Reflections II] R2-D2, and Stolen Data Tapes there) and Dune Sea. For remainder of game, you may not deploy Sandwhirl, Strike Planning, Admiral's Orders or [Episode I] Jedi. While this side up, your Force drains at Tatooine system are -2. Once per turn, may [download] Alderaan or a Tatooine battleground site. Until the start of your first turn, Tantive IV may be forfeited to satisfy to satisfy all battle damage against you. Flip this card if Stolen Data Tapes 'delivered' and Rebels control two battlegrounds (a site and a system).",
+    "gameText": "Deploy Tatooine system (with Tantive IV, non-[Reflections II] R2-D2, and Stolen Data Tapes there) and Dune Sea. For remainder of game, you may not deploy Sandwhirl, Strike Planning, Admiral's Orders, or [Episode I] Jedi. While this side up, your Force drains at Tatooine system are -2. Once per turn, may [download] Alderaan or a Tatooine battleground site. Until the start of your first turn, Tantive IV may be forfeited to cancel all remaining battle damage. Flip this card if Stolen Data Tapes 'delivered' and Rebels control two battlegrounds (a site and a system).",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -140604,7 +140604,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, your total battle destiny is +X, where X = number of battlegrounds occupied by Rebels of ability < 4. Once per turn, may [download] a Tatooine battleground site. Once per turn, if you just won a battle, may retrieve 1 Force. Flip this card if you do not occupy a battleground site and a battleground system (or you do not control any locations).",
+    "gameText": "While this side up, your total battle destiny is +X, where X = number of battlegrounds occupied by Rebels of ability < 4. Once per turn, may [download] Alderaan or a Tatooine battleground site. Once per turn, if you just won a battle, may retrieve 1 Force. Flip this card if you do not occupy a battleground site and a battleground system (or you do not control any locations).",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -145960,7 +145960,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "Although temperamental, this trusty hunk of junk always seems to perform for its proud owner and his Wookiee co-pilot when needed the most.",
-    "gameText": "Permanent pilots are •Han and •Chewie, who provide ability of 5. If in battle, add one destiny to total power. Immune to Come With Me, Life Debt and attrition < 6.",
+    "gameText": "Permanent pilots are •Han and •Chewie, who provide total ability of 5. While in battle, adds one destiny to total power. Immune to Come With Me, Life Debt, and attrition < 6.",
     "deployCost": 6.0,
     "destiny": 2.0,
     "credits": 0,
@@ -146253,7 +146253,7 @@
       "IMPERIAL"
     ],
     "lore": "General of the AT-AT assault armor division sent by Darth Vader to crush the Rebellion on Hoth. Cold and ruthless.",
-    "gameText": "Leader. Adds 3 to the power of anything he pilots. Leader. If piloting Blizzard 1 in battle, adds one destiny to total power. Deploys free aboard Blizzard 1. Once per turn, may reveal from hand to deploy 6th Marker or Blizzard 1 to Hoth from Reserve Deck; reshuffle.",
+    "gameText": "[Pilot] 3. Leader. Once per turn, may reveal from hand to [download] 6th Marker or Blizzard 1 to Hoth. Deploys free aboard Blizzard 1. While piloting Blizzard 1, adds one destiny to total power.",
     "deployCost": 3.0,
     "destiny": 1.0,
     "credits": 0,
@@ -147713,7 +147713,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The Empire's remote bases develop new technology and hide sensitive projects from potential Rebel saboteurs.",
-    "gameText": "Deploy on Bunker if you control that site. Your Force generation at Endor system may not be canceled. Once per turn, may [download] an Endor site. Place Effect in Used Pile if opponent controls Bunker. (Immune to Alter.)",
+    "gameText": "Deploy on Bunker if you control that site. Your Force generation at Endor system may not be canceled. Once per turn, may [download] an Endor site. Place Effect in Used Pile if opponent controls this site. (Immune to Alter.)",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -153070,7 +153070,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "",
-    "gameText": "If Agents Of Black Sun on table, deploy on table. Once per turn, may use 1 Force to [download] Imperial Square. Once per turn, if Emperor on Coruscant, may draw top card of Force Pile (if during your turn and you occupy three battlegrounds, opponent also loses 1 Force). [Immune to Alter.]",
+    "gameText": "If Agents Of Black Sun on table, deploy on table. May use 1 Force to [download] Imperial Square. Once per turn, if Emperor on Coruscant, may draw top card of Force Pile (if during your turn and you occupy three battlegrounds, opponent also loses 1 Force). [Immune to Alter.]",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -154271,7 +154271,7 @@
       "JEDI_MASTER"
     ],
     "lore": "",
-    "gameText": "Never deploys to a site opponent occupies. Deploys -2 to Ahch-To. Once per turn, may [upload] Force Projection. During battle, may cancel an opponent's just drawn destiny to cause a re-draw. Immune to attrition.",
+    "gameText": "Never deploys to a site opponent occupies. Deploys -2 to Ahch-To. Once per turn, may [upload] Force Projection. During battle, may cancel an opponent's just drawn destiny to cause a redraw. Immune to attrition.",
     "deployCost": 5.0,
     "destiny": 4.0,
     "credits": 0,
@@ -155078,7 +155078,7 @@
     ],
     "cardSubtype": "SYSTEM",
     "locationDarkSideGameText": "While Anakin or Vader here, gains one [Dark Side] icon and one [Light Side] icon.",
-    "locationLightSideGameText": "While Vader on table, unless Padme at a Mustafar location, Force drain -1 here.",
+    "locationLightSideGameText": "If Vader on table, unless Amidala at a Mustafar location, Force drain -1 here.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -162968,7 +162968,7 @@
       "REBEL"
     ],
     "lore": "Leader. Scout.",
-    "gameText": "[Pilot] 3. Cancels Kylo's game text here. When deployed, may reveal the top two cards of your Reserve Deck; take one into hand. Draws one battle destiny if unable to otherwise. During battle with Chewie or [Endor] Leia, may add one destiny to total power.",
+    "gameText": "[Pilot] 3. When deployed, may reveal the top two cards of your Reserve Deck; take one into hand. Cancels Kylo's game text here. Draws one battle destiny if unable to otherwise. During battle with Chewie or [Endor] Leia, may add one destiny to total power.",
     "deployCost": 4.0,
     "destiny": 1.0,
     "credits": 0,
@@ -163763,7 +163763,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "If you did not deploy an Objective or Epic Event, deploy on table. We're Not Going To Attack?: Once per turn, may [download] a battleground system. You may not deploy non-Imperial starships. Unless you occupy a battleground site, Dreaded Imperial Starfleet is suspended. The Alliance Will Die...: Flagship Operations does not require any Executor sites on table to deploy, and does not target squadrons. ...As Will Your Friends: At battleground systems where you have a piloted capital starship / TIE pair, Force drains = 2. During battle at a site related to a system you occupy, may add one destiny to total power and/or re-circulate.",
+    "gameText": "If you did not deploy an Epic Event or Objective, deploy on table. We're Not Going To Attack?: Once per turn, may [download] a battleground system. You may not deploy non-Imperial starships. Unless you occupy a battleground site, Dreaded Imperial Starfleet is suspended. The Alliance Will Die...: Flagship Operations does not require any Executor sites on table to deploy, and does not target squadrons. ...As Will Your Friends: At battleground systems where you have a piloted capital starship/TIE pair, Force drains = 2. During battle at a site related to a system you occupy, may add one destiny to total power and/or re-circulate.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -165047,8 +165047,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If Qui-Gon 'communing,' may [download] Theed Palace Generator.",
-    "locationLightSideGameText": "While Qui-Gon 'communing,' no Force drains here.",
+    "locationDarkSideGameText": "",
+    "locationLightSideGameText": "While Qui-Gon 'communing,' no Force drains here and, once per turn, may [download] Theed Palace Generator.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -165094,8 +165094,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If Yoda here or [Set 16] Yoda 'communing,' once per turn, may subtract 2 from attrition against you.",
-    "locationLightSideGameText": "If Yoda here or [Set 16] Yoda 'communing,' Broken Concentration is canceled.",
+    "locationDarkSideGameText": "",
+    "locationLightSideGameText": "If Yoda here or [Set 16] Yoda 'communing,' Broken Concentration is canceled and, once per turn, you may subtract 2 from attrition against you.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -165845,8 +165845,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "May [download] non-[Theed Palace] Sidious here.",
-    "locationLightSideGameText": "If opponent's [Special Edition] objective on table, gains one [Light Side] icon and Force drain +2 here.",
+    "locationDarkSideGameText": "May [download] non-[Theed Palace] Sidious here. If your [Special Edition] objective on table, gains one [Light Side] icon and opponent's Force drains are +2 here.",
+    "locationLightSideGameText": "",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -166050,8 +166050,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "While Obi-Wan 'communing,' no Force drains here.",
-    "locationLightSideGameText": "If Obi-Wan 'communing,' once per turn, may subtract 2 from a just drawn [Permanent Weapon] weapon destiny.",
+    "locationDarkSideGameText": "",
+    "locationLightSideGameText": "While Obi-Wan 'communing,' no Force drains here and, once per turn, may subtract 2 from a just drawn [Permanent Weapon] weapon destiny.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -169388,7 +169388,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "If you occupy, opponent's Level 6 Core Shaft Corridor game text is canceled.",
-    "locationLightSideGameText": "Your stormtroopers here may move as a 'react' to a battle or Force drain at an adjacent site.",
+    "locationLightSideGameText": "Your stormtroopers here may move to an adjacent site as a 'react.'",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -170533,7 +170533,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Lothal system, Advanced Projects Laboratory, Imperial Complex, and Thrawn's Art Collection. For remainder of game, you may not deploy Chiraneau or [Episode I] (or [Episode VII]) cards with ability or [Presence]. Once per turn, may [download] a battleground system (or a site to Lothal). While this side up, Imperial Star Destroyers deploy -1 (-3 if Chimaera deploying to Lothal). Flip this card during any deploy phase if Thrawn at a battleground and two or more artwork cards on table.",
+    "gameText": "Deploy Lothal system, Advanced Projects Laboratory, Imperial Complex, and Thrawn's Art Collection. For remainder of game, you may not deploy Chiraneau or [Episode I] (or [Episode VII]) cards with ability or [Presence]. Once per turn, may [download] a battleground system (or a site to Lothal). While this side up, Imperial Star Destroyers deploy -1 (-3 if Chimaera deploying to Lothal). Flip this card during any deploy phase if Thrawn at a battleground and two artwork cards on table.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -170569,7 +170569,7 @@
     ],
     "cardSubtype": "SYSTEM",
     "locationDarkSideGameText": "While you occupy, gains one [Dark Side] icon.",
-    "locationLightSideGameText": "Rebel starships here are power and forfeit +1 and immune to Gravity Shadow.",
+    "locationLightSideGameText": "Piloted Rebel starships here are power and forfeit +1 and immune to Gravity Shadow.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -170981,7 +170981,7 @@
       "IMPERIAL"
     ],
     "lore": "Leader. Secretive manipulator of the galaxy. Played Darth Vader and Prince Xizor off against one another in his relentless pursuit of 'young Skywalker.'",
-    "gameText": "Never deploys or moves (even if carried) to a site opponent occupies. Players do not retrieve Force for initiating a battle. If Agents Of The Black Sun on table, your total battle destiny where you have a Black Sun agent is +1. Immune to attrition.",
+    "gameText": "Never deploys or moves (even if carried) to a site opponent occupies. Players do not retrieve Force for initiating a battle. While Agents Of Black Sun on table, your total battle destiny is +1 where you have a Black Sun agent. Immune to attrition.",
     "deployCost": 5.0,
     "destiny": 6.0,
     "credits": 0,
@@ -172056,7 +172056,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SYSTEM",
-    "locationDarkSideGameText": "Thrawn and Pryce deploy -1 (and move for free) to here. While Lothal converted, gains one [Dark Side] icon.",
+    "locationDarkSideGameText": "Thrawn and Pryce deploy -1 (and shuttle for free) to here. While Lothal converted, gains one [Dark Side] icon.",
     "locationLightSideGameText": "Once per game, may simultaneously deploy Ghost and Hera here from hand and/or Reserve Deck; reshuffle.",
     "destiny": 0.0,
     "credits": 0,
@@ -181279,7 +181279,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Even though Luke felt the pain of losing his mentor, Obi-Wan continued to give him strength and guidance through the Force.",
-    "gameText": "If Obi-Wan 'communing,' deploy on table. If a Rebel in battle, may activate 1 Force or add 1 to a just drawn battle destiny. Once per game, may either take Old Ben into hand from Reserve Deck (reshuffle) OR retrieve Old Ben from Lost Pile. [Immune to Alter.]",
+    "gameText": "If Obi-Wan 'communing,' deploy on table. Once per battle involving a Rebel, may activate 1 Force or add 1 to a just drawn battle destiny. Once per game, may [upload] (or retrieve) Old Ben. [Immune to Alter.]",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -181784,7 +181784,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "In the end, Watto finally came to understand the agony of defeat.",
-    "gameText": "If Podrace Arena on table, [upload] Jar Jar, Padme, or Skywalker Hut. OR During your control phase, if you have won a Podrace and [Tatooine] Anakin is present at a battleground site, opponent loses 1 Force for each [Dark Side] at that site.",
+    "gameText": "If Podrace Arena on table, [upload] Skywalker Hut, Amidala, or Jar Jar. OR During your control phase, if you have won a Podrace and [Tatooine] Anakin is present at a battleground site, opponent loses 1 Force for each [Dark Side] at that site.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -193763,7 +193763,7 @@
       "DEVICE"
     ],
     "lore": "Long-range stereoscopic sighting device connected to the cannons of an Imperial walker. Calibrated to allow the AT-AT commander to accurately fire at distant targets.",
-    "gameText": "Deploy on an AT-AT; may immediately search your Used Pile and take an AT-AT Cannon or [Hoth] Epic Event into hand; reshuffle. Adds 2 to this AT-AT's weapon destiny draws (unless targeting a character).",
+    "gameText": "Deploy on an AT-AT; may immediately search your Used Pile and take an AT-AT Cannon or [Hoth] Epic Event into hand; reshuffle. Adds 2 to each of this AT-AT's weapon destiny draws (unless targeting a character).",
     "destiny": 6.0,
     "credits": 0,
     "icons": [
@@ -194264,7 +194264,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "Darth Vader often used physical means of 'persuasion' to get information. Captain Antilles of Tantive IV chose to die rather than reveal the location of the stolen Death Star plans.",
-    "gameText": "USED: [Upload] (or place in owner's Used Pile) Deactivated Hyperdrive or an Admiral's Order. LOST: If Vader in battle against two characters of ability < 4 present with him, add one battle destiny and, if one is a Rebel trooper, it is 'choked' (lost).",
+    "gameText": "USED: [Upload] (or place in owner's Used Pile) Deactivated Hyperdrive or an Admiral's Order. LOST: During battle, if Vader present with two opponent's characters of ability < 4, add one battle destiny. If any are Rebel troopers, choose one to be 'choked' (lost).",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -194463,7 +194463,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "No star system will dare oppose the Emperor now.",
-    "gameText": " If two Imperials (or two Black Sun agents) in battle, re-circulate and shuffle your Reserve Deck. OR Once per game, if Emperor or Tarkin on table, Allegations Of Corruption stacks opponent's just played Interrupt; this does not count towards that card's once per game limit.",
+    "gameText": "If two Imperials (or two Black Sun agents) in battle, re-circulate and shuffle your Reserve Deck. OR Once per game, if Emperor or Tarkin on table, Allegations Of Corruption stacks opponent's just played Interrupt; this does not count toward that card's once per game limit.",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -194617,7 +194617,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "'Not even finished?'",
-    "gameText": "Plays on table. You lose no Force to Boonta Eve Podrace. Unless opponent occupies three battlegrounds, I Did It! is suspended. Double Agent may not target opponent's Undercover spies. If an Undercover spy is about to be lost, place it out of play instead.",
+    "gameText": "Plays on table. You lose no Force to Boonta Eve Podrace. Unless opponent occupies three battlegrounds, I Did It! is suspended. Double Agent may not target opponent's Undercover spies. If an Undercover spy is about to be lost (for any reason), place it out of play instead.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -194725,7 +194725,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "'Poodoo!'",
-    "gameText": "Plays on table. You lose no Force to Boonta Eve Podrace. While you occupy three battlegrounds, Watto's Box is suspended. Nevar Yalnal may not target opponent's Undercover spies. If an Undercover spy is about to be lost, place it out of play instead.",
+    "gameText": "Plays on table. You lose no Force to Boonta Eve Podrace. While you occupy three battlegrounds, Watto's Box is suspended. Nevar Yalnal may not target opponent's Undercover spies. If an Undercover spy is about to be lost (for any reason), place it out of play instead.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -195255,7 +195255,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "gameText": "Destiny +2 if 3 Wookiees and/or Ewoks on table. Take an Ewok or Wookiee of power < 6 into hand from reserve deck; reshuffle. OR Deploy a Bowcaster or Ewok Weapon from your lost pile. OR Add one battle destiny at same site as Part of the Tribe.",
+    "gameText": "When drawn for destiny, if three Ewoks and/or Wookiees on table, destiny +2. Deploy a bowcaster or Ewok weapon from Lost Pile. OR [upload] an Ewok or Wookiee of power < 6. OR During battle at same site as Part Of The Tribe, add one battle destiny.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -195559,7 +195559,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "gameText": "Once per game, 'BEEP-BOOP' (your [Grabber] card stacks a just played opponent's Interrupt; this does not count towards any [Grabber] card's once per game limit). OR Once per game, 'WHAAAAOW!' (lose your droid at a Scomp link to cancel a battle just initiated at same or related interior site).",
+    "gameText": "Once per game, 'BEEP-BOOP' (your [Grabber] card stacks a just played opponent's Interrupt; this does not count toward any [Grabber] card's once per game limit). OR Once per game, 'WHAAAAOW!' (lose your droid at a Scomp link to cancel a battle just initiated at same or related interior site).",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -207582,7 +207582,7 @@
       "FIRST_ORDER"
     ],
     "lore": "Knight of Ren.",
-    "gameText": "[Pilot] 2. Power +1 for each of opponent's cards out of play. Opponent may not cancel your battle destiny draws where you have Kylo or a Knight of Ren. If you just initiated a Force drain here, may place topmost Interrupt of opponent's Lost Pile out of play.",
+    "gameText": "[Pilot] 2. Power +1 for each opponent's card out of play. Opponent may not cancel your battle destiny draws where you have Kylo or a Knight of Ren. If you just initiated a Force drain here, may place topmost Interrupt of opponent's Lost Pile out of play.",
     "deployCost": 4.0,
     "destiny": 2.0,
     "credits": 0,
@@ -207636,7 +207636,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "Deploy on Galactic Senate. [Set 17] Passel Argente's game text and your Political Effects are canceled. Twice per turn, may target your agenda here: Blockade: Cancel a 'react.' Taxation: Place a character with politics from hand in Used Pile to activate 1 Force. Trade: During your draw phase, place a card from hand in Lost Pile, shuffle that pile, and take top card into hand. Wealth: Subtract 1 from attrition against you.",
+    "gameText": "Deploy on Galactic Senate. [Set 17] Passel Argente's game text and your Political Effects are canceled. Twice per turn, may target your agenda here: Blockade: Cancel a 'react.' Taxation: Place a character with politics from hand in Used Pile to choose: Activate 1 Force or [download] Senate Hovercam. Trade: During your draw phase, place a card from hand in Lost Pile, shuffle that pile, and take top card into hand. Wealth: Subtract 1 from attrition against you.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -208208,7 +208208,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "Deploy on Galactic Senate. Your Political Effects are canceled. Twice per turn, may target your agenda here: Justice: During battle, subtract 1 from a just drawn weapon destiny. Order: During any move phase, peek at the top 2 cards of any Reserve Deck and replace in any order. Peace: Subtract 1 from attrition against you. Taxation: Place a character with politics from hand in Used Pile to activate 1 Force.",
+    "gameText": "Deploy on Galactic Senate. Your Political Effects are canceled. Twice per turn, may target your agenda here: Justice: During battle, subtract 1 from a just drawn weapon destiny. Order: During any move phase, peek at the top 2 cards of any Reserve Deck and replace in any order. Peace: Subtract 1 from attrition against you. Taxation: Place a character with politics from hand in Used Pile to choose: Activate 1 Force or [download] Senate Hovercam.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -216694,7 +216694,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, Force drain bonuses at same site as your Lando or your Lobot may not be canceled. While Vader at a Bespin location, game text of Admiral's Orders is canceled and Alter may not be played. If your alien/Imperial pair in battle, your total battle destiny is +2. Once per battle involving your Lando (twice if any Lobot also there), may a subtract 1 from opponent's just drawn destiny. Flip this card if opponent controls more Bespin locations than you.",
+    "gameText": "While this side up, Force drain bonuses at same site as your Lando or your Lobot may not be canceled. While Vader at a Bespin location, game text of Admiral's Orders is canceled and Alter may not be played. While your alien/Imperial pair in battle, your total battle destiny is +2. Once per battle involving your Lando (twice if any Lobot also there), may subtract 1 from opponent's just drawn destiny. Flip this card if opponent controls more Bespin locations than you.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -217018,7 +217018,7 @@
       "JEDI_MASTER"
     ],
     "lore": "Wookiee.",
-    "gameText": "Once per turn, if Wookiee Homestead on table, may place a card from hand on top of Force Pile to draw bottom card from Force Pile. Once per game, may [download] a unique (•) Forest. Immune to Wookiee Strangle and You Are Beaten.",
+    "gameText": "Once per turn, if Wookiee Homestead on table, may place a card from hand on Force Pile to draw bottom card of your Force Pile. Once per game, may [download] a unique (•) forest. Immune to Wookiee Strangle and You Are Beaten.",
     "deployCost": 5.0,
     "destiny": 2.0,
     "credits": 0,
@@ -225878,7 +225878,7 @@
       "ALIEN"
     ],
     "lore": "Jawa mechanic.",
-    "gameText": "Once per game, may [DOWNLOAD] a Sandcrawler here. While driving a Sandcrawler it moves for free, may not be targeted by weapons and adds one battle destiny. Once during your turn, may select a player to activate 1 Force.",
+    "gameText": "Once per game, may [download] a sandcrawler here. While driving a sandcrawler, it moves for free, may not be targeted by weapons, and Run'heb adds one battle destiny. Once during your turn, may choose a player to activate 1 Force.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -226309,7 +226309,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "gameText": "Deploy on table. Sense and Alter are Lost Interrupts. When any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force (may not be reduced). May [download] Bog Clearing. [Dagobah] Luke is a Padawan. Once per game, during a battle involving [Dagobah] Luke, may lose 1 Force to cancel a non-[Sense] Interrupt. Yoda and Padawans are immune to Imperial Barrier and Stunning Leader and may move free using landspeed. While she is alone, Jedi Ahsoka’s gametext is canceled. [Immune to Alter.]",
+    "gameText": "Deploy on table. Sense and Alter are Lost Interrupts. When any player makes a destiny draw for Sense or Alter, and that destiny draw is successful, that player loses 2 Force (may not be reduced). May [download] Bog Clearing. [Dagobah] Luke is a Padawan. Once per game, if [Dagobah] Luke in battle, may lose 1 Force to cancel a non-[Sense] Interrupt. Yoda and Padawans are immune to Imperial Barrier and Stunning Leader and may move for free using landspeed. While alone, Jedi Ahsoka's game text is canceled. [Immune to Alter.]",
     "destiny": 1.0,
     "credits": 0,
     "icons": [
