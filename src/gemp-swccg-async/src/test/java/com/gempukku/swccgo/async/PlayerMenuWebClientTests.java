@@ -76,6 +76,14 @@ public class PlayerMenuWebClientTests {
     }
 
     @Test
+    public void MenuIsPlacedAgainAfterCopyFeedback() throws IOException {
+        //test7: "Copied" widens the menu; it is kept inside the window (hall user list sits at the right edge)
+        String menu = read("js/gemp-016/playerMenu.js");
+        int copy = menu.indexOf("status.text(\"Press Ctrl+C to copy\");");
+        assertTrue(copy > 0 && menu.indexOf("place();", copy) > copy && menu.indexOf("place();", copy) < menu.indexOf("function open("));
+    }
+
+    @Test
     public void HallShowsTheCarryOverNoticeFromTheHallUi() throws IOException {
         //test6: the notice is shown by GempSwccgHallUI's init (HallChatResizer has no such method)
         String hall = read("js/gemp-016/hallUi.js");
