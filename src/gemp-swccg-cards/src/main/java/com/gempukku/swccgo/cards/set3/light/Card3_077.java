@@ -41,7 +41,7 @@ public class Card3_077 extends AbstractArtilleryWeapon {
     public Card3_077() {
         super(Side.LIGHT, 1, 3, 1, "Medium Repeating Blaster Cannon", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C1);
         setLore("Merr-Sonn Mark II repeating blaster. Accepts power cells from a very wide variety of sources, a benefit for Rebels accustomed to scavenging for supplies.");
-        setGameText("Deploy on a site. May be moved by two warriors for 1 additional Force. Your warrior present may target up to two characters or two creatures at same or adjacent site using 2 Force. Draw two destiny. Target(s) hit if total destiny > total defense value.");
+        setGameText("Deploy on a site. May be moved by two warriors for 1 additional Force. Your warrior present may target up to two characters or creatures at same or adjacent site using 2 Force. Draw two destiny. Target(s) hit if total destiny > total defense value.");
         addIcons(Icon.HOTH);
         addKeywords(Keyword.BLASTER, Keyword.CANNON, Keyword.ARTILLERY_WEAPON_MAY_USE_DB_TRANSIT);
     }

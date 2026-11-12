@@ -36,7 +36,7 @@ public class Card8_050 extends AbstractUsedInterrupt {
     public Card8_050() {
         super(Side.LIGHT, 5, "Firefight", Uniqueness.UNRESTRICTED, ExpansionSet.ENDOR, Rarity.C);
         setLore("Lieutenant Page effectively deployed his detachment of Rebel commandos during the attack at the control bunker.");
-        setGameText("During a battle, if you have weapons at both sites adjacent to that battle, add 3 to your total power and add one battle destiny. OR For remainder of turn, your scout at an exterior site is power +1 and adds 1 to each of that character's weapon destiny draws.");
+        setGameText("During a battle, if you have weapons at at least 2 sites adjacent to that battle, add 3 to your total power and add one battle destiny. OR For remainder of turn, your scout at an exterior site is power +1 and adds 1 to each of that character's weapon destiny draws.");
         addIcons(Icon.ENDOR);
     }
 

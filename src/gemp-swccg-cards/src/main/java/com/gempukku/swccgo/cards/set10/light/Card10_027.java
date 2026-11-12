@@ -34,7 +34,7 @@ public class Card10_027 extends AbstractUsedOrLostInterrupt {
     public Card10_027() {
         super(Side.LIGHT, 2, "Yoda Stew & You Do Have Your Moments", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles(Title.Yoda_Stew, Title.You_Do_Have_Your_Moments);
-        setGameText("USED: During opponent's turn, take up to 4 cards from your hand and place them on top of your Force Pile. LOST: During a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to 0.");
+        setGameText("USED: During opponent's turn, take up to four cards from your hand and place them on top of your Force Pile. LOST: At the start of the damage segment during a battle, before any cards have been forfeited, cause all attrition for both sides to be reduced to zero.");
         addIcons(Icon.REFLECTIONS_II);
     }
 

@@ -34,7 +34,7 @@ public class Card4_151 extends AbstractLostInterrupt {
     public Card4_151() {
         super(Side.DARK, 3, Title.Uncertain_Is_The_Future, Uniqueness.UNRESTRICTED, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("Even a Jedi cannot always foresee future events.");
-        setGameText("Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck. Shuffle, cut and replace. Each player then draws from Reserve Deck the counted number of cards to create a new hand.");
+        setGameText("Use 3 Force. Each player places hand onto Reserve Deck (if possible), then places Used Pile onto Reserve Deck; reshuffle. Each player then draws cards from Reserve Deck equal to the number of cards just placed from hand onto Reserve Deck (if any).");
         addIcons(Icon.DAGOBAH);
     }
 

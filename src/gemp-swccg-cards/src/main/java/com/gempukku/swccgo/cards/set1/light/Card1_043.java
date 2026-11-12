@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set1.light;
 
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
+import com.gempukku.swccgo.cards.conditions.PresentAtCondition;
 import com.gempukku.swccgo.cards.conditions.PresentCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Keyword;
@@ -13,6 +14,7 @@ import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
+import com.gempukku.swccgo.logic.conditions.AndCondition;
 import com.gempukku.swccgo.logic.conditions.UnlessCondition;
 import com.gempukku.swccgo.logic.modifiers.DefinedByGameTextDeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
@@ -30,7 +32,7 @@ public class Card1_043 extends AbstractNormalEffect {
     public Card1_043() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, "Affect Mind", Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.R1);
         setLore("'What was that?' The Jedi power known as 'affect mind' is often used to create minor distractions, allowing Jedi to elude enemies rather than engage them in battle.");
-        setGameText("Use 1 Force to deploy on one of your Jedi. Unless a Dark Jedi is also present, opponent's total ability at same location is reduced by 2.");
+        setGameText("Use 1 Force to deploy on one of your Jedi. While present at a site, unless a Dark Jedi is also present, opponent's total ability at same location is reduced by 2.");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
     }
 
@@ -57,7 +59,8 @@ public class Card1_043 extends AbstractNormalEffect {
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new TotalAbilityModifier(self, Filters.wherePresent(self),
-                new UnlessCondition(new PresentCondition(self, Filters.Dark_Jedi)), -2, opponent));
+                new AndCondition(new PresentAtCondition(Filters.hasAttached(self), Filters.site),
+                        new UnlessCondition(new PresentCondition(self, Filters.Dark_Jedi))), -2, opponent));
         return modifiers;
     }
 }

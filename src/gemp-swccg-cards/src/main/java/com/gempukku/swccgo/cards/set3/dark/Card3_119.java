@@ -35,7 +35,7 @@ public class Card3_119 extends AbstractUsedInterrupt {
     public Card3_119() {
         super(Side.DARK, 4, "ComScan Detection", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.C2);
         setLore("The Imperial Navy boasts the best communications network in the galaxy. Sophisticated control technology allows the Empire to dispatch armed forces without delay.");
-        setGameText("If opponent just moved a character, vehicle, or starship as a 'react' to a location, you may immediately move one of your vehicles or starships, if within range, to that location (as a regular move).");
+        setGameText("If opponent just moved a character, vehicle, or starship as a 'react' to a location, you may immediately move one vehicle or starship, if within range, to that location (as a regular move).");
         addIcons(Icon.HOTH);
     }
 

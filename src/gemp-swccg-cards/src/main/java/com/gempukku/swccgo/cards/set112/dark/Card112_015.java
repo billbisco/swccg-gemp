@@ -46,7 +46,7 @@ public class Card112_015 extends AbstractObjective {
     public Card112_015() {
         super(Side.DARK, 0, Title.My_Kind_Of_Scum, ExpansionSet.JPSD, Rarity.PM);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy Desert Heart and a Jabba's Palace site. May deploy Well Guarded. Reveal one unique (•) alien from your deck whose lore specifies its species. This card is your Rep. For remainder of game, your Rep is a leader. Well Guarded is immune to Alter. You may not deploy 'insert' cards or operatives. While frozen Han on table, Rebels are immune to No Bargain and Bad Feeling Have I. Flip this card if you occupy two battleground sites (must occupy a third with a non-unique alien of your Rep's species if a non-Tatooine location is on table).");
+        setGameText("Deploy Desert Heart and a Jabba's Palace site. May deploy Well Guarded. Reveal one unique (•) alien with a defined species from your deck. This card is your Rep. For remainder of game, your Rep is a leader. Well Guarded is immune to Alter. You may not deploy 'insert' cards or operatives. While frozen Han on table, Rebels are immune to No Bargain and Bad Feeling Have I. Flip this card if you occupy two battleground sites (must occupy a third with a non-unique alien of your Rep's species if a non-Tatooine location is on table).");
         addIcons(Icon.PREMIUM);
     }
 

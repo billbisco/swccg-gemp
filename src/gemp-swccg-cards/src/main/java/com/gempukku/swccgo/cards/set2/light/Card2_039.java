@@ -39,7 +39,7 @@ public class Card2_039 extends AbstractUtinniEffect {
     public Card2_039() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, Title.Theyre_On_Dantooine, Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.R1);
         setLore("'You would prefer another target? A military target? Then name the system!'");
-        setGameText("Once per game, use 2 Force to deploy on Dantooine. Target Death Star. Opponent may not play Commence Primary Ignition until target reaches Dantooine, canceling Utinni Effect.");
+        setGameText("Once per game, use 2 Force to deploy on Dantooine system. Target Death Star. Opponent may not play Commence Primary Ignition until target reaches Dantooine, canceling Utinni Effect.");
         addIcons(Icon.A_NEW_HOPE);
     }
 

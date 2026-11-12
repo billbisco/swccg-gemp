@@ -36,7 +36,7 @@ public class Card4_033 extends AbstractNormalEffect {
     public Card4_033() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, Title.Reflection, Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.R);
         setLore("It was hard to imagine the enormous losses the Alliance suffered during the Battle of Hoth. Leia contemplated what she could do to help the Rebellion recover.");
-        setGameText("Deploy on Leia. Once during each of your control phases, you may use 3 Force to retrieve one card from your Lost Pile. Also, when an apprentice, adds 1 to her training destiny.");
+        setGameText("Deploy on Leia. Once during each of your control phases, you may use 3 Force to retrieve 1 Force. Also, when an apprentice, adds 1 to her training destiny.");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.DAGOBAH);
     }

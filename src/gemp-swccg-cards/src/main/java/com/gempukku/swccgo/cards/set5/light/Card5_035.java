@@ -41,7 +41,7 @@ public class Card5_035 extends AbstractUsedOrLostInterrupt {
     public Card5_035() {
         super(Side.LIGHT, 2, Title.Blaster_Proficiency, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.C);
         setLore("Some people think that hokey religions and ancient weapons are no match for a good blaster at your side.");
-        setGameText("USED: If you just targeted with a blaster, add 3 to your weapon destiny. LOST: Lose 1 Force to cause one opponent's character just 'hit' to be immediately placed in Lost Pile. OR Cancel Levitation Attack.");
+        setGameText("USED: If you just targeted with a blaster, add 3 to your total weapon destiny. LOST: Lose 1 Force to cause one opponent's just 'hit' character to be immediately placed in Lost Pile. OR Cancel Levitation Attack.");
         addIcons(Icon.CLOUD_CITY);
     }
 

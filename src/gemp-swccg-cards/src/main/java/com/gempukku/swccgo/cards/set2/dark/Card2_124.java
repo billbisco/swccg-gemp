@@ -36,7 +36,7 @@ public class Card2_124 extends AbstractNormalEffect {
     public Card2_124() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, Title.Program_Trap, Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.U1);
         setLore("Imperial slicers imbed a secret command in a droid's primary performance banks. A predetermined trigger causes a power overload, destroying the droid and anything nearby.");
-        setGameText("Use 2 Force to deploy on an opponent's droid (except R2-D2 and C-3PO), 1 on your droid. When either player draws a destiny matching the number of characters at same site, droid 'explodes' (all characters present are lost).");
+        setGameText("Use 2 Force to deploy on an opponent's droid (except C-3PO or R2-D2), 1 on your droid. When either player draws a destiny matching the number of characters at same site, droid 'explodes' (all characters present with Effect are lost).");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.A_NEW_HOPE);
     }

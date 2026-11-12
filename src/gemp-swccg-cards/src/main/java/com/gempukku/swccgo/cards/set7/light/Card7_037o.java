@@ -1,5 +1,8 @@
 package com.gempukku.swccgo.cards.set7.light;
 
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.common.TextState;
 
 import java.time.LocalDate;
@@ -12,8 +15,7 @@ import java.time.LocalDate;
  * <p>
  * The print says "aboard a capital starship" and "at Central Core"; the Players Committee wrote "your capital starship" and
  * "Death Star: Central Core" (the only Central Core).
- * The difference is wording only and plays the same in GEMP, so this state reuses the bare card's code
- * (Card7_037) and differs only in its game text and text-state information.
+ * The bare card (Card7_037) plays "your capital starship"; this state applies aboard any capital starship, as printed.
  */
 public class Card7_037o extends Card7_037 {
     public Card7_037o() {
@@ -23,5 +25,11 @@ public class Card7_037o extends Card7_037 {
         setTextState(new TextState("7_37", "Printed",
                 "Special Edition printing (Decipher, November 1999)",
                 LocalDate.of(1999, 11, 1), LocalDate.of(2017, 3, 1)));
+    }
+
+    /** As printed: "aboard a capital starship" (any player's). */
+    @Override
+    protected Filter capitalStarshipFilter(PhysicalCard self) {
+        return Filters.capital_starship;
     }
 }

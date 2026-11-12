@@ -40,7 +40,7 @@ public class Card6_141 extends AbstractNormalEffect {
     public Card6_141() {
         super(Side.DARK, 2, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.All_Wrapped_Up, Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.U);
         setLore("A capture cable is a quick and effective way for bounty hunters to suddenly snare their target.");
-        setGameText("Deploy on your side of table. We Have A Prisoner and Oo-ta Goo-ta Solo? play for free and are immune to Sense. Also, whenever opponent forfeits a character, your bounty hunter present may capture that character. (Immune to Alter.)");
+        setGameText("Deploy on your side of table. We Have A Prisoner and Oo-ta Goo-ta, Solo? play for free and are immune to Sense. If opponent's character is about to be forfeited, your bounty hunter present may capture that character (character is first restored to normal). (Immune to Alter.)");
         addIcons(Icon.JABBAS_PALACE);
         addImmuneToCardTitle(Title.Alter);
     }

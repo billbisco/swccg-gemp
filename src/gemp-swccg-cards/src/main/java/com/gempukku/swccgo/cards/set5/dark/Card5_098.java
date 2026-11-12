@@ -36,7 +36,7 @@ public class Card5_098 extends AbstractImperial {
     public Card5_098() {
         super(Side.DARK, 4, 2, 2, 1, 2, "Imperial Trooper Guard Dainsom", Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.U);
         setLore("Experienced trooper guard from Algarian. Assigned to guard sensitive areas. Formerly served aboard the Star Destroyer Thunderflare.");
-        setGameText("Deploys only aboard Executor or on any Death Star Site. Cannot move. May cancel opponent's Force Drains at adjacent sites.");
+        setGameText("Deploys only aboard Executor or to any Death Star site. Cannot move. May cancel opponent's Force drains at adjacent Death Star or Executor sites.");
         addIcons(Icon.CLOUD_CITY, Icon.WARRIOR);
         addKeywords(Keyword.IMPERIAL_TROOPER_GUARD);
     }

@@ -39,7 +39,7 @@ public class Card4_019 extends AbstractImmediateEffect {
     public Card4_019() {
         super(Side.LIGHT, 3, PlayCardZoneOption.ATTACHED, "At Peace", Uniqueness.UNIQUE, ExpansionSet.DAGOBAH, Rarity.R);
         setLore("To recover from the strenuous Jedi training routine and revitalize the mind and body, an apprentice must rest to be calm and at peace.");
-        setGameText("Deploy on an apprentice at the beginning of your turn. Apprentice 'rests' (may not attempt Jedi Tests) until end of your next turn; then relocate Immediate Effect to Jedi Test. When attempting this test, that apprentice adds 3 to training destiny. (Immune to Control.)");
+        setGameText("Deploy on any apprentice at the beginning of your turn. Apprentice 'rests' (may not attempt Jedi Tests) until end of your next turn, then relocate Immediate Effect to Jedi Test. When attempting this test, that apprentice adds 3 to training destiny. (Immune to Control.)");
         addIcons(Icon.DAGOBAH);
         addImmuneToCardTitle(Title.Control);
     }

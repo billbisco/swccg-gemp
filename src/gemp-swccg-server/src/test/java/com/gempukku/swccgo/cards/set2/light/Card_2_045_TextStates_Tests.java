@@ -107,11 +107,12 @@ public class Card_2_045_TextStates_Tests {
     }
 
     @Test
-    public void BlastTheDoorKidBareCardIsUnchanged() {
+    public void BlastTheDoorKidBareCardHasThePcErrataText() {
         var scn = GetScenario("2_45");
         var card = scn.GetLSCard("blast").getBlueprint();
         assertBlastTheDoorStats(scn, card);
-        assertEquals(GLOSSARY_TEXT, card.getGameText());
+        // Players Committee errata (Advanced Rulebook 2023 Appendix A); plays as the Glossary text (state d)
+        assertEquals("If a battle was just initiated at an interior site, use 1 Force; for remainder of battle all characters of ability > 2 and all leaders (on both sides) are simultaneously excluded from that battle.", card.getGameText());
         assertNull(card.getTextState());
         assertNull(card.getLegacyVersion());
         assertEquals("Blast The Door, Kid!", GameUtils.getFullName(card));

@@ -47,7 +47,7 @@ public class Card2_031 extends AbstractNormalEffect {
     public Card2_031() {
         super(Side.LIGHT, 5, PlayCardZoneOption.ATTACHED, "Commence Recharging", Uniqueness.UNIQUE, ExpansionSet.A_NEW_HOPE, Rarity.R2);
         setLore("The huge strain on the little-tested power generator matrix of the superlaser's fusion reactor can require full recharging before the system can be used again.");
-        setGameText("Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a system, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.");
+        setGameText("Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a planet, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.");
         addIcons(Icon.A_NEW_HOPE);
     }
 

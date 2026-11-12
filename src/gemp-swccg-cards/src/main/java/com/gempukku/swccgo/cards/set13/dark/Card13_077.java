@@ -32,8 +32,8 @@ import java.util.List;
 public class Card13_077 extends AbstractSite {
     public Card13_077() {
         super(Side.DARK, Title.Theed_Palace_Generator_Core, Title.Naboo, Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_III, Rarity.PM);
-        setLocationDarkSideGameText("Any characters of ability < 5 'hit' here (and all cards on them) are placed in owner's Used Pile.");
-        setLocationLightSideGameText("Any characters of ability < 5 'hit' here (and all cards on them) are placed in owner's Used Pile.");
+        setLocationDarkSideGameText("Any characters of ability < 5 about to be 'hit' here (and all cards on them) are placed in owner's Used Pile.");
+        setLocationLightSideGameText("Any characters of ability < 5 about to be 'hit' here (and all cards on them) are placed in owner's Used Pile.");
         addIcon(Icon.DARK_FORCE, 3);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I, Icon.INTERIOR_SITE, Icon.PLANET);

@@ -31,7 +31,7 @@ public class Card1_163 extends AbstractDroid {
     public Card1_163() {
         super(Side.DARK, 2, 4, 2, 5, Title._5D6RA7, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.R1);
         setLore("Aide to Admiral Motti's staff. Foul-tempered and vindictive. Feared by other droids. A spy for the ISB. Secretly investigates Imperial officers whose loyalties are in question.");
-        setGameText("Power +1 if at same site as Motti or Yularen. Deploy +1 for all opponent's droids (and your 'mouse' droids) at same location. Immune to attrition during 'nighttime conditions.'");
+        setGameText("Power +1 if at same site as Motti or Yularen. Adds 1 to deploy cost of each opponent's droid (and your 'mouse' droids) when deploying to same location. Immune to attrition during \"nighttime conditions.\"");
         addKeywords(Keyword.SPY);
         addModelType(ModelType.SERVANT);
     }

@@ -31,7 +31,7 @@ public class Card9_077 extends AbstractCapitalStarship {
     public Card9_077() {
         super(Side.LIGHT, 3, 3, 1, 3, null, 5, 4, "Luminous", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.U);
         setLore("Medium transport with boosted hyperdrive. Armor and capacity diminished. Crew trained for reconnaissance and swift intergalactic transport.");
-        setGameText("Deploys and moves like a starfighter. May add 1 pilot and 6 passengers. Has ship-docking capability. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter.");
+        setGameText("Deploys and moves like a starfighter. May add 1 pilot and 6 passengers. Permanent pilot provides ability of 2. May use Covert Landing like a shuttle or starfighter (even while landed).");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addKeywords(Keyword.MEDIUM_TRANSPORT);
         addModelType(ModelType.TRANSPORT);

@@ -32,8 +32,8 @@ import java.util.List;
 public class Card5_167 extends AbstractSite {
     public Card5_167() {
         super(Side.DARK, Title.Chasm_Walkway, Title.Bespin, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.C);
-        setLocationDarkSideGameText("If Weather Vane on table, characters 'hit' here are instead immediately relocated there.");
-        setLocationLightSideGameText("If Weather Vane on table, characters 'hit' here are instead immediately relocated there.");
+        setLocationDarkSideGameText("If Weather Vane on table, characters about to be 'hit' here are relocated there.");
+        setLocationLightSideGameText("If Weather Vane on table, characters about to be 'hit' here are relocated there.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.CLOUD_CITY, Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK);

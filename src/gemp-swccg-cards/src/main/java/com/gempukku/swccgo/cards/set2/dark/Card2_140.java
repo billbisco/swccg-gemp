@@ -38,7 +38,7 @@ public class Card2_140 extends AbstractLostInterrupt {
     public Card2_140() {
         super(Side.DARK, 4, Title.Stunning_Leader, Uniqueness.UNRESTRICTED, ExpansionSet.A_NEW_HOPE, Rarity.C2);
         setLore("Stormtroopers are trained to stun, not kill, priority targets in order to split enemy forces and hold the leaders for interrogation. Stun effects wear off, requiring efficient action.");
-        setGameText("If a battle was just initiated at an interior site, use 1 Force to exclude from that battle all characters of ability > 2 and all leaders (on both sides).");
+        setGameText("If a battle was just initiated at an interior site, use 1 Force; for remainder of battle all characters of ability > 2 and all leaders (on both sides) are simultaneously excluded from that battle.");
         addIcons(Icon.A_NEW_HOPE);
     }
 

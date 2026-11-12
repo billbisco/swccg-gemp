@@ -39,7 +39,7 @@ public class Card7_221 extends AbstractMobileEffect {
     public Card7_221() {
         super(Side.DARK, 4, "Bantha Herd", Uniqueness.RESTRICTED_2, ExpansionSet.SPECIAL_EDITION, Rarity.R);
         setLore("While banthas are found on many worlds, the largest herds are found on Tatooine. The Sand People of that planet learned to tame the beasts.");
-        setGameText("Deploy on an exterior Tatooine site. Specify starting direction. During your control phase, moves to next adjacent site (reversing direction as necessary). During battle, if your tusken raider or bantha here may add one battle destiny.");
+        setGameText("Deploy on an exterior Tatooine site. Specify starting direction. During your control phase, moves to next adjacent exterior site (reversing direction as necessary). During battle here, if your Tusken Raider or bantha here, may add one battle destiny.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

@@ -48,7 +48,7 @@ public class Card10_046 extends AbstractUsedOrLostInterrupt {
     public Card10_046() {
         super(Side.DARK, 3, "Sense & Uncertain Is The Future", Uniqueness.UNRESTRICTED, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles(Title.Sense, Title.Uncertain_Is_The_Future);
-        setGameText("USED: Target your highest-ability character and one just-played Interrupt. Draw destiny. If destiny < ability of target character, cancel target Interrupt. LOST: Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck; reshuffle. Each player then draws from Reserve Deck the counted number of cards to create a new hand.");
+        setGameText("USED: Target your highest-ability character and one just-played Interrupt. Draw destiny. If destiny < ability of target character, cancel target Interrupt. LOST: Use 3 Force. Each player places hand onto Reserve Deck (if possible), then places Used Pile onto Reserve Deck; reshuffle. Each player then draws cards from Reserve Deck equal to the number of cards just placed from hand onto Reserve Deck (if any).");
         addIcons(Icon.REFLECTIONS_II);
     }
 

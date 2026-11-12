@@ -34,7 +34,7 @@ public class Card4_058 extends AbstractLostInterrupt {
     public Card4_058() {
         super(Side.LIGHT, 3, Title.Recoil_In_Fear, Uniqueness.UNRESTRICTED, ExpansionSet.DAGOBAH, Rarity.C);
         setLore("In combat, a bold and unexpected move can change the entire situation.");
-        setGameText("Use 3 Force. Each player counts cards in hand, then places entire hand and Used Pile onto Reserve Deck. Shuffle, cut and replace. Each player then draws from Reserve Deck the counted number of cards to create a new hand.");
+        setGameText("Use 3 Force. Each player places hand onto Reserve Deck (if possible), then places Used Pile onto Reserve Deck; reshuffle. Each player then draws cards from Reserve Deck equal to the number of cards just placed from hand onto Reserve Deck (if any).");
         addIcons(Icon.DAGOBAH);
     }
 

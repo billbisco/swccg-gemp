@@ -43,7 +43,7 @@ public class Card9_144 extends AbstractSector {
     public Card9_144() {
         super(Side.DARK, Title.Coolant_Shaft, Title.Death_Star_II, Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.C);
         setLocationDarkSideGameText("Deploys only if Death Star II system on table. Your TIEs at Death Star II locations may not Tallon Roll. Your non-Objective cards with 'Occupation' in title are canceled.");
-        setLocationLightSideGameText("When your starship moves from here, draw movement destiny. Add maneuver. If total destiny < 1, starship is lost.");
+        setLocationLightSideGameText("When your starship moves from here, draw movement destiny. Add maneuver (if any). If total destiny < 1, starship is lost.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.DEATH_STAR_II, Icon.MOBILE);
     }

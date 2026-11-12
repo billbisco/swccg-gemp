@@ -35,7 +35,7 @@ public class Card5_112 extends AbstractImmediateEffect {
     public Card5_112() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.All_Too_Easy, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.R);
         setLore("'Perhaps you are not as strong as the Emperor thought.'");
-        setGameText("If an opponent's character at the Carbonite Chamber was just 'hit' by a lightsaber, deploy on that character. Character is instead immediately captured and 'frozen.' If captive released, lose Immediate Effect. (Immune to Control.)");
+        setGameText("If an opponent's character at the Carbonite Chamber is about to be 'hit' by a lightsaber, deploy on that character. Character is instead immediately captured and 'frozen.' If captive released, lose Immediate Effect. (Immune to Control.)");
         addIcons(Icon.CLOUD_CITY);
         addImmuneToCardTitle(Title.Control);
     }

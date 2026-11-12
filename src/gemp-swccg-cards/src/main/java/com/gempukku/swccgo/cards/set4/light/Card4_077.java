@@ -51,7 +51,7 @@ import java.util.List;
 public class Card4_077 extends AbstractJediTest {
     public Card4_077() {
         super(Side.LIGHT, 1, Title.Great_Warrior, ExpansionSet.DAGOBAH, Rarity.C);
-        setGameText("Deploy on a Dagobah site. Target a mentor here. Also, target or deploy (regardless of location deployment restrictions) an apprentice here. Attempt when targets are present at the beginning of your control phase. Draw training destiny. If destiny + apprentice's ability > 12, test completed: Place on apprentice. All opponent's Force drain bonuses are canceled. (Mentor: one of your characters of ability > 2. Apprentice: one of your non-droid, non-Jedi characters of lesser ability than mentor. Each time you complete any Jedi Test, you may exchange one card in hand for one Jedi Test in your Lost Pile.)");
+        setGameText("Deploy on a Dagobah site. Target a mentor here. Also, target or deploy (regardless of location deployment restrictions) an apprentice here. Attempt when targets are present at the beginning of your control phase. Draw training destiny. If destiny + apprentice's ability > 12, test completed: Place on apprentice. All opponent's Force drain bonuses are canceled. Mentor: Your character of ability > 2. Apprentice: Your non-droid, non-Jedi character of lesser ability than mentor. Each time you complete any Jedi Test, you may exchange one card in hand for one Jedi Test in your Lost Pile.");
         addIcons(Icon.DAGOBAH);
         addKeyword(Keyword.JEDI_TEST_1);
     }

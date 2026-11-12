@@ -43,7 +43,7 @@ public class Card3_032 extends AbstractNormalEffect {
     public Card3_032() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Bacta_Tank, Uniqueness.UNIQUE, ExpansionSet.HOTH, Rarity.R2);
         setLore("Medical wonder invented centuries ago by the Vratix insectoid species. Gelatinous red bacta is suspended in a synthetic solution to create a healing bacterial medium.");
-        setGameText("Use 4 Force to deploy on your side of table. A non-droid character you just lost may be placed here instead of Lost Pile. Holds 1 'patient' at a time. During your deploy phase, may use X Force to bring 'patient' to hand, where X = deploy cost of 'patient.'");
+        setGameText("Use 4 Force to deploy on your side of table. A non-droid character you just lost may be placed here. Holds 1 'patient' at a time. During your deploy phase, may use X Force to bring 'patient' to hand, where X = deploy cost of 'patient.'");
         addIcons(Icon.HOTH);
     }
 
