@@ -8471,7 +8471,6 @@ const fixedImages = {
 "13_74o":"https://wiki.swccg.com/images/1/1f/Ref3-D-lordmaul-decipher-archive.jpg",
 "13_75o":"https://wiki.swccg.com/images/9/99/Ref3-D-maulsdoublebladedlightsaber-decipher-archive.jpg",
 "13_77o":"https://wiki.swccg.com/images/4/47/Ref3-D-nabootheedpalacegeneratorcore-decipher-archive.jpg",
-"14_115o":"https://wiki.swccg.com/images/c/c5/Theed-D-dfssquadronstarfighter-decipher-archive.jpg",
 "14_63o":"https://wiki.swccg.com/images/c/c3/Theed-L-booma-decipher-archive.jpg",
 "1_163o":"https://wiki.swccg.com/images/c/c4/Premiere-D-5d6ra7-decipher-archive.gif",
 "1_217o":"https://wiki.swccg.com/images/2/29/Premiere-D-ifindyourlackoffaith-decipher-archive.gif",
