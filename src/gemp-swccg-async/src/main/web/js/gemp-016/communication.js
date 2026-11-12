@@ -791,6 +791,35 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
+    /** #222: cards for the Create Tournament form's pool search, <cards><card id title side set label/></cards>. */
+    searchPoolCards:function (query, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/tournament/cardSearch",
+            cache:false,
+            data:{
+                q:query,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    /** #222: what the saved event will show for this pool, <rules>..., or <error message/> when it would be refused. */
+    previewCardPool:function (formatCode, cardPool, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/tournament/poolPreview",
+            cache:false,
+            data:{
+                formatCode:formatCode,
+                cardPool:cardPool,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
     /** #222: the public rules summary of a player-made event, <rules><rule text="..."/></rules>. */
     getEventRules:function (eventId, callback, errorMap) {
         $.ajax({

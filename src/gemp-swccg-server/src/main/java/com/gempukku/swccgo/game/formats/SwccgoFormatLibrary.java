@@ -387,6 +387,79 @@ public class SwccgoFormatLibrary {
                 + (set != null ? "set " + set + ", " : "") + id + ")";
     }
 
+    private volatile List<String[]> _searchIndex;
+
+    /** Every card a pool can name, as {id, lower-case title}, built once (#222 card search). */
+    private List<String[]> searchIndex() {
+        List<String[]> index = _searchIndex;
+        if (index != null)
+            return index;
+        index = new ArrayList<>();
+        int[][] ranges = {
+                com.gempukku.swccgo.common.CardCounts.FULL_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.REFLECTIONS_GOLD_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.PREMIUM_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.VIRTUAL_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.LEGACY_SETS_CARD_COUNTS};
+        int[] firstSets = {1, 15, 101, 200, 301, 601};
+        for (int r = 0; r < ranges.length; r++) {
+            for (int i = 0; i < ranges[r].length; i++) {
+                for (int j = 1; j <= ranges[r][i]; j++) {
+                    String id = (firstSets[r] + i) + "_" + j;
+                    SwccgCardBlueprint blueprint;
+                    try {
+                        blueprint = _cardLibrary.getSwccgoCardBlueprint(id);
+                    } catch (RuntimeException exp) {
+                        blueprint = null;
+                    }
+                    if (blueprint != null && blueprint.getTitle() != null)
+                        index.add(new String[] {id, blueprint.getTitle().toLowerCase(java.util.Locale.ROOT)});
+                }
+            }
+        }
+        _searchIndex = index;
+        return index;
+    }
+
+    /**
+     * Cards for the organizer's pool search (#222): ids whose title contains {@code query} (case-insensitive), or the
+     * card with that exact id. At most {@code limit}, in set order. Labels come from {@link #cardLabel}.
+     */
+    public List<String> searchCards(String query, int limit) {
+        List<String> result = new ArrayList<>();
+        if (query == null || query.trim().length() < 2)
+            return result;
+        String q = query.trim().toLowerCase(java.util.Locale.ROOT);
+        if (q.matches("\\d+_\\d+") && _cardLibrary.getSwccgoCardBlueprint(q) != null) {
+            result.add(q);
+            return result;
+        }
+        for (String[] entry : searchIndex()) {
+            if (entry[1].contains(q)) {
+                result.add(entry[0]);
+                if (result.size() >= limit)
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The Create Tournament form's live preview of a pool (#222): the same lines the saved event's summary shows, after
+     * the same checks creating the event runs, so the preview and the saved event agree.
+     *
+     * @throws IllegalArgumentException for an unknown format or a pool the event would refuse
+     */
+    public List<String> previewPool(String formatCode, CardPool pool) {
+        SwccgFormat format = getFormat(DeckSize.baseCode(formatCode));
+        if (format == null)
+            throw new IllegalArgumentException("This format is not supported: " + formatCode);
+        SwccgFormat base = getFormat(format.getBaseCode());
+        checkPool(base != null ? base : format, pool);
+        return describePool(GameSetup.defaults(format.getBaseCode()).withPool(pool));
+    }
+
     /**
      * The public rules summary of an event's card pool (#222), one line per part, shown to players before they join and
      * in the event while it runs. Empty when the event plays its format's own pool.

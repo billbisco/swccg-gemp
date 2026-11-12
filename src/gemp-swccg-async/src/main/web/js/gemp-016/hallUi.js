@@ -1068,6 +1068,11 @@ var GempSwccgHallUI = Class.extend({
         if (this.gameOptionsRoot != null)
             this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
         tFields.append(this.tournamentDeckSizeRow);
+        // #222: an optional custom card pool on top of the format (Constructed only); locked once the event opens
+        if (typeof CardPoolForm !== "undefined")
+            this.tournamentCardPoolForm = new CardPoolForm.Form(this.comm, tFields, function () {
+                return thatSize.tournamentFormatCode();
+            });
 
         this.tournamentProductRow = $("<div class='play-form-row' style='display:none'></div>");
         this.tournamentProductRow.append("<span class='play-form-label'>Product</span>");
@@ -1210,6 +1215,8 @@ var GempSwccgHallUI = Class.extend({
             var fmt = thatTourney.tournamentFormatCode();
             if (fmt)
                 thatTourney.updateDecks(fmt, "default");
+            if (thatTourney.tournamentCardPoolForm != null)
+                thatTourney.tournamentCardPoolForm.refreshPreview();
         });
         $(this.tournamentCreateButton).button().click(function () {
             thatTourney.submitCreateTournament();
@@ -1447,6 +1454,12 @@ var GempSwccgHallUI = Class.extend({
             this.joinContextDiv.html(pending.contextLabel).show();
         } else {
             this.joinContextDiv.hide().empty();
+        }
+        // #222: a custom card pool's rules, before the player picks decks
+        if (pending.kind === "playerTournament" && pending.hasCardPool && typeof CardPoolForm !== "undefined") {
+            var rulesDiv = $("<div class='join-card-pool-rules'></div>");
+            this.joinContextDiv.append(rulesDiv).show();
+            CardPoolForm.showRules(this.comm, pending.id, rulesDiv);
         }
 
         this.joinOverlay.css("display", "flex");
@@ -1993,6 +2006,8 @@ var GempSwccgHallUI = Class.extend({
         if (this.tournamentLightLibraryRow != null) this.tournamentLightLibraryRow.css("display", deckDisplay);
         if (this.tournamentDarkPlayerRow != null) this.tournamentDarkPlayerRow.css("display", deckDisplay);
         if (this.tournamentDarkLibraryRow != null) this.tournamentDarkLibraryRow.css("display", deckDisplay);
+        if (this.tournamentCardPoolForm != null)
+            this.tournamentCardPoolForm.show(!limited);
         if (limited)
             this.populateTournamentProducts();
         else
@@ -2301,8 +2316,17 @@ var GempSwccgHallUI = Class.extend({
             lightSampleDeck: light.sample,
             darkDeckName: dark.name,
             darkSampleDeck: dark.sample,
-            gameOptions: this.tournamentGameOptions()
+            gameOptions: this.tournamentGameOptions(),
+            cardPool: ""
         };
+        if (!limited && this.tournamentCardPoolForm != null) {
+            try {
+                params.cardPool = this.tournamentCardPoolForm.json();
+            } catch (e) {
+                this.showTournamentError(e.message);
+                return;
+            }
+        }
         var button = $(this.tournamentCreateButton);
         if (button.hasClass("ui-button"))
             button.button("disable");
@@ -2526,6 +2550,19 @@ var GempSwccgHallUI = Class.extend({
             return report ? null : base;
         }
         return this.tournamentOptionsForm.deckListCode(base);
+    },
+
+    /** #222: a "Rules" link on a hall row whose event has a custom card pool, showing the saved rules to anyone. */
+    appendCardPoolRulesLink:function(cell, eventId, optionsText, eventName) {
+        if (typeof CardPoolForm === "undefined" || !CardPoolForm.hasPool(optionsText))
+            return;
+        var that = this;
+        var link = $("<a href='#' class='card-pool-rules-link'>Rules</a>");
+        link.click(function (e) {
+            e.preventDefault();
+            CardPoolForm.showRulesDialog(that.comm, eventId, eventName ? eventName + ": rules" : "Event rules");
+        });
+        cell.append(" ").append(link);
     },
 
     /** The tournament form's non-default game options, as the JSON the server reads (#119). */
@@ -4129,6 +4166,7 @@ var GempSwccgHallUI = Class.extend({
 
         var row = $("<tr class='queue" + id + "'></tr>");
         row.append($("<td></td>").append(gameFormatWithChips(formatName, queue.getAttribute("options"))));
+        this.appendCardPoolRulesLink(row.children().last(), id, queue.getAttribute("options"), queueName);
         row.append(this.cell(queueName));
         var statusCell = $("<td></td>");
         statusCell.text(statusText);
@@ -4164,7 +4202,8 @@ var GempSwccgHallUI = Class.extend({
                         collectionCode: null,
                         hostSide: null,
                         requiredSide: null,
-                        contextLabel: that.buildJoinContextLabel(fmt, null, qname, null, null)
+                        contextLabel: that.buildJoinContextLabel(fmt, null, qname, null, null),
+                        hasCardPool: typeof CardPoolForm !== "undefined" && CardPoolForm.hasPool(queue.getAttribute("options"))
                     });
                 };
             })(id, formatName, queueName, formatCode, requiresDeck));
@@ -4548,6 +4587,7 @@ var GempSwccgHallUI = Class.extend({
 
                     var row = $("<tr class='tournament" + id + "'></tr>");
                     row.append($("<td></td>").append(gameFormatWithChips(tournament.getAttribute("format"), tournament.getAttribute("options"))));
+                    this.appendCardPoolRulesLink(row.children().last(), id, tournament.getAttribute("options"), tournament.getAttribute("name"));
                     row.append(this.cell(tournament.getAttribute("collection")));
                     row.append(this.cell(tournament.getAttribute("name")));
                     row.append(this.cell(tournament.getAttribute("system")));

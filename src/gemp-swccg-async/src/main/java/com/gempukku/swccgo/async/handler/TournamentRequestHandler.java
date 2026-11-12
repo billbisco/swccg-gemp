@@ -60,6 +60,10 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             createPlayerMadeTournament(request, responseWriter);
         } else if (uri.equals("/history") && request.method() == HttpMethod.GET) {
             getTournamentHistory(request, responseWriter);
+        } else if (uri.startsWith("/cardSearch") && request.method() == HttpMethod.GET) {
+            searchPoolCards(request, responseWriter);
+        } else if (uri.equals("/poolPreview") && request.method() == HttpMethod.POST) {
+            previewPool(request, responseWriter);
         } else if (uri.startsWith("/rules/") && request.method() == HttpMethod.GET) {
             getEventRules(uri.substring("/rules/".length()), responseWriter);
         } else if (uri.startsWith("/") && uri.endsWith("/html") && uri.contains("/deck/") && request.method() == HttpMethod.GET) {
@@ -68,6 +72,54 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             getTournamentInfo(request, uri.substring(1), responseWriter);
         } else {
             responseWriter.writeError(404);
+        }
+    }
+
+    /**
+     * Card search for the Create Tournament form's custom card pool (#222):
+     * {@code <cards><card id="1_121" title="Alderaan" side="Light" set="1" label="Alderaan (Light, set 1, 1_121)"/>}.
+     */
+    private void searchPoolCards(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        String query = getQueryParameterSafely(new io.netty.handler.codec.http.QueryStringDecoder(request.uri()), "q");
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element cards = doc.createElement("cards");
+        for (String id : _formatLibrary.searchCards(query, 40)) {
+            com.gempukku.swccgo.game.SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(id);
+            Element card = doc.createElement("card");
+            card.setAttribute("id", id);
+            card.setAttribute("title", blueprint != null ? GameUtils.getFullName(blueprint) : id);
+            card.setAttribute("side", blueprint != null && blueprint.getSide() != null ? blueprint.getSide().getHumanReadable() : "");
+            card.setAttribute("set", id.substring(0, id.indexOf('_')));
+            card.setAttribute("label", _formatLibrary.cardLabel(id));
+            cards.appendChild(card);
+        }
+        doc.appendChild(cards);
+        responseWriter.writeXmlResponse(doc);
+    }
+
+    /** The form's live pool preview (#222): {@code <rules>} as the saved event will show it, or {@code <error>}. */
+    private void previewPool(HttpRequest request, ResponseWriter responseWriter) throws Exception {
+        HttpPostRequestDecoder postDecoder = new HttpPostRequestDecoder(request);
+        try {
+            List<String> lines;
+            try {
+                lines = _formatLibrary.previewPool(getFormParameterSafely(postDecoder, "formatCode"),
+                        com.gempukku.swccgo.game.setup.CardPool.fromJson(getFormParameterSafely(postDecoder, "cardPool")));
+            } catch (IllegalArgumentException exp) {
+                responseWriter.writeXmlResponse(marshalException(new HallException(exp.getMessage())));
+                return;
+            }
+            Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+            Element rules = doc.createElement("rules");
+            for (String line : lines) {
+                Element rule = doc.createElement("rule");
+                rule.setAttribute("text", line);
+                rules.appendChild(rule);
+            }
+            doc.appendChild(rules);
+            responseWriter.writeXmlResponse(doc);
+        } finally {
+            postDecoder.destroy();
         }
     }
 

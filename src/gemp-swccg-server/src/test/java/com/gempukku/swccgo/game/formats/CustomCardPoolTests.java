@@ -230,4 +230,28 @@ public class CustomCardPoolTests {
         assertNull("so is Open itself", message(FORMATS.getFormat("open"), withIt));
         assertFalse(open.getBannedCards().contains(card));
     }
+
+    @Test
+    public void TheFormSearchesCardsAndPreviewsWhatTheEventWillShow() {
+        List<String> found = FORMATS.searchCards("alderaan", 40);
+        assertTrue(found.toString(), found.contains("1_121") && found.contains("1_281"));
+        assertEquals(List.of("1_121"), FORMATS.searchCards("1_121", 40));
+        assertTrue(FORMATS.searchCards("a", 40).isEmpty());
+        assertEquals(3, FORMATS.searchCards("er", 3).size());
+        CardPool pool = CardPool.of(List.of(1, 2), List.of("3_1"), List.of("1_121"));
+        assertEquals(FORMATS.describePool(GameSetup.defaults("open").withPool(pool)), FORMATS.previewPool("open", pool));
+        assertEquals("a deck size on the code is the same format", FORMATS.previewPool("open", pool), FORMATS.previewPool("open@45", pool));
+        try {
+            FORMATS.previewPool("open", CardPool.of(null, List.of("1_121"), List.of("1_121")));
+            fail();
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("both allowed and banned"));
+        }
+        try {
+            FORMATS.previewPool("no-such-format", pool);
+            fail();
+        } catch (IllegalArgumentException expected) {
+            assertTrue(expected.getMessage().contains("not supported"));
+        }
+    }
 }
