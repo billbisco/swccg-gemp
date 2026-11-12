@@ -72,7 +72,7 @@ src/gemp-swccg-server/src/main/resources/draft/cube_building/
 The card mapping process requires an up-to-date card database that EXCLUDES playtesting cards (set 501).
 
 ```bash
-./bin/gemp export-cards src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
+bin/regen-blueprint-db   # fresh local copy; never commit it (the workflow does, swccg-guild/work#284)
 ```
 
 **Why this matters:** The CardDataExporter automatically excludes set501 cards via a filter. If this step is skipped or uses old data, playtesting cards will appear in the cube.
@@ -413,7 +413,7 @@ mkdir -p src/gemp-swccg-server/src/main/resources/draft/cube_building/my_cube
 # - cube_worlds_darkside.csv
 
 # 3. Update card database
-./bin/gemp export-cards src/gemp-swccg-cards/src/main/resources/card_blueprint_database.json
+bin/regen-blueprint-db   # fresh local copy; never commit it (the workflow does, swccg-guild/work#284)
 
 # 4. Create side-specific databases WITHOUT defensive shields
 bash <<'BASH'
