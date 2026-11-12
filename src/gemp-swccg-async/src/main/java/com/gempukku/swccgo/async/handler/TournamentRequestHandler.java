@@ -60,6 +60,8 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             createPlayerMadeTournament(request, responseWriter);
         } else if (uri.equals("/history") && request.method() == HttpMethod.GET) {
             getTournamentHistory(request, responseWriter);
+        } else if (uri.startsWith("/rules/") && request.method() == HttpMethod.GET) {
+            getEventRules(uri.substring("/rules/".length()), responseWriter);
         } else if (uri.startsWith("/") && uri.endsWith("/html") && uri.contains("/deck/") && request.method() == HttpMethod.GET) {
             getTournamentDeck(request, uri.substring(1, uri.indexOf("/deck/")), uri.substring(uri.indexOf("/deck/") + 6, uri.lastIndexOf("/html")), responseWriter);
         } else if (uri.startsWith("/") && request.method() == HttpMethod.GET) {
@@ -67,6 +69,26 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
         } else {
             responseWriter.writeError(404);
         }
+    }
+
+    /**
+     * The public rules summary of a player-made event (#222): {@code <rules event="ptq-..."><rule text="Sets: 1, 2"/>...}.
+     * Read-only; the rules are fixed once the event is open.
+     */
+    private void getEventRules(String eventId, ResponseWriter responseWriter) throws Exception {
+        List<String> lines = _hallServer.getEventRulesSummary(eventId);
+        if (lines == null)
+            throw new HttpProcessingException(404);
+        Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
+        Element rules = doc.createElement("rules");
+        rules.setAttribute("event", eventId);
+        for (String line : lines) {
+            Element rule = doc.createElement("rule");
+            rule.setAttribute("text", line);
+            rules.appendChild(rule);
+        }
+        doc.appendChild(rules);
+        responseWriter.writeXmlResponse(doc);
     }
 
     private void getTournamentProducts(ResponseWriter responseWriter) throws Exception {
@@ -169,12 +191,19 @@ public class TournamentRequestHandler extends SwccgoServerRequestHandler impleme
             int readyCheckSeconds = parseIntParam(getFormParameterSafely(postDecoder, "readyCheckSeconds"), 0);
             int packCount = parseIntParam(getFormParameterSafely(postDecoder, "packCount"), 0);
             java.util.Map<String, String> gameOptions = HallRequestHandler.parseGameOptions(getFormParameterSafely(postDecoder, "gameOptions"));
+            // #222: optional custom card pool, JSON {"sets":[..],"allow":[..],"ban":[..]}
+            com.gempukku.swccgo.game.setup.CardPool cardPool;
+            try {
+                cardPool = com.gempukku.swccgo.game.setup.CardPool.fromJson(getFormParameterSafely(postDecoder, "cardPool"));
+            } catch (IllegalArgumentException exp) {
+                throw new HallException(exp.getMessage());
+            }
 
             Player lightLibrarian = lightSample ? getLibrarian() : null;
             Player darkLibrarian = darkSample ? getLibrarian() : null;
             _hallServer.createPlayerMadeQueue(resourceOwner, titlePrefix, formatCode, pairing, totalGames, maxPlayers,
                     readyCheckSeconds, privateEvent, lightDeckName, lightSample, darkDeckName, darkSample,
-                    lightLibrarian, darkLibrarian, type, draftMode, productCode, packCount, gameOptions);
+                    lightLibrarian, darkLibrarian, type, draftMode, productCode, packCount, gameOptions, cardPool);
             responseWriter.writeXmlResponse(null);
         } catch (HallException e) {
             responseWriter.writeXmlResponse(marshalException(e));
