@@ -138414,5 +138414,124 @@
       "SABER_SQUADRON"
     ],
     "species": "CORELLIAN"
+  },
+  {
+    "cardId": "1_39",
+    "title": "Targeting Computer",
+    "slug": "targeting-computer",
+    "slugWithSetName": "targeting-computer-premiere",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "U1",
+    "cardCategory": "DEVICE",
+    "cardTypes": [
+      "DEVICE"
+    ],
+    "lore": "Specially designed for use on Rebel starfighters. Assists pilots on torpedo runs. Automatically locks on pre-programmed target points.",
+    "gameText": "Use 2 Force to deploy on any starship. Adds 1 to starship's maneuver. If this starship is using a weapon during a battle, you may fire that weapon twice, separately or combined. Subtract 1 from each destiny draw when firing.",
+    "destiny": 3,
+    "icons": [
+      {
+        "icon": "DEVICE",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "1_75",
+    "title": "Combined Attack",
+    "slug": "combined-attack",
+    "slugWithSetName": "combined-attack-premiere",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "C2",
+    "cardCategory": "INTERRUPT",
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "cardSubtype": "LOST",
+    "lore": "Efficient cooperation allowed the Rebels to coordinate the attack of their small starfighters effectively at the Battle of Yavin.",
+    "gameText": "During a battle, target opponent's starship present with two (or more) of your starship weapons. Add all weapon destiny draws together. Apply that total separately for each weapon in an order of your choosing.",
+    "destiny": 4,
+    "icons": [
+      {
+        "icon": "INTERRUPT",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "1_245",
+    "title": "Evacuate?",
+    "slug": "evacuate",
+    "slugWithSetName": "evacuate-premiere",
+    "side": "DARK",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "U2",
+    "cardCategory": "INTERRUPT",
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "cardSubtype": "USED",
+    "lore": "Escape pods are on many starships allowing those in peril to flee, an act considered cowardly by Imperial officers. 'We've analyzed their attack, sir, and there is a danger.'",
+    "gameText": "If your capital starship is about to be lost, unless Tarkin aboard, relocate your characters aboard to any one planet site or to one of your capital starships.",
+    "destiny": 6,
+    "icons": [
+      {
+        "icon": "INTERRUPT",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "1_256",
+    "title": "Local Trouble",
+    "slug": "local-trouble",
+    "slugWithSetName": "local-trouble-premiere",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "expansionSet": "PREMIERE",
+    "rarity": "R1",
+    "cardCategory": "INTERRUPT",
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "cardSubtype": "LOST",
+    "lore": "'Look like somebody's beginning to take an interest in your handiwork.' Imperial stormtroopers coerce local residents to assist them in the apprehension of Rebel scum.",
+    "gameText": "Use 1 Force at the beginning of your battle phase to allow any two of your Stormtroopers in the Cantina to battle any one opponent's character (your choice). You may add one battle destiny. No other battles may occur in Cantina this turn.",
+    "destiny": 4,
+    "icons": [
+      {
+        "icon": "INTERRUPT",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "1_265",
+    "title": "Precise Attack",
+    "slug": "precise-attack",
+    "slugWithSetName": "precise-attack-premiere",
+    "side": "DARK",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "C2",
+    "cardCategory": "INTERRUPT",
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "cardSubtype": "LOST",
+    "lore": "'Only Imperial stormtroopers are so precise.'",
+    "gameText": "During a battle, target opponent's character or vehicle present with two (or more) of your weapons. Add all weapon destiny draws together. Apply that total separately for each weapon in an order of your choosing.",
+    "destiny": 4,
+    "icons": [
+      {
+        "icon": "INTERRUPT",
+        "count": 1
+      }
+    ]
   }
 ]

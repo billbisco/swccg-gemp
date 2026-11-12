@@ -16526,6 +16526,29 @@
     ]
   },
   {
+    "cardId": "1_39",
+    "title": "Targeting Computer",
+    "slug": "targeting-computer",
+    "slugWithSetName": "targeting-computer-premiere",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "U1",
+    "cardCategory": "DEVICE",
+    "cardTypes": [
+      "DEVICE"
+    ],
+    "lore": "Specially designed for use on Rebel starfighters. Assists pilots on torpedo runs. Automatically locks on pre-programmed target points.",
+    "gameText": "Use 2 Force to deploy on any starship. Adds 1 to starship's maneuver. If this starship is using a weapon during a battle, you may fire that weapon twice, separately or combined. Subtract 1 from each destiny draw when firing.",
+    "destiny": 3,
+    "icons": [
+      {
+        "icon": "DEVICE",
+        "count": 1
+      }
+    ]
+  },
+  {
     "cardId": "1_4",
     "title": "BoShek",
     "slug": "boshek",
@@ -70425,6 +70448,30 @@
     ],
     "keywords": [
       "MINE"
+    ]
+  },
+  {
+    "cardId": "1_75",
+    "title": "Combined Attack",
+    "slug": "combined-attack",
+    "slugWithSetName": "combined-attack-premiere",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "expansionSet": "PREMIERE",
+    "rarity": "C2",
+    "cardCategory": "INTERRUPT",
+    "cardTypes": [
+      "INTERRUPT"
+    ],
+    "cardSubtype": "LOST",
+    "lore": "Efficient cooperation allowed the Rebels to coordinate the attack of their small starfighters effectively at the Battle of Yavin.",
+    "gameText": "During a battle, target opponent's starship present with two (or more) of your starship weapons. Add all weapon destiny draws together. Apply that total separately for each weapon in an order of your choosing.",
+    "destiny": 4,
+    "icons": [
+      {
+        "icon": "INTERRUPT",
+        "count": 1
+      }
     ]
   }
 ]
