@@ -61,7 +61,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_5", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -76,7 +76,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_9", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -91,7 +91,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_41", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
         assertEquals(0, printed.getIconCount(Icon.GRABBER));
@@ -108,7 +108,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_58", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -123,7 +123,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_95", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -138,7 +138,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_99", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -153,7 +153,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_113", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -168,7 +168,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_136", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -183,7 +183,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_152", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }
@@ -198,7 +198,7 @@ public class Card_2_ANH_TextStates_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_156", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
     }

@@ -69,7 +69,7 @@ public class Card_2_ANH_TextStates2_Tests {
         TextState state = printed.getTextState();
         assertEquals(currentId, state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
     }
 
     /** Power of the vehicle or starship piloted by the pilot, and its printed power. */

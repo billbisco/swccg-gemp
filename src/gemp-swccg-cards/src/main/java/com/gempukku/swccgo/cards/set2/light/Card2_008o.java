@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: Garouf Lafoe
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Garouf Lafoe]] (Decipher archive scan); superseded by Decipher errata, wiki [[Garouf Lafoe (Errata)]] (Glossary; upper bound November 1998).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -25,8 +25,8 @@ public class Card2_008o extends Card2_008 {
         super();
         setGameText("Adds 1 to power of any starship he pilots. All your characters at same Tatooine site are forfeit +1. All opponent's characters at same Hoth site are forfeit -1. Game text canceled if at same site as a tax collector.");
         setTextState(new TextState("2_8", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(1998, 11, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(1998, 11, 1)));
     }
 
     @Override

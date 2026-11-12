@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: DS-61-4
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[DS-61-4]] (Decipher archive scan); superseded by Decipher errata, wiki [[DS-61-4 (Errata)]] (Glossary; upper bound November 1998).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -25,8 +25,8 @@ public class Card2_088o extends Card2_088 {
         super();
         setGameText("Adds 3 to power of any starship he pilots. On Black 4, also draws one battle destiny if not able to otherwise. May use 1 Force to search through your Reserve Deck and take one Lone Pilot into your hand. Shuffle, cut and replace.");
         setTextState(new TextState("2_88", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(1998, 11, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(1998, 11, 1)));
     }
 
     @Override

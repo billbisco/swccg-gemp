@@ -5,6 +5,7 @@ import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.conditions.PlayCardOptionIdCondition;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
@@ -93,14 +94,13 @@ public class Card2_036 extends AbstractNormalEffect {
 
         // Check condition(s)
         if (GameConditions.isPlayCardOption(game, self, PlayCardOptionId.PLAY_CARD_OPTION_1)
-                && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
+                && isControlPhaseUseAvailable(game, self, playerId, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_DEFAULT)
                 && GameConditions.canTarget(game, self, SpotOverride.INCLUDE_STOLEN, targetingReason, filter)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
             action.setText("Steal device");
             // Update usage limit(s)
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
+            appendControlPhaseUsageLimit(action);
             // Choose target(s)
             action.appendTargeting(
                     new TargetCardOnTableEffect(action, playerId, "Target device to steal", SpotOverride.INCLUDE_STOLEN, targetingReason, filter) {
@@ -148,5 +148,22 @@ public class Card2_036 extends AbstractNormalEffect {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * Whether the control-phase action may be used now: "Once during each of your control phases" (Decipher Glossary
+     * 2.0 / PC text). The printed text state (o) overrides this: printed "During your control phase, may" had no
+     * per-phase limit.
+     */
+    protected boolean isControlPhaseUseAvailable(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId, GameTextActionId gameTextActionId) {
+        return GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL);
+    }
+
+    /**
+     * Adds the "once during each of your control phases" usage limit to the action; the printed text state (o) adds none.
+     */
+    protected void appendControlPhaseUsageLimit(TopLevelGameTextAction action) {
+        action.appendUsage(
+                new OncePerPhaseEffect(action));
     }
 }

@@ -174,7 +174,7 @@ printing (errata)".
 | Id | Text | Example |
 |---|---|---|
 | bare `<set>_<n>` | the card's current text (unchanged) | `2_45` Blast The Door, Kid! |
-| `<set>_<n>o` | as first published (print) | `2_45o` (A New Hope, 1997) |
+| `<set>_<n>o` | as first published (print) | `2_45o` (A New Hope, 1996) |
 | `<set>_<n>d` | Decipher's last word (1998 Glossary / 2002 Supplement) | `2_45d` (Glossary 2.0, Nov 1998) |
 | `<set>_<n>o1` … `o9` | intermediate revisions in date order, only when a printing has more than three states | |
 

@@ -80,7 +80,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_33", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertEquals(0, printed.getIconCount(Icon.GRABBER));
         assertEquals(1, bare.getIconCount(Icon.GRABBER));
@@ -97,7 +97,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_127", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertEquals(0, printed.getIconCount(Icon.GRABBER));
         assertEquals(1, bare.getIconCount(Icon.GRABBER));
@@ -114,7 +114,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_128", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertEquals(0, printed.getIconCount(Icon.GRABBER));
         assertEquals(1, bare.getIconCount(Icon.GRABBER));
@@ -131,7 +131,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_40", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertFalse(printed.isImmuneToCardTitle(Title.Alter));
         assertTrue(bare.isImmuneToCardTitle(Title.Alter));
@@ -148,7 +148,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_129", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertFalse(printed.isImmuneToCardTitle(Title.Alter));
         assertTrue(bare.isImmuneToCardTitle(Title.Alter));
@@ -165,7 +165,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_135", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -180,7 +180,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_93", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -195,7 +195,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_94", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -210,7 +210,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_73", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -225,7 +225,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_140", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -240,7 +240,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_35", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -285,7 +285,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_76", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 
@@ -299,7 +299,7 @@ public class Card_2_ANH_TextStates3_Tests {
         TextState state = printed.getTextState();
         assertEquals("2_109", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
     }
 

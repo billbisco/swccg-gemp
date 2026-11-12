@@ -930,6 +930,31 @@ public class GameConditions {
     }
 
     /**
+     * Checks when an action worded "During your ____ phase, may ..." can be performed: the same phase window as
+     * {@link #isOnceDuringYourPhase(SwccgGame, PhysicalCard, String, int, GameTextActionId, Phase)} (including moving a
+     * Reserve Deck search to the deploy phase when that rule is active), with no per-phase usage limit. Used by printed
+     * text states (docs/legacy-versions.md "Text states") from before Decipher's Glossary 2.0 added "Once during each of".
+     *
+     * @param game             the game
+     * @param self             the source card of the action
+     * @param playerId         the player to perform the action
+     * @param gameTextActionId the identifier for the card's specific action
+     * @param phase            the phase
+     * @return true if condition is satisfied, otherwise false
+     */
+    public static boolean isDuringYourPhaseNoLimit(SwccgGame game, PhysicalCard self, String playerId, GameTextActionId gameTextActionId, Phase phase) {
+        String ownerId = playerId != null ? playerId : self.getOwner();
+        Phase phaseToCheck = phase;
+        if (phase != Phase.DEPLOY
+                && gameTextActionId != null && gameTextActionId.isSearchCardPile()
+                && game.getModifiersQuerying().hasFlagActive(game.getGameState(), ModifierFlag.MAY_ONLY_TAKE_OR_DEPLOY_FROM_RESERVE_DURING_DEPLOY_PHASE)
+                && isPhaseForPlayer(game, Phase.DEPLOY, ownerId)) {
+            phaseToCheck = Phase.DEPLOY;
+        }
+        return isPhaseForPlayer(game, phaseToCheck, ownerId);
+    }
+
+    /**
      * Checks when action can be performed "X times during your ____ phase".
      *
      * @param game                 the game

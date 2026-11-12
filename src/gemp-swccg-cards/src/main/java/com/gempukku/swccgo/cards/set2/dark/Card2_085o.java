@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: Danz Borin
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Danz Borin]] (Decipher archive scan); superseded by the Players Committee errata, wiki [[Danz Borin (PC Errata)]] (date unknown; upper bound March 2017).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -28,8 +28,8 @@ public class Card2_085o extends Card2_085 {
         super();
         setGameText("Adds 3 to power of any starship he pilots. OR If aboard a starship as a passenger, adds 1 to starship's weapon destiny draws.");
         setTextState(new TextState("2_85", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(2017, 3, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(2017, 3, 1)));
     }
 
     @Override

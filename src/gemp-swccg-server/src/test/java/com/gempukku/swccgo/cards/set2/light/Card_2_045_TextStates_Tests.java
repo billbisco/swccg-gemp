@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Blast The Door, Kid! text states (docs/legacy-versions.md, "Text states"):
- * 2_45o as printed (A New Hope, 1997), 2_45d Decipher Glossary 2.0 (1998) with the 2002 Glossary Supplement ruling,
+ * 2_45o as printed (A New Hope, 1996), 2_45d Decipher Glossary 2.0 (1998) with the 2002 Glossary Supplement ruling,
  * and the bare card 2_45 unchanged. Texts from wiki.swccg.com [[Blast The Door, Kid!]] and
  * [[Blast The Door, Kid! (Errata)]].
  */
@@ -89,7 +89,7 @@ public class Card_2_045_TextStates_Tests {
         TextState state = card.getTextState();
         assertEquals("2_45", state.currentId());
         assertEquals("Printed", state.label());
-        assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
+        assertEquals(LocalDate.of(1996, 7, 1), state.printedOn());
         assertEquals("Blast The Door, Kid! [Printed]", GameUtils.getFullName(card));
     }
 

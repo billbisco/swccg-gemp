@@ -33,7 +33,7 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Lost
  * Title: Blast The Door, Kid!
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * The printed text excludes the leaders and characters of ability &gt; 2 that are in the battle when it resolves.
  * The rule that cards introduced to the battle later are excluded too came with Decipher's 2002 Glossary Supplement
@@ -46,8 +46,8 @@ public class Card2_045o extends AbstractLostInterrupt {
         setGameText("After a battle at an interior site is initiated, use 1 Force to cause all leaders and all characters with ability > 2 (on both sides) to be completely excluded from that battle.");
         addIcons(Icon.A_NEW_HOPE);
         setTextState(new TextState("2_45", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(1998, 9, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(1998, 9, 1)));
     }
 
     @Override
