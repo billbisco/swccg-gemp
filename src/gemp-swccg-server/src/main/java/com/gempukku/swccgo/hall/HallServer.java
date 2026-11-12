@@ -5,6 +5,7 @@ import com.gempukku.swccgo.ai.AiRegistry;
 import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.setup.GameOption;
 import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.CardPool;
 import com.gempukku.swccgo.game.setup.GameSetup;
 import com.gempukku.swccgo.game.save.GameSaveCodec;
 import com.gempukku.swccgo.game.save.GameSaveDAO;
@@ -1053,7 +1054,8 @@ public class HallServer extends AbstractServer {
                 return true;
             }
 
-            SwccgFormat format = _formatLibrary.getFormat(tournamentQueue.getFormat());
+            // #116/#222: the event's own setup (deck rules, custom card pool), the same snapshot every round uses
+            SwccgFormat format = eventFormat(tournamentQueue.getFormat(), tournamentQueue.getGameSetup(_formatLibrary));
             SwccgDeck lightDeck = validateUserAndDeck(format, player, lightDeckName,
                     tournamentQueue.getCollectionType(), lightSample, lightLibrarian);
             SwccgDeck darkDeck = validateUserAndDeck(format, player, darkDeckName,
@@ -1068,6 +1070,41 @@ public class HallServer extends AbstractServer {
             return true;
         } finally {
             _hallDataAccessLock.writeLock().unlock();
+        }
+    }
+
+    /**
+     * The public rules summary of a player-made event's card pool (#222), for a waiting queue (before a player joins)
+     * or a running tournament: the setup's chips first, then one line per set list, allow and ban. It is read from the
+     * event's saved setup, so it stays the same for every round and does not depend on the organizer still being here.
+     * Returns {@code null} for an unknown event.
+     */
+    public List<String> getEventRulesSummary(String eventId) {
+        _hallDataAccessLock.readLock().lock();
+        try {
+            GameSetup setup = null;
+            String formatCode = null;
+            TournamentQueue queue = _tournamentQueues.get(eventId);
+            if (queue != null) {
+                setup = queue.getGameSetup(_formatLibrary);
+                formatCode = queue.getFormat();
+            } else {
+                Tournament tournament = _runningTournaments.get(eventId);
+                if (tournament == null)
+                    return null;
+                setup = tournament.getGameSetup(_formatLibrary);
+                formatCode = tournament.getFormat();
+            }
+            List<String> lines = new ArrayList<>();
+            SwccgFormat format = eventFormat(formatCode, setup);
+            lines.add("Format: " + (format != null ? format.getName() : formatCode));
+            String chips = setupChips(setup);
+            if (!chips.isEmpty())
+                lines.add("Options: " + chips);
+            lines.addAll(_formatLibrary.describePool(setup));
+            return lines;
+        } finally {
+            _hallDataAccessLock.readLock().unlock();
         }
     }
 
@@ -1179,6 +1216,21 @@ public class HallServer extends AbstractServer {
             String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
             Player lightLibrarian, Player darkLibrarian, String eventType, String draftMode,
             String productCode, int packCount, Map<String, String> gameOptions) throws HallException {
+        createPlayerMadeQueue(host, titlePrefix, formatCode, pairing, totalGames, maxPlayers, readyCheckSeconds,
+                privateEvent, lightDeckName, lightSample, darkDeckName, darkSample, lightLibrarian, darkLibrarian,
+                eventType, draftMode, productCode, packCount, gameOptions, CardPool.NONE);
+    }
+
+    /**
+     * @param gameOptions the options chosen at setup (#119), option id to value; null or empty for the defaults
+     * @param cardPool    the event's custom card pool (#222), or {@link CardPool#NONE} (or null) for the format's own.
+     *                    It is checked in full before anything is created, and is fixed once the tournament is open.
+     */
+    public void createPlayerMadeQueue(Player host, String titlePrefix, String formatCode, String pairing,
+            int totalGames, int maxPlayers, int readyCheckSeconds, boolean privateEvent,
+            String lightDeckName, boolean lightSample, String darkDeckName, boolean darkSample,
+            Player lightLibrarian, Player darkLibrarian, String eventType, String draftMode,
+            String productCode, int packCount, Map<String, String> gameOptions, CardPool cardPool) throws HallException {
         if (_shutdown)
             throw new HallException(
                     "Server is in shutdown mode. No games may be started. Server will be restarted after all games have finished.");
@@ -1229,6 +1281,13 @@ public class HallServer extends AbstractServer {
         try {
             SwccgFormat setupBase = _formatLibrary.getFormat(baseFormat.getBaseCode());
             eventSetup = GameSetup.of(setupBase != null ? setupBase : baseFormat, raw, GameOption.Scope.TOURNAMENT);
+            // #222: a custom card pool is checked whole before the event exists; a bad exception creates nothing
+            if (cardPool != null && !cardPool.isNone()) {
+                if (product != null)
+                    throw new IllegalArgumentException("A custom card pool is only for Constructed tournaments");
+                _formatLibrary.checkPool(setupBase != null ? setupBase : baseFormat, cardPool);
+                eventSetup = eventSetup.withPool(cardPool);
+            }
         } catch (IllegalArgumentException exp) {
             throw new HallException(exp.getMessage());
         }
@@ -2097,6 +2156,15 @@ public class HallServer extends AbstractServer {
      * If the league has deck lock-in enabled and the player already has a locked
      * deck for the given side, return the locked deck. Otherwise return the original.
      */
+    /**
+     * The format an event's decks are checked against and its games are played in (#222): its setup's effective format
+     * (deck size, deck rules, custom card pool), or the stored format code for an event without a setup.
+     */
+    private SwccgFormat eventFormat(String formatCode, GameSetup setup) {
+        SwccgFormat format = setup != null ? _formatLibrary.effectiveFormat(setup) : null;
+        return format != null ? format : _formatLibrary.getFormat(formatCode);
+    }
+
     /** The non-default game options of a tournament or queue, for lists (#116/#119). */
     private static String setupChips(GameSetup setup) {
         return setup != null ? setup.chipsText() : "";
@@ -2356,7 +2424,8 @@ public class HallServer extends AbstractServer {
                                 public void gameCancelled() {
                                     createGameInternal(participants, allowSpectators);
                                 }
-                            }, _formatLibrary.getFormat(_tournament.getFormat()), _tournament.getTournamentName(), null,
+                            }, eventFormat(_tournament.getFormat(), _tournament.getGameSetup(_formatLibrary)),
+                            _tournament.getTournamentName(), null,
                             allowSpectators && !privateEvent, false, false, false, false, _decisionTimeoutSeconds,
                             _timePerPlayerMinutes, privateEvent, null, null, null, true,
                             mediator -> applyEventSetup(mediator, _tournament.getGameSetup(_formatLibrary)));
