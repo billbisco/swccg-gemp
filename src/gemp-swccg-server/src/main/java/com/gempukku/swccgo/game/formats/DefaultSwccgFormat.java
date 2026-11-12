@@ -492,6 +492,18 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 }
             }
         }
+        if (rules.isFourTwenty()) {
+            // "Deck: 420" (#224): inside and outside the deck
+            for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
+                for (String blueprintId : cards) {
+                    SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(blueprintId);
+                    String violation = FourTwenty.violation(card);
+                    if (violation != null)
+                        throw new DeckInvalidException("Card <span class=\"validate-invalid-icon-cardname\">" + GameUtils.getFullName(card)
+                                + "</span> not permitted at this table (Deck: 420): " + violation + ".");
+                }
+            }
+        }
         try {
             // Deck
             int dark = 0;

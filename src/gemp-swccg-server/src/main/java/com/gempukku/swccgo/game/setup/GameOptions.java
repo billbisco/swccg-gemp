@@ -31,6 +31,7 @@ public final class GameOptions {
     public static final String DECIPHER_LOCATION_RULES = "decipherLocationRules";
     public static final String OBJECTIVES_FROM_HAND = "objectivesFromHand";
     public static final String SAME_SIDE = "sameSide";
+    public static final String FOUR_TWENTY = "fourTwenty";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -53,6 +54,14 @@ public final class GameOptions {
                 .help("Both decks may be the same side of the Force. A coin toss decides who takes the Light Side seat; each player uses the Force icons on their seat's side.")
                 .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
                 .shortLabel(v -> "true".equals(v) ? "Deck: same side allowed" : "Deck: opposite sides")
+                .build());
+        // #224: Clayton Moore's (cmoore89) 420 deck restriction, with any base format; off by default
+        register(GameOption.builder(FOUR_TWENTY, Kind.DECK_RULES, Type.BOOLEAN, "Deck: 420")
+                .help("420 (by Clayton Moore): every card must have printed destiny 0, 2 or 4, and Objectives are not allowed. "
+                        + "Locations count as destiny 0. In-game modifiers and conditional destiny bonuses do not count. "
+                        + "The format's own rules still apply.")
+                .defaultValue(f -> "false")
+                .shortLabel(v -> "true".equals(v) ? "Deck: 420" : "Deck: any destiny")
                 .build());
         // #144: a deck rule, as Open (no shields): the table refuses decks holding Defensive Shields
         register(GameOption.builder(NO_SHIELDS, Kind.DECK_RULES, Type.BOOLEAN, "Shields: none")

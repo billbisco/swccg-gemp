@@ -300,7 +300,8 @@ public class SwccgoFormatLibrary {
                 "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),
                 "true".equals(setup.get(GameOptions.OBJECTIVE_OPTIONAL, format)) && !format.allowsMultipleObjectives(),
                 "true".equals(setup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, format)),
-                intOption(setup, GameOptions.STARTING_EFFECTS, format));
+                intOption(setup, GameOptions.STARTING_EFFECTS, format),
+                "true".equals(setup.get(GameOptions.FOUR_TWENTY, format)));
         return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
     }
 
