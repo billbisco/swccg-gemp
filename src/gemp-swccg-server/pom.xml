@@ -156,6 +156,25 @@
                             </systemProperties>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>export-blueprint-db</id>
+                        <goals>
+                            <goal>java</goal>
+                        </goals>
+                        <configuration>
+                            <mainClass>com.gempukku.swccgo.util.CardDataExporter</mainClass>
+                            <arguments>
+                                <argument>--resources</argument>
+                                <argument>${project.basedir}/../gemp-swccg-cards/src/main/resources</argument>
+                            </arguments>
+                            <systemProperties>
+                                <systemProperty>
+                                    <key>user.dir</key>
+                                    <value>${project.basedir}/../..</value>
+                                </systemProperty>
+                            </systemProperties>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
         </plugins>
