@@ -1,11 +1,12 @@
 [
   {
-    "comment": "Anything Goes is the default Casual/AI format. Structure only; 40-60 cards; Legacy plus non-Legacy. Sets 2200-2292 are pre-errata Legacy versions (docs/legacy-versions.md): Anything Goes only, never Legacy.",
+    "comment": "Anything Goes is the default Casual/AI format. Structure only; 40-60 cards; Legacy plus non-Legacy. Sets 2200-2292 are pre-errata Legacy versions (docs/legacy-versions.md): Anything Goes only, never Legacy. textStates: older text states of printings (2_45o as printed, 2_45d Decipher errata; docs/legacy-versions.md \"Text states\") are legal here and in no other format.",
     "name":"Anything Goes",
     "code":"anything_goes",
     "startingCredits":true,
     "loreHeroicRule":true,
     "skipFormatPool":true,
+    "textStates":true,
     "multipleObjectives":true,
     "minDeckSize":40,
     "maxDeckSize":60,

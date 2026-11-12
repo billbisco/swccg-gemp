@@ -527,7 +527,8 @@ public class SortAndFilterCards {
     private boolean isRarity(String blueprintId, Set<Rarity> rarity, SwccgCardBlueprintLibrary library, Map<String, SetRarity> rarities) {
         if (rarity.isEmpty())
             return true;
-        if (LegacyIds.isLegacyBlueprint(blueprintId) || LegacyVersion.isVersionBlueprint(blueprintId))
+        if (LegacyIds.isLegacyBlueprint(blueprintId) || LegacyVersion.isVersionBlueprint(blueprintId)
+                || com.gempukku.swccgo.common.TextState.isTextStateBlueprint(blueprintId))
             return rarity.contains(library.getSwccgoCardBlueprint(blueprintId).getRarity());
         if (blueprintId.contains("_")) {
             SetRarity setRarity = rarities.get(blueprintId.substring(0, blueprintId.indexOf("_")));
@@ -566,11 +567,20 @@ public class SortAndFilterCards {
     /** Set-filter value that selects every pre-errata Legacy version. */
     public static final String LEGACY_VERSIONS_SET_FILTER = "legacy_versions";
 
+    /** Set-filter value that selects every older text state of a printing (2_45o, 2_45d). */
+    public static final String TEXT_STATES_SET_FILTER = "text_states";
+
     private boolean isInSets(String blueprintId, String[] sets, SwccgCardBlueprintLibrary library, SwccgoFormatLibrary formatLibrary) {
         for (String set : sets) {
             if ("601".equals(set) && LegacyIds.isLegacyBlueprint(blueprintId))
                 return true;
             // Deck builder "Legacy (pre-errata versions)": every version set 2200-2292 (docs/legacy-versions.md)
+            // Deck builder "Older card texts": every text state (2_45o, 2_45d; docs/legacy-versions.md "Text states")
+            if (TEXT_STATES_SET_FILTER.equals(set)) {
+                if (com.gempukku.swccgo.common.TextState.isTextStateBlueprint(blueprintId))
+                    return true;
+                continue;
+            }
             if (LEGACY_VERSIONS_SET_FILTER.equals(set)) {
                 if (LegacyVersion.isVersionBlueprint(blueprintId))
                     return true;

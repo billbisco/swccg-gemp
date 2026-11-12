@@ -45,6 +45,7 @@ public class CollectionsManager {
         addCardsToDefaultCollection(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 601, _defaultCollection);
         addCardsToDefaultCollection(library, CardCounts.REFLECTIONS_GOLD_CARD_COUNTS, 15, _defaultCollection);
         LegacyCardPool.addSheetCards(library, _defaultCollection);
+        TextStateCardPool.addCards(library, _defaultCollection);
 
         // Add cards to default collection with playtesting
         addCardsToDefaultCollection(library, CardCounts.FULL_SETS_CARD_COUNTS, 1, _defaultCollectionWithPlaytesting);
@@ -57,6 +58,7 @@ public class CollectionsManager {
         addCardsToDefaultCollection(library, CardCounts.LEGACY_SETS_CARD_COUNTS, 601, _defaultCollectionWithPlaytesting);
         addCardsToDefaultCollection(library, CardCounts.REFLECTIONS_GOLD_CARD_COUNTS, 15, _defaultCollectionWithPlaytesting);
         LegacyCardPool.addSheetCards(library, _defaultCollectionWithPlaytesting);
+        TextStateCardPool.addCards(library, _defaultCollectionWithPlaytesting);
 
         _collectionReadyLatch.countDown();
     }

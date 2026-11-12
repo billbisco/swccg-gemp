@@ -226,6 +226,10 @@ public class SwccgCardBlueprintLibrary {
     private static final String ALTERNATE_IMAGE_SUFFIX = "ai";
 
     private String normalizeId(String blueprintPart) {
+        // Text state of one printing (docs/legacy-versions.md, "Text states"): 2_45d -> Card2_045d, 1250_45aio -> Card1250_045aio
+        String textState = com.gempukku.swccgo.common.TextState.paddedCardNumber(blueprintPart);
+        if (textState != null)
+            return textState;
         if (blueprintPart.endsWith(ALTERNATE_IMAGE_SUFFIX) && blueprintPart.length() > ALTERNATE_IMAGE_SUFFIX.length())
             return normalizeId(blueprintPart.substring(0, blueprintPart.length() - ALTERNATE_IMAGE_SUFFIX.length())) + ALTERNATE_IMAGE_SUFFIX;
         int id = Integer.parseInt(blueprintPart);

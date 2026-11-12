@@ -58,6 +58,7 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     private int _startingEffectCapacityReduction;
     private boolean _isLegacy;
     private LegacyVersion _legacyVersion;
+    private com.gempukku.swccgo.common.TextState _textState;
     private String _displayTitle;
     private boolean _displayTitleComplete;
     private boolean _excludeFromDeckBuilder;
@@ -3042,6 +3043,21 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
      */
     protected void setLegacyVersion(LegacyVersion version) {
         _legacyVersion = version;
+    }
+
+    @Override
+    public com.gempukku.swccgo.common.TextState getTextState() {
+        return _textState;
+    }
+
+    /**
+     * Marks this blueprint as an older text state of a printing (docs/legacy-versions.md, "Text states"): e.g.
+     * 2_45o (as printed) or 2_45d (Decipher's last word). Its title, uniqueness and persona must match the card at
+     * {@code textState.currentId()}.
+     * @param textState the text-state information
+     */
+    protected void setTextState(com.gempukku.swccgo.common.TextState textState) {
+        _textState = textState;
     }
 
     @Override

@@ -253,6 +253,7 @@ var CardFilter = Class.extend({
             + "<option value='301'>Virtual Premium Set</option>"
             + "<option value='601'>Legacy</option>"
             + "<option value='legacy_versions'>Legacy (pre-errata versions)</option>"
+            + "<option value='text_states'>Older card texts (printed / Decipher errata)</option>"
             //+ "<option value='401'>Dream Cards</option>"
             + "<option value='501'>Playtesting</option>"
             + "</select>");

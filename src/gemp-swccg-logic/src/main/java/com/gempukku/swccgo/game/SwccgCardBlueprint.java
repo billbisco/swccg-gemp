@@ -1830,6 +1830,15 @@ public interface SwccgCardBlueprint {
     }
 
     /**
+     * Gets the text-state information when this blueprint is an older text state of a printing, e.g. 2_45o (as
+     * printed) or 2_45d (Decipher's last word); see docs/legacy-versions.md, "Text states".
+     * @return the text state, or null if this blueprint is a card's current text
+     */
+    default com.gempukku.swccgo.common.TextState getTextState() {
+        return null;
+    }
+
+    /**
      * Gets this card's Display Title: the wording on the card's face, set only when it differs from {@link #getTitle()}.
      * Rule (Bill, 2026-11-11): the title is the card's label, "(V)" included for a Virtual card ("Bail Organa (V)"),
      * even when the face prints something else ("Bail Organa"); the face's wording is the Display Title. Examples: a

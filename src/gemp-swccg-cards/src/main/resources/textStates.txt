@@ -1,0 +1,5 @@
+# Older text states of printings that have a card (docs/legacy-versions.md, "Text states").
+# One blueprint id per line: <set>_<n><state>, state o (as printed), d (Decipher's last word), o1..o9 (intermediate).
+# The card pool (deck builder, Anything Goes) lists exactly these ids; TextStatesTests checks every class is listed.
+2_45o
+2_45d
