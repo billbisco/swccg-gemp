@@ -1512,6 +1512,11 @@ public class HallServer extends AbstractServer {
         }
     }
 
+    /** The player id the player menu shows for a table seat's name; null for guests, bots and unknown names (#264). */
+    public Integer playerIdForMenu(String name) {
+        return com.gempukku.swccgo.service.PlayerCard.playerId(_playerDAO, name);
+    }
+
     protected void processHall(Player player, HallInfoVisitor visitor) {
         _hallDataAccessLock.readLock().lock();
         try {

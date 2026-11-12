@@ -102,6 +102,17 @@ public interface PlayerDAO {
     boolean updateLastLoginIp(String playerName, String remoteAddr) throws SQLException;
 
     /**
+     * Marks a new account's first Play session (swccg-guild/work#264 R6/AC3, Bill 2026-11-11 t135u): records the
+     * last-login IP only if the account has never had a Play session (no last IP yet) and was created at most
+     * maxAgeSeconds ago. Atomic, so exactly one session of a new account gets true. Existing accounts always get
+     * false. Used to carry a guest's Play now games over to an account just made through the sign-in service.
+     * @return true if this was the account's first Play session
+     */
+    default boolean claimFirstPlaySession(String playerName, String remoteAddr, int maxAgeSeconds) throws SQLException {
+        return false;
+    }
+
+    /**
      * Updates the date indicator of the last time the player received a reward for logging in.
      * @param player the player
      * @param previousReward the previous date indicator, or null

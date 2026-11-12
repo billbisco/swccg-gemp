@@ -3,6 +3,19 @@
 // States: connecting / connected / reconnecting / disconnected. Hover/focus/click opens details popup.
 // Wired into SWCCG's existing getHall/updateHall/hallErrorMap (no full LOTR poll rewrite).
 // NOTE: hall.html runs jQuery 3.6, but the other pages still load this file on jQuery 1.6.2 — use .bind() not .on().
+var GUEST_ADOPT_FAILED_NOTICE = "Your account was created, but we couldn't move your Play now game to it. "
+    + "The game is still saved for you as a guest: log out and open Play now in this browser to carry on.";
+
+// #264 AC6: the name in a hall table's player entry: "Name (Side: deck)" -> "Name"; "(Side)" (a hidden seat) -> "".
+// Names never hold "(" (#249), so the first " (" ends the name.
+function tablePlayerName(entry) {
+    var s = entry == null ? "" : String(entry);
+    if (s.charAt(0) === "(")
+        return "";
+    var at = s.indexOf(" (");
+    return at < 0 ? s : s.substring(0, at);
+}
+
 var HallConnectionIndicator = Class.extend({
 	root: null,
 	button: null,
@@ -186,6 +199,7 @@ var HallChatResizer = Class.extend({
     init: function (chat) {
         var that = this;
         this.chat = chat;
+        this.showGuestCarryOverNotice();
         if (!chat.length)
             return;
         this.handle = $("<div class='ui-resizable-handle ui-resizable-n hall-chat-resizer' role='separator' tabindex='0'></div>")
@@ -3903,6 +3917,47 @@ var GempSwccgHallUI = Class.extend({
         return $("<td></td>").text(text == null ? "" : text);
     },
 
+    // #264 R6/AC3: after a new membership's first sign-in (the sign-in service), the server sends the hall
+    // "?guest_notice=adopt_failed" when this browser's Play now game couldn't be moved to the account. Same text as
+    // a classic signup's notice (RegisterRequestHandler.SIGNUP_ADOPT_FAILED_NOTICE).
+    showGuestCarryOverNotice: function() {
+        if (!/[?&]guest_notice=adopt_failed(&|$)/.test(window.location.search))
+            return;
+        try {
+            window.history.replaceState(null, "", window.location.pathname + window.location.hash);
+        } catch (e) { /* old browser: the parameter stays */ }
+        alert(GUEST_ADOPT_FAILED_NOTICE);
+    },
+
+    // #264 AC6: a table's players, each name opening the player menu (name, Player ID, Copy). An entry is
+    // "Name (Side: deck)", or "(Side)" when the table hides who sits there (no menu then). ids[i] is the player id
+    // of players[i] from the hall's "playerIds" ("" for guests, bots and hidden seats).
+    playersCell: function(players, ids) {
+        var td = $("<td></td>");
+        for (var i = 0; i < players.length; i++) {
+            if (i > 0)
+                td.append(document.createTextNode(", "));
+            var entry = String(players[i]), name = tablePlayerName(entry);
+            if (!name || typeof PlayerMenu === "undefined") {
+                td.append(document.createTextNode(playerNameText(entry)));
+                continue;
+            }
+            var shown = playerNameText(entry);
+            var nameShown = playerNameText(name);
+            var span = $("<span class='table-player'></span>").text(nameShown);
+            PlayerMenu.bind(span[0], this.menuInfo(name, ids[i]));
+            td.append(span);
+            if (shown.length > nameShown.length && shown.indexOf(nameShown) === 0)
+                td.append(document.createTextNode(shown.substring(nameShown.length)));
+        }
+        return td;
+    },
+
+    menuInfo: function(name, id) {
+        var info = {name: name, kind: PlayerMenu.kindOf(name), playerId: id && /^[0-9]+$/.test(id) ? id : null};
+        return function () { return info; };
+    },
+
     // A comma-separated list of player names from the server, each ready to show (#249).
     playerListText: function(list) {
         if (!list)
@@ -4533,7 +4588,9 @@ var GempSwccgHallUI = Class.extend({
                             playersStr += ", ";
                         playersStr += playerNameText(players[playerI]);
                     }
-                    row.append(this.cell(playersStr));
+                    var playerIdsAttr = table.getAttribute("playerIds");
+                    var tablePlayerIds = playerIdsAttr ? playerIdsAttr.split(",") : [];
+                    row.append(this.playersCell(players, tablePlayerIds));
 
                     var lastField = $("<td></td>");
                     if (status == "WAITING") {
@@ -4587,6 +4644,10 @@ var GempSwccgHallUI = Class.extend({
                     } else if (status == "FINISHED") {
                         if (winner != null) {
                             lastField.text(playerNameText(winner));
+                            var winnerI = $.inArray(winner, $.map(players, function (p) { return tablePlayerName(p); }));
+                            if (winner && typeof PlayerMenu !== "undefined")
+                                PlayerMenu.bind(lastField.wrapInner("<span></span>").children()[0],
+                                    this.menuInfo(winner, winnerI >= 0 ? tablePlayerIds[winnerI] : null));
                         }
                         if (gameId)
                             this.closeReadyModal("game:" + gameId);

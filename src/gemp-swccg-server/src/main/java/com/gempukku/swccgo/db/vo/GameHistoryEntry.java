@@ -24,6 +24,8 @@ public class GameHistoryEntry {
 
     private String _winnerSide;
     private String _leagueType;
+    private Integer _winnerId;
+    private Integer _loserId;
 
     public GameHistoryEntry(String winner, String winReason, String winnerRecording, String loser, String loseReason, String loserRecording, String formatName, String tournament, String winnerDeckName, String winnerDeckArchetype, String loserDeckName, String loserDeckArchetype, Date startTime, Date endTime) {
         _winner = winner;
@@ -47,6 +49,21 @@ public class GameHistoryEntry {
         this(winner, winReason, winnerRecording, loser, loseReason, loserRecording, formatName, tournament, winnerDeckName, winnerDeckArchetype, loserDeckName, loserDeckArchetype, startTime, endTime);
         _winnerSide = winnerSide;
         _leagueType = leagueType;
+    }
+
+    /** The winner's and loser's player ids (game_history.winner_id / loser_id, #264); null for bots and guests. */
+    public GameHistoryEntry withPlayerIds(Integer winnerId, Integer loserId) {
+        _winnerId = winnerId;
+        _loserId = loserId;
+        return this;
+    }
+
+    public Integer getWinnerId() {
+        return _winnerId;
+    }
+
+    public Integer getLoserId() {
+        return _loserId;
     }
 
     public String getLoser() {

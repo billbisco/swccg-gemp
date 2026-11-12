@@ -1357,13 +1357,17 @@ var GempSwccgGameUI = Class.extend({
             //});
         }
 
-        var playerListener = function (players) {
-            var val = "";
+        var playerListener = function (players, infos) {
             if (!this.replayMode) {
-                for (var i = 0; i < players.length; i++)
-                    val += chatListEntryHtml(players[i]) + "<br/>";
+                var box = $("#playersInRoomBox").empty();
+                for (var i = 0; i < players.length; i++) {
+                    var entry = $("<div class='playerInRoom'></div>").html(chatListEntryHtml(players[i]));
+                    // #264 AC6: a click shows the player menu (name, Player ID and Copy; Guest or Bot without an id)
+                    if (infos && infos[i] && typeof PlayerMenu !== "undefined")
+                        PlayerMenu.bind(entry[0], (function (info) { return function () { return info; }; })(infos[i]));
+                    box.append(entry);
+                }
                 $("a[href='#playersInRoomBox']").html("Players(" + players.length + ")");
-                $("#playersInRoomBox").html(val);
             }
         };
 

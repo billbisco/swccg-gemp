@@ -412,6 +412,7 @@ var GameHistoryUI = Class.extend({
             winReason: attr("winReason"),
             loseReason: attr("loseReason"),
             opponent: opponent,
+            opponentPlayerId: /^[0-9]+$/.test(attr("opponentPlayerId") || "") ? attr("opponentPlayerId") : null,
             side: attr("mySide"),
             deck: attr("deckName"),
             format: attr("formatName"),
@@ -511,7 +512,18 @@ var GameHistoryUI = Class.extend({
                 render: function (row) {
                     if (!row.opponent)
                         return "—";
-                    return that.filterLink(playerNameText(row.opponent), {opponent: row.opponent, opponentExact: true});
+                    var link = that.filterLink(playerNameText(row.opponent), {opponent: row.opponent, opponentExact: true});
+                    if (typeof PlayerMenu === "undefined")
+                        return link;
+                    // #264 AC6: the name opens the player menu (Player ID, Copy); filtering is its first action
+                    var info = {name: row.opponent, kind: row.opponentPlayerId ? "player" : PlayerMenu.kindOf(row.opponent),
+                        playerId: row.opponentPlayerId};
+                    var href = link.attr("href");
+                    link.attr("title", "Player menu: Player ID, and show only games against this player");
+                    PlayerMenu.bind(link[0], function () { return info; }, function () {
+                        return [{label: "Show only games against this player", href: href}];
+                    });
+                    return link;
                 }},
             {key: "format", title: "Format", className: "gh-format gh-left",
                 render: function (row) {

@@ -140,6 +140,15 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public boolean claimFirstPlaySession(String playerName, String remoteAddr, int maxAgeSeconds) throws SQLException {
+        boolean first = _delegate.claimFirstPlaySession(playerName, remoteAddr, maxAgeSeconds);
+        if (first) {
+            removePlayerFromCacheByName(playerName);
+        }
+        return first;
+    }
+
+    @Override
     public boolean updateLastReward(Player player, Integer previousReward, int currentReward) throws SQLException {
         boolean success = _delegate.updateLastReward(player, previousReward, currentReward);
         if (success) {

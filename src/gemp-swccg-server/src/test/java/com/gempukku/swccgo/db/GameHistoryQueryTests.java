@@ -155,4 +155,10 @@ public class GameHistoryQueryTests {
                                             String result, LocalDate from, LocalDate to) {
         return new GameHistoryFilter(format, opponent, exact, event, side, result, from, to);
     }
+
+    @Test
+    public void GameHistoryQuerySelectsThePlayerIds() {
+        //test1: #264 AC6: the history page reads winner_id and loser_id (columns 17 and 18) for the player menu
+        assertTrue(GameHistoryQuery.COLUMNS.endsWith("winner_side, league_type, winner_id, loser_id"));
+    }
 }

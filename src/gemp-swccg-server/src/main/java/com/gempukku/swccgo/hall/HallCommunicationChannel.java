@@ -91,6 +91,8 @@ public class HallCommunicationChannel implements LongPollableResource {
                     public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt, String setupChips) {
 
                         List<String> playerInfo = new LinkedList<String>();
+                        // #264 AC6: the player menu's ids, one per entry of "players" ("" for guests, bots, hidden)
+                        List<String> playerIds = new LinkedList<String>();
 
                         for (SwccgGameParticipant player : players) {
                             String sideInfo = player.getDeck().getSide(library).toString();
@@ -103,9 +105,12 @@ public class HallCommunicationChannel implements LongPollableResource {
 
                             if (hidePlayerId) {
                                 playerInfo.add("(" + sideInfo + ")");
+                                playerIds.add("");
                             }
                             else {
                                 playerInfo.add(player.getPlayerId() + " (" + sideInfo + ")");
+                                Integer id = hallServer.playerIdForMenu(player.getPlayerId());
+                                playerIds.add(id == null ? "" : String.valueOf(id));
                             }
                         }
 
@@ -123,6 +128,7 @@ public class HallCommunicationChannel implements LongPollableResource {
                             props.put("collectionCode", collectionCode);
                         props.put("tournament", tournamentName + ((!hideDesc && tableDesc != null && !tableDesc.isEmpty()) ? (" - " + tableDesc) : ""));
                         props.put("players", StringUtils.join(playerInfo, ","));
+                        props.put("playerIds", StringUtils.join(playerIds, ","));
                         props.put("playing", String.valueOf(playing));
                         if (winner != null)
                             props.put("winner", hideWinner?"":winner);
