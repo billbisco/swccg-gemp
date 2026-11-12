@@ -8562,4 +8562,18 @@ const fixedImages = {
 // Virtual Modern text states (docs/legacy-versions.md, "Text states"): Imperial Enforcement 201_30o = the original PC image (12 Jul 2020), 201_30o1 = the PC-E2 image (12 Dec 2022).
 "201_30o":"https://wiki.swccg.com/images/b/b4/V1-D-imperialenforcement-original.gif",
 "201_30o1":"https://wiki.swccg.com/images/4/45/V1-D-imperialenforcement-PC-E2.png",
+"102_1o":"https://wiki.swccg.com/images/4/4d/Jedi-L-forluck-decipher-archive.gif",
+"12_79o":"https://wiki.swccg.com/images/1/15/Cor-L-naboobattleplains-decipher-archive.jpg",
+"12_170o":"https://wiki.swccg.com/images/6/65/Cor-D-naboobattleplains-decipher-archive.jpg",
+"11_18o":"https://wiki.swccg.com/images/1/1d/Tat-L-greatshotkid-decipher-archive.jpg",
+"1_155o":"https://wiki.swccg.com/images/b/b0/Premiere-L-jedilightsaber-decipher-archive.gif",
+"1_157o":"https://wiki.swccg.com/images/1/15/Premiere-L-obiwanslightsaber-decipher-archive.gif",
+"1_314o":"https://wiki.swccg.com/images/2/20/Premiere-D-darkjedilightsaber-decipher-archive.gif",
+"1_324o":"https://wiki.swccg.com/images/1/1b/Premiere-D-vaderslightsaber-decipher-archive.gif",
+"4_180o":"https://wiki.swccg.com/images/a/ac/Dagobah-D-zuckusssnarerifle-decipher-archive.gif",
+"1_72o":"https://wiki.swccg.com/images/8/8a/Premiere-L-berustew-decipher-archive.gif",
+"4_21o":"https://wiki.swccg.com/images/2/27/Dagobah-L-doordonot-decipher-archive.gif",
+"4_123o":"https://wiki.swccg.com/images/3/3a/Dagobah-D-heisnotready-decipher-archive.gif",
+"5_53o":"https://wiki.swccg.com/images/8/8f/CC-L-innocentscoundrel-decipher-archive.gif",
+"7_224o":"https://wiki.swccg.com/images/7/7a/SE-D-comehereyoubigcoward-decipher-archive.gif",
 };

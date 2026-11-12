@@ -130935,11 +130935,11 @@
     "slug": "innocent-scoundrel",
     "slugWithSetName": "innocent-scoundrel-cloud-city",
     "side": "LIGHT",
-    "uniqueness": "UNRESTRICTED",
+    "uniqueness": "UNIQUE",
     "titleComponents": [
       {
         "name": "Innocent Scoundrel",
-        "uniqueness": "UNRESTRICTED"
+        "uniqueness": "UNIQUE"
       }
     ],
     "expansionSet": "CLOUD_CITY",

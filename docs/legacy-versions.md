@@ -274,6 +274,7 @@ defense value", added creature targets and "your warrior". Rules that decide how
 | `characterDefenseValueIsAbility()` | a character target is compared to its ability (every hit, capture, lost, forfeit and Jawa Ion Gun check in the builder) |
 | `ionHitLosesAllWeaponsAboard()` | ion cannons: "all weapons aboard target are lost" (also weapons on cards aboard) |
 | `hitsCardsAtSiteNotOnlyPresent()` | Concussion Grenade: cards "at that site" (also aboard vehicles and starships there) |
+| `captureIsTargetOwnersChoice()` | Zuckuss' Snare Rifle: "Character may be immediately captured" (the target's owner chooses) |
 
 A printed weapon that names no creature target targets no creatures; Bowcaster and the two hunting rifles fire at
 characters (hit by ability) or creatures ("immediately lost") as two actions.
@@ -286,6 +287,32 @@ Done (tests `cards/PrintedWeaponTextStatesTests.java` one per state, `cards/Prin
   6_89o 6_174o 6_175o 6_177o 6_178o`.
 - Creature lost, character hit by ability: `2_77o 2_79o 2_162o`. Ion cannons: `1_318o 2_81o 3_78o`. Concussion
   Grenade: `3_73o`.
-- Not done (need a ruling): the four Premiere lightsabers (`1_155 1_157 1_314 1_324`, printed "use as follows: Add 1 to
-  Force drain … OR Target …") and Zuckuss' Snare Rifle (`4_180`, printed "may be immediately captured"). Timer Mine
-  (`1_162`, `1_322`) has no errata.
+- Built after Bill's ruling of 12 Nov 2026 (ai-team-skills RULINGS.md "printed-text readings"; tests
+  `cards/textstates/RuledTextStates*Tests.java`): the four Premiere lightsabers `1_155o 1_157o 1_314o 1_324o`
+  ("use as follows: … OR …" lists two separate abilities, as the bare cards play them; characters hit by ability, no
+  creatures) and Zuckuss' Snare Rifle `4_180o` (may target any card, only a character or creature is affected;
+  "may be immediately captured" is the target owner's choice, `captureIsTargetOwnersChoice()`; a vehicle target still
+  counts as the rifle firing for Jabba's Through With You). Timer Mine (`1_162`, `1_322`) has no errata.
+
+### Printed readings ruled by Bill (12 Nov 2026)
+
+ai-team-skills RULINGS.md "printed-text readings"; tests `cards/textstates/RuledTextStatesTests.java` (text, dates,
+same card) and `RuledTextStatesGameplayTests.java`.
+
+- `102_1o` For Luck: printed "exclude X Jedi" includes Dark Jedi and works on either player's characters, your own
+  included (`Card102_001.getExcludableFromHighestAbilityFilter`).
+- `12_79o`, `12_170o` Naboo: Battle Plains ("tanks") and `11_18o` Great Shot, Kid!: wording only.
+- Lightsabers and Zuckuss' Snare Rifle: see "Printed weapons" above.
+- **Uniqueness-only errata.** The printed cards `1_72o` Beru Stew, `4_21o` Do, Or Do Not, `4_123o` He Is Not Ready,
+  `5_53o` Innocent Scoundrel and `7_224o` Come Here You Big Coward (printed "…Coward!", `setDisplayTitle`) are
+  **non-unique**; their errata (Decipher Glossary 2.0 / Glossary Supplement, or SWCCG 2023 Advanced Rulebook
+  Appendix A) made them unique (•). This is the one exception to "a text state keeps the bare card's uniqueness"
+  (`AbstractSwccgCardBlueprint.setUniqueness`; listed in `TextStatesTests.PRINTED_NON_UNIQUE_BY_ERRATA`). The bare
+  Innocent Scoundrel `5_53` is now unique. They keep the bare card's title, so "same title" checks (Grimtaash, Monnok:
+  `Filters.duplicatesOfInHand`) count a printed and a bare copy as two of the same card. The cumulative rule still
+  applies: modifiers of the same title do not stack (ModifiersLogic), and two printed Do, Or Do Not make a player lose
+  2 Force once (`Card4_021o`: only the first-deployed printed copy, and none while another copy is active).
+  Their title components keep the bare card's uniqueness (`AbstractSwccgCardBlueprint.setUniqueness`), so title
+  matching and the uniqueness rule see one title ("same card title for all game play purposes (e.g. uniqueness rules,
+  Grimtaash, etc.)", 2023 Advanced Rulebook): a bare unique copy may not deploy while a printed copy is on table, but
+  a printed copy is non-unique (`CardTraits.getComponentUniqueness` returns the printed uniqueness).

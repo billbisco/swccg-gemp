@@ -36,6 +36,13 @@ import static org.junit.Assert.fail;
  * Anything Goes only.
  */
 public class TextStatesTests {
+    /**
+     * Printed text states whose errata only made the card unique (•): the printed card is non-unique (Bill 2026-11-12,
+     * ai-team-skills RULINGS.md "printed-text readings" 6; SWCCG 2023 Advanced Rulebook Appendix A). The only text
+     * states whose uniqueness differs from the bare card. Tests: UniquenessErrataTextStatesTests.
+     */
+    public static final Set<String> PRINTED_NON_UNIQUE_BY_ERRATA = Set.of("1_72o", "4_21o", "4_123o", "5_53o", "7_224o");
+
     private static SwccgCardBlueprintLibrary library;
     private static SwccgoFormatLibrary formats;
     private static CollectionsManager collections;
@@ -100,7 +107,13 @@ public class TextStatesTests {
             assertNull(current.getTextState());
             assertEquals(id, current.getTitle(), state.getTitle());
             assertEquals(id, current.getTitles(), state.getTitles());
-            assertEquals(id, current.getUniqueness(), state.getUniqueness());
+            if (PRINTED_NON_UNIQUE_BY_ERRATA.contains(id)) {
+                assertEquals(id, com.gempukku.swccgo.common.Uniqueness.UNIQUE, current.getUniqueness());
+                assertEquals(id, com.gempukku.swccgo.common.Uniqueness.UNRESTRICTED, state.getUniqueness());
+            }
+            else {
+                assertEquals(id, current.getUniqueness(), state.getUniqueness());
+            }
             assertEquals(id, current.getSide(), state.getSide());
             assertEquals(id, current.getCardCategory(), state.getCardCategory());
             assertEquals(id, current.getCardTypes(), state.getCardTypes());
