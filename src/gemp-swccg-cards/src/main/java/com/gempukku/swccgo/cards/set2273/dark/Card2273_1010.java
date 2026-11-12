@@ -43,7 +43,7 @@ import java.util.List;
  * loss), and Spice Mine Administrator deploys from Reserve Deck. Anything Goes only (docs/legacy-versions.md).
  */
 public class Card2273_1010 extends AbstractLocationDevice {
-    /** Spice Mine Administrator: Moruth Doole, Kessel Administrator's printed title on the Virtual Block 7.3 sheet (that card only). */
+    /** Spice Mine Administrator: Moruth Doole, Kessel Administrator's display title on the Virtual Block 7.3 sheet (that card only). */
     static final Filter SPICE_MINE_ADMINISTRATOR = Filters.title("Moruth Doole, Kessel Administrator");
 
     public Card2273_1010() {

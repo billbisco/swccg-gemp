@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set200.light;
 public class Card200_150 extends Card200_032 {
     public Card200_150() {
         super();
-        setBasePrintingTitle("Your Insight Serves You Well (Death Star II)");
+        setBasePrintingDisplayTitle("Your Insight Serves You Well (Death Star II)");
     }
 }

@@ -302,13 +302,13 @@ public class LegacyBatchR8B7B11VersionsTests {
     @Test
     public void ObiWanInRadiantViiCardListTitleMovesToItsVersion() {
         assertEquals("Obi-Wan In Radiant VII", library.getSwccgoCardBlueprint("1250_83").getTitle());
-        assertNull(library.getSwccgoCardBlueprint("1250_83").getPrintedTitle());
+        assertNull(library.getSwccgoCardBlueprint("1250_83").getDisplayTitle());
     }
 
     @Test
     public void AmbushAndBaragwinCardListVersionsPlayTheirOwnText() {
         assertTrue(library.getSwccgoCardBlueprint("2250_1065") instanceof com.gempukku.swccgo.cards.set2250.light.Card2250_1065);
         assertTrue(library.getSwccgoCardBlueprint("2261_1062") instanceof com.gempukku.swccgo.cards.set2261.light.Card2261_1062);
-        assertEquals("Obi-Wan in Radiant VII", library.getSwccgoCardBlueprint("2250_1083").getPrintedTitle());
+        assertEquals("Obi-Wan in Radiant VII", library.getSwccgoCardBlueprint("2250_1083").getDisplayTitle());
     }
 }

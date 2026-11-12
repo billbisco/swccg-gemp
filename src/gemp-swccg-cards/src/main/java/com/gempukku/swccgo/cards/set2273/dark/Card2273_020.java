@@ -39,7 +39,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-/** Original A Stunning Move / A Valuable Hostage (Virtual Block 7.3 sheet, 2011-06-03), a version of 1273_20: deploys (for -2 Force) "Cyborg Commander" (Grievous, Hunter Of Jedi's printed title on the 7.1 sheet, that card only) or "The Count" (no card had that title; read as Dooku); replaced by the Virtual Cards Master List front text (PC-E1, 2013-04-27: "Dooku or Grievous"). Anything Goes only (docs/legacy-versions.md). */
+/** Original A Stunning Move / A Valuable Hostage (Virtual Block 7.3 sheet, 2011-06-03), a version of 1273_20: deploys (for -2 Force) "Cyborg Commander" (Grievous, Hunter Of Jedi's display title on the 7.1 sheet, that card only) or "The Count" (no card had that title; read as Dooku); replaced by the Virtual Cards Master List front text (PC-E1, 2013-04-27: "Dooku or Grievous"). Anything Goes only (docs/legacy-versions.md). */
 public class Card2273_020 extends AbstractObjective {
     public static final String PRINTED_GAMETEXT = "A Stunning Move: Deploy Palpatine's Quarters, Private Platform, and Insidious Prisoner. For remainder of game, Sidious and Imperials are lost. Once per turn, may deploy a Blockade Flagship site from Reserve Deck; reshuffle. Blockade Flagship may not be 'blown away.' While this side up, Insidious Prisoner only follows opponent's characters when moving to Palpatine's Quarters. Once per game, may deploy (for -2 Force) Cyborg Commander or The Count to a site you occupy from Reserve Deck; reshuffle. Flip this card if Insidious Prisoner is on Blockade Flagship. "
             + "A Valuable Hostage: Immediately take into hand from Reserve Deck; reshuffle (or retrieve into hand) a [Presence] droid. While this side up, immunity to attrition of opponent's Jedi, starships, and vehicles is limited to < 5. During your control phase, opponent loses 1 Force for each battleground you control. Once during your turn, may search your Force Pile and reveal any one card; reshuffle. Opponent may lose 2 Force to place that card on bottom of your Used Pile; otherwise, take it into hand. Flip this card if Insidious Prisoner not at a Blockade Flagship site.";
@@ -141,7 +141,7 @@ public class Card2273_020 extends AbstractObjective {
             actions.add(deploySite);
         }
 
-        // Cyborg Commander: Grievous, Hunter Of Jedi's printed title on the Virtual Block 7.1 sheet (that card only);
+        // Cyborg Commander: Grievous, Hunter Of Jedi's display title on the Virtual Block 7.1 sheet (that card only);
         // The Count: no card was printed with that title, read as Dooku
         GameTextActionId gameTextActionId = GameTextActionId.LEGACY__A_STUNNING_MOVE__DEPLOY_GRIEVOUS_OR_DOOKU;
         if (GameConditions.isOncePerGame(game, self, gameTextActionId)

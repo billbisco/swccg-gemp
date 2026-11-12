@@ -27,7 +27,7 @@ public class Card2271_001 extends AbstractRepublic {
         setGameText("[Virtual Block 5] Dark Jedi Lightsaber may deploy on Cyborg Commander. Jedi present are power -1 (-2 if a Jedi Council Member). While armed with a lightsaber, your battle destiny draws here are +1 and his forfeit may not be reduced. Immune to attrition < 4.");
         setLegacyVersion(new LegacyVersion("1271_1", "",
                 "Virtual Block 7.1 release sheet (2010-06-18); superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2010, 6, 18), LocalDate.of(2012, 7, 21)));
-        setPrintedTitle("Cyborg Commander, Hunter Of Jedi");
+        setDisplayTitle("Cyborg Commander, Hunter Of Jedi");
         addPersona(Persona.GRIEVOUS);
         addKeywords(Keyword.LEADER);
         addIcons(Icon.WARRIOR, Icon.EPISODE_I, Icon.SPECIAL_EDITION);

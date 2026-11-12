@@ -14,7 +14,7 @@ import com.gempukku.swccgo.common.Icon;
 public class Card1261_075 extends Card1261_073 {
     public Card1261_075() {
         super();
-        setBasePrintingTitle("Your Insight Serves You Well (Death Star II)");
+        setBasePrintingDisplayTitle("Your Insight Serves You Well (Death Star II)");
         removeIcon(Icon.REFLECTIONS_III);
         addIcon(Icon.DEATH_STAR_II);
     }

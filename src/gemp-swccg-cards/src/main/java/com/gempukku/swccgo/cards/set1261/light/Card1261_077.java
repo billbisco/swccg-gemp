@@ -35,7 +35,7 @@ public class Card1261_077 extends AbstractDefensiveShield {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Lets_Keep_A_Little_Optimism_Here,
                 ExpansionSet.VIRTUAL_BLOCK_6_1, Rarity.V);
         setVirtualSuffix(true);
-        setBasePrintingTitle("Let's Keep A Little Optimism Here (Ref III)");
+        setBasePrintingDisplayTitle("Let's Keep A Little Optimism Here (Ref III)");
         setLore("The heroes of the Rebellion know that where there is life, there is hope.");
         setGameText("Plays on table. Ounee Ta is canceled. At opponent's Ralltiir and Renegade Planet sites, your Rebels are deploy -2 and your Force drains may not be modified or canceled by opponent. Your game text at opponent's <>Swamp and <>Jungle is canceled. Your characters present at opponent's <>Forest are immune to attrition.");
         addIcons(Icon.REFLECTIONS_III);

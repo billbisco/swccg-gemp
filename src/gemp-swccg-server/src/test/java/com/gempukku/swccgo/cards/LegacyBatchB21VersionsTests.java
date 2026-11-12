@@ -91,12 +91,12 @@ public class LegacyBatchB21VersionsTests {
     }
 
     @Test
-    public void RebelAgentsBlasterRifleVersionsKeepTheirPrintedTitle() {
+    public void RebelAgentsBlasterRifleVersionsKeepTheirDisplayTitle() {
         for (String id : new String[]{"2281_47", "2281_1047"}) {
             SwccgCardBlueprint card = library.getSwccgoCardBlueprint(id);
-            assertEquals(id, "Rebel Agent's Blaster Rifle", card.getPrintedTitle());
+            assertEquals(id, "Rebel Agent's Blaster Rifle", card.getDisplayTitle());
             assertEquals(id, "Kyle Katarn's Blaster Rifle", card.getTitle());
         }
-        assertNull(library.getSwccgoCardBlueprint("1281_47").getPrintedTitle());
+        assertNull(library.getSwccgoCardBlueprint("1281_47").getDisplayTitle());
     }
 }

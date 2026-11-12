@@ -19,8 +19,8 @@ import static org.junit.Assert.assertTrue;
  * Legacy batch B34 (leftovers; ai-team-skills shared/gemp-legacy-cards/versions/BATCH-METHOD.md): Jedi Survivor (V).
  * The Virtual Block 5 release-sheet slip prints destiny 1; the PC card image and the Master List (2013-04-27) print
  * destiny 3 with the same game text. Bill: stat-only changes count as versions, so the destiny-1 original is its own
- * 22xx card (2250_41, an icon-loss alias of 1250_41 before this batch). Ice-Heart (2271_5) keeps its printed title
- * (LegacyVersionPrintedTitleTests). Images are pinned in cardImageUrlTests.js.
+ * 22xx card (2250_41, an icon-loss alias of 1250_41 before this batch). Ice-Heart (2271_5) keeps its display title
+ * (LegacyVersionDisplayTitleTests). Images are pinned in cardImageUrlTests.js.
  */
 public class LegacyBatchB34VersionsTests {
     private static SwccgCardBlueprintLibrary library;

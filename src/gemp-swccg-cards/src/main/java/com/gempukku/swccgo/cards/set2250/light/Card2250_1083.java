@@ -20,6 +20,6 @@ public class Card2250_1083 extends Card601_249 {
         setLegacyVersion(new LegacyVersion("1250_83", "PC-E1",
                 "PC website card list (by 2012-07-21)",
                 LocalDate.of(2012, 7, 21), LocalDate.of(2013, 2, 25)));
-        setPrintedTitle("Obi-Wan in Radiant VII"); // the card list prints a small i
+        setDisplayTitle("Obi-Wan in Radiant VII"); // the card list prints a small i
     }
 }

@@ -79,7 +79,7 @@ public class LegacyBatchC1VersionsTests {
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(v[0]);
             assertEquals(id, current.getTitle(), card.getTitle());
             assertEquals(id, current.getLore(), card.getLore());
-            assertNull(id, card.getPrintedTitle());
+            assertNull(id, card.getDisplayTitle());
         });
     }
 
@@ -87,9 +87,9 @@ public class LegacyBatchC1VersionsTests {
     public void ObiWanInRadiantViiCardListTitleIsDisplayOnly() {
         SwccgCardBlueprint current = library.getSwccgoCardBlueprint("1250_83");
         assertEquals("Obi-Wan In Radiant VII", current.getTitle());
-        assertNull(current.getPrintedTitle()); // R8 (2026-11-11): the current card is the Master List text; the card-list title is on 2250_1083
+        assertNull(current.getDisplayTitle()); // R8 (2026-11-11): the current card is the Master List text; the card-list title is on 2250_1083
         SwccgCardBlueprint original = library.getSwccgoCardBlueprint("2250_83");
         assertEquals("Obi-Wan In Radiant VII", original.getTitle());
-        assertNull(original.getPrintedTitle());
+        assertNull(original.getDisplayTitle());
     }
 }

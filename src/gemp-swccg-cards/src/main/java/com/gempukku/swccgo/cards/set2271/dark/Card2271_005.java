@@ -23,6 +23,6 @@ public class Card2271_005 extends Card601_189 {
         setLegacyVersion(new LegacyVersion("1271_5", "",
                 "Virtual Block 7.1 release sheet (2010-06-18), printed as Ice-Heart; renamed Ysanne Isard (PC card list by 2013-03-14, Virtual Cards Master List 2013-04-27)",
                 LocalDate.of(2010, 6, 18), LocalDate.of(2013, 3, 14)));
-        setPrintedTitle("Ice-Heart");
+        setDisplayTitle("Ice-Heart");
     }
 }

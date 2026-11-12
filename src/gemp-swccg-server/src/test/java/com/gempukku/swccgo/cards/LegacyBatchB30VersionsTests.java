@@ -22,14 +22,14 @@ import static org.junit.Assert.assertTrue;
 /**
  * Legacy batch B30 (title-change versions, Virtual Blocks 4-7; ai-team-skills shared/gemp-legacy-cards/versions/
  * BATCH-METHOD.md). Bill (2026-11-09): a title change is a version (Ice-Heart, Thrawn's Ysalamir, Infinity "and every
- * similar situation"). Each original-title printing is its own 22xx card with the printed title (display only), the
+ * similar situation"). Each original-title printing is its own 22xx card with the Display Title (display only), the
  * release-sheet text and lore, and the same title/persona for every rule; the current cards keep the Master List
- * title and text. Printed titles are also pinned in LegacyVersionPrintedTitleTests, images in cardImageUrlTests.js.
+ * title and text. Display titles are also pinned in LegacyVersionDisplayTitleTests, images in cardImageUrlTests.js.
  */
 public class LegacyBatchB30VersionsTests {
     private static SwccgCardBlueprintLibrary library;
 
-    /** version id -> {current id, printed title, printed-on date} */
+    /** version id -> {current id, display title, printed-on date} */
     private static final Map<String, Object[]> VERSIONS = new LinkedHashMap<>() {{
         put("2240_17", new Object[]{"1240_17", "Thrawn's Pet", LocalDate.of(2009, 12, 7)});
         put("2240_66", new Object[]{"1240_66", "Fallen Jedi", LocalDate.of(2009, 12, 7)});
@@ -56,7 +56,7 @@ public class LegacyBatchB30VersionsTests {
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(currentId);
             assertNotNull(id, version);
             assertNull(currentId, current.getLegacyVersion());
-            assertNull(currentId, current.getPrintedTitle());
+            assertNull(currentId, current.getDisplayTitle());
             LegacyVersion lv = version.getLegacyVersion();
             assertNotNull(id, lv);
             assertEquals(id, currentId, lv.currentPrintingId());
@@ -64,7 +64,7 @@ public class LegacyBatchB30VersionsTests {
             assertEquals(id, e.getValue()[2], lv.printedOn());
             // 2272_18: the rename took effect on 2013-01-29 (PC "New Persona Changes"); dated so in batch B39, before the rescinded 2013-04-13 errata (2272_1018)
             assertEquals(id, id.equals("2272_18") ? LocalDate.of(2013, 1, 29) : LocalDate.of(2013, 4, 27), lv.supersededOn());
-            assertEquals(id, e.getValue()[1], version.getPrintedTitle());
+            assertEquals(id, e.getValue()[1], version.getDisplayTitle());
             assertEquals(id, e.getValue()[1], GameUtils.getFullName(version));
             // same card for every rule
             assertEquals(id, current.getTitle(), version.getTitle());

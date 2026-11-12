@@ -91,7 +91,7 @@ public class LegacyBatchB17VersionsTests {
 
     @Test
     public void TitlesAndLoreAsPrinted() {
-        assertEquals("Krayt Dragon Howl & Armed And Dangerous", library.getSwccgoCardBlueprint("2261_93").getPrintedTitle());
+        assertEquals("Krayt Dragon Howl & Armed And Dangerous", library.getSwccgoCardBlueprint("2261_93").getDisplayTitle());
         assertEquals("\"I don't know how we're gonna get out of this one.\"", library.getSwccgoCardBlueprint("601_92").getLore());
         assertEquals(library.getSwccgoCardBlueprint("601_92").getLore(), library.getSwccgoCardBlueprint("2261_46").getLore());
         assertEquals(library.getSwccgoCardBlueprint("601_92").getLore(), library.getSwccgoCardBlueprint("2261_1046").getLore());

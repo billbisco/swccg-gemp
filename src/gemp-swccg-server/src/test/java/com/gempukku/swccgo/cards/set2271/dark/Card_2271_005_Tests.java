@@ -24,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Ice-Heart (2271_5): the Virtual Block 7.1 printing of Ysanne Isard (1271_5), printed as "•Ice-Heart" and renamed Ysanne
- * Isard on the Virtual Cards Master List (2013-04-27). Same game text; the version is the printed title. Bill
+ * Isard on the Virtual Cards Master List (2013-04-27). Same game text; the version is the display title. Bill
  * (2026-11-08): "Although they have different names; they are the same persona" - Ice-Heart, the Legacy Ysanne Isard
  * (601_189) and the Set 0 Ysanne Isard (200_92) all have the Ysanne Isard persona and are one unique card.
  */
@@ -51,7 +51,7 @@ public class Card_2271_005_Tests {
         var s = scenario();
         SwccgCardBlueprint version = s.GetDSCard("iceHeart").getBlueprint();
         SwccgCardBlueprint current = s.GetDSCard("legacy").getBlueprint();
-        assertEquals("Ice-Heart", version.getPrintedTitle());
+        assertEquals("Ice-Heart", version.getDisplayTitle());
         assertEquals("Ice-Heart", GameUtils.getFullName(version));
         assertEquals("Ysanne Isard", version.getTitle());
         assertEquals(current.getTitle(), version.getTitle());
@@ -67,7 +67,7 @@ public class Card_2271_005_Tests {
         assertEquals(LocalDate.of(2013, 3, 14), info.supersededOn());
         // The current card keeps the latest title, Ysanne Isard
         assertNull(current.getLegacyVersion());
-        assertNull(current.getPrintedTitle());
+        assertNull(current.getDisplayTitle());
         assertEquals("Ysanne Isard", GameUtils.getFullName(current));
     }
 

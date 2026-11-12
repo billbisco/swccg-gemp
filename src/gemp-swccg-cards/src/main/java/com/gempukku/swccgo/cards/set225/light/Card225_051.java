@@ -36,7 +36,7 @@ public class Card225_051 extends AbstractDefensiveShield {
         setGameText("Plays on table. Do They Have A Code Clearance? does not modify forfeit values. While you occupy a Renegade planet location, operatives are forfeit = 0, operatives do not add to Force drains and your Force drains may not be reduced.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
         setVirtualSuffix(true);
-        setBasePrintingTitle("Let's Keep A Little Optimism Here (Reflections III)");
+        setBasePrintingDisplayTitle("Let's Keep A Little Optimism Here (Reflections III)");
     }
 
     @Override

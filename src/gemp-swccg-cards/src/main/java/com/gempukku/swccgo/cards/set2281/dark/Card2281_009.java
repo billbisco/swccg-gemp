@@ -24,6 +24,6 @@ public class Card2281_009 extends Card601_013 {
         setLegacyVersion(new LegacyVersion("1281_9", "",
                 "Virtual Block 8.1 release sheet (2012-05-11), printed as The Mandalorian, Father Of Fett",
                 LocalDate.of(2012, 5, 11), LocalDate.of(2012, 7, 21)));
-        setPrintedTitle("The Mandalorian, Father Of Fett");
+        setDisplayTitle("The Mandalorian, Father Of Fett");
     }
 }

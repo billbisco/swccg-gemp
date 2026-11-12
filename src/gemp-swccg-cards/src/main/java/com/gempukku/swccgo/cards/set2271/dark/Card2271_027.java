@@ -113,7 +113,7 @@ public class Card2271_027 extends AbstractMission {
         if (GameConditions.isDuringYourPhase(game, playerId, Phase.MOVE)
                 && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.MOVE)
                 && GameConditions.canUseForce(game, playerId, 2)) {
-            // Ice-Heart: Ysanne Isard's printed title on the Virtual Block 7.1 sheet, i.e. the [Legacy Block 7] Ysanne Isard
+            // Ice-Heart: Ysanne Isard's display title on the Virtual Block 7.1 sheet, i.e. the [Legacy Block 7] Ysanne Isard
             // only (not other Ysanne Isard cards, which the Master List's "Ysanne Isard" also covers).
             Filter isbWithIsardHere = Filters.and(Filters.your(self), Filters.ISB_agent, Filters.here(self),
                     Filters.presentWith(self, Filters.and(Filters.title("Ysanne Isard"), Icon.LEGACY_BLOCK_7)));

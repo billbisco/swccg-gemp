@@ -678,7 +678,7 @@ public class SortAndFilterCards {
 
         // A pre-errata Legacy version printed under an older name is found by either name (docs/legacy-versions.md)
         return containsAllWords(GameUtils.getFullName(blueprint), words)
-                || (blueprint.getPrintedTitle() != null && containsAllWords(GameUtils.getRulesFullName(blueprint), words));
+                || (blueprint.getDisplayTitle() != null && containsAllWords(GameUtils.getRulesFullName(blueprint), words));
     }
 
     private static boolean containsAllWords(String name, List<String> words) {

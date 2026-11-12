@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set200.light;
 public class Card200_149 extends Card200_026 {
     public Card200_149() {
         super();
-        setBasePrintingTitle("Don't Do That Again (Tatooine)");
+        setBasePrintingDisplayTitle("Don't Do That Again (Tatooine)");
     }
 }

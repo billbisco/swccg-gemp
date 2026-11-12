@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
  * cardImageUrlTests.js.
  */
 public class LegacyBatchB39VersionsTests {
-    /** version id -> {current printing id, label, game text, printed on, superseded on, printed title or null} */
+    /** version id -> {current printing id, label, game text, printed on, superseded on, display title or null} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(
             Map.entry("2272_1018", new String[]{"1272_18", "PC-E2", "\"Occupy\" on Forest Depths is treated as \"control.\" Non-unique Wookiees here are Heroic. Once per game, when deployed, may 'roar' to take one card into hand from Used Pile (reshuffle) and/or stack a Wookiee (as if just lost) from hand on Grrrghrrrgh!.", "2013-04-13", "2013-04-15", null}),
             Map.entry("2250_68", new String[]{"1250_68", "PC-E1", "Stack a Wookiee (as if just lost) from your Lost Pile on Grrrghrrrgh!. OR Deploy a Wookiee stacked on Grrrghrrrgh! to Kashyyyk (as if from hand). OR Once per game, draw X cards from top of Reserve deck, where X = number of cards stacked on Grrrghrrrgh!.", "2013-04-13", "2013-04-15", null}),
@@ -57,7 +57,7 @@ public class LegacyBatchB39VersionsTests {
             assertEquals(id, v[2] != null ? v[2] : current.getGameText(), card.getGameText());
             assertEquals(id, LocalDate.parse(v[3]), version.printedOn());
             assertEquals(id, LocalDate.parse(v[4]), version.supersededOn());
-            assertEquals(id, v[5], card.getPrintedTitle());
+            assertEquals(id, v[5], card.getDisplayTitle());
             assertEquals(id, current.getTitle(), card.getTitle());
             assertEquals(id, current.getUniqueness(), card.getUniqueness());
         });
@@ -91,8 +91,8 @@ public class LegacyBatchB39VersionsTests {
     }
 
     @Test
-    public void BoostersStarDestroyerPrintedTitleFollowsTheSheetHeading() {
+    public void BoostersStarDestroyerDisplayTitleFollowsTheSheetHeading() {
         // Legacy T1 (Bill, 2026-11-10 late): the 8.1 sheet prints "Booster's Star Destroyer (V)", so the "(V)" is part of the title.
-        assertEquals("Booster's Star Destroyer (V)", library.getSwccgoCardBlueprint("2281_45").getPrintedTitle());
+        assertEquals("Booster's Star Destroyer (V)", library.getSwccgoCardBlueprint("2281_45").getDisplayTitle());
     }
 }

@@ -21,6 +21,6 @@ public class Card2250_083 extends Card601_249 {
         setGameText("May add 1 pilot. Permanent pilot is •Obi-Wan, who provides ability of 6. Opponent's starships may not 'cloak'. Your total ability here may not be reduced.");
         setLegacyVersion(new LegacyVersion("1250_83", "",
                 "Virtual Block 5 release sheet (2009-12-07), card #83; superseded by the PC card list text (by 2012-07-21)", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 7, 21)));
-        setPrintedTitle("Obi-Wan In Radiant VII"); // the current card shows the card-list title "Obi-Wan in Radiant VII"
+        setDisplayTitle("Obi-Wan In Radiant VII"); // the current card shows the card-list title "Obi-Wan in Radiant VII"
     }
 }

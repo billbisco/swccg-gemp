@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 
 /**
  * Batch B35 (Bill 2026-11-09): a card printed on two base cards is two cards. Each printing has its own blueprint id,
- * image and printed title; the second printing extends the first, so it plays the same and is the same card for
+ * image and display title; the second printing extends the first, so it plays the same and is the same card for
  * uniqueness and deck limits. The first printing keeps the id it already had, so existing decks don't change.
  */
 public class LegacyBatchB35TwoBasePrintingsTests {
@@ -91,7 +91,7 @@ public class LegacyBatchB35TwoBasePrintingsTests {
     }
 
     @Test
-    public void ModernPrintingsShowTheirPrintedTitlesWithTheirBase() {
+    public void ModernPrintingsShowTheirDisplayTitlesWithTheirBase() {
         for (String[] p : MODERN) {
             assertEquals(p[3], GameUtils.getFullName(library.getSwccgoCardBlueprint(p[0])));
             assertEquals(p[4], GameUtils.getFullName(library.getSwccgoCardBlueprint(p[1])));

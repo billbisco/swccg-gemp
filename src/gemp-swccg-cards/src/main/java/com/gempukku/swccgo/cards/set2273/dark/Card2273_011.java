@@ -45,7 +45,7 @@ public class Card2273_011 extends AbstractCharacterDevice {
         setAsLegacy(true);
     }
 
-    /** Cyborg Commander: Grievous, Hunter Of Jedi's printed title on the Virtual Block 7.1 sheet (that card only, not other Grievous cards). */
+    /** Cyborg Commander: Grievous, Hunter Of Jedi's display title on the Virtual Block 7.1 sheet (that card only, not other Grievous cards). */
     static final Filter CYBORG_COMMANDER = Filters.title("Grievous, Hunter Of Jedi");
 
     @Override

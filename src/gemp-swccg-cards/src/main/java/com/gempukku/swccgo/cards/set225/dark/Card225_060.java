@@ -11,6 +11,6 @@ package com.gempukku.swccgo.cards.set225.dark;
 public class Card225_060 extends Card225_003 {
     public Card225_060() {
         super();
-        setBasePrintingTitle("Come Here You Big Coward (Special Edition)");
+        setBasePrintingDisplayTitle("Come Here You Big Coward (Special Edition)");
     }
 }

@@ -31,7 +31,7 @@ import static org.junit.Assert.assertTrue;
  * cardImageUrlTests.js. 601_101 / 601_111 are the current classes of 1210_136 / 1281_32.
  */
 public class LegacyBatchB41VersionsTests {
-    /** version id -> {current printing id, label, printed on, superseded on, printed title or null} */
+    /** version id -> {current printing id, label, printed on, superseded on, display title or null} */
     private static final Map<String, String[]> VERSIONS = Map.ofEntries(
             Map.entry("2220_169", new String[]{"1220_169", "", "2009-12-07", "2011-08-26", null}),
             Map.entry("2220_2169", new String[]{"1220_169", "PC-E1", "2011-08-26", "2012-04-11", null}),
@@ -124,7 +124,7 @@ public class LegacyBatchB41VersionsTests {
             assertEquals(id, v[1], version.label());
             assertEquals(id, LocalDate.parse(v[2]), version.printedOn());
             assertEquals(id, LocalDate.parse(v[3]), version.supersededOn());
-            assertEquals(id, v[4], card.getPrintedTitle());
+            assertEquals(id, v[4], card.getDisplayTitle());
             SwccgCardBlueprint current = library.getSwccgoCardBlueprint(v[0]);
             assertNull(v[0], current.getLegacyVersion());
             assertEquals(id, current.getTitle(), card.getTitle());
