@@ -6623,6 +6623,10 @@ const fixedImages = {
 // Text states of one printing (docs/legacy-versions.md, "Text states"): 2_45o = Blast The Door, Kid! as printed (Decipher archive scan); 2_45d = the Decipher Glossary 2.0 text (Players Committee 2007 card-gallery image, which prints that wording).
 "2_45o":"https://wiki.swccg.com/images/c/c7/ANH-L-blastthedoorkid-decipher-archive.gif",
 "2_45d":"https://wiki.swccg.com/images/d/d9/ANH-L-blastthedoorkid-pc2007.gif",
+// Text states, Dagobah (printed faces, Decipher archive scans): 4_94o Comm Chief, 4_95o Commander Brandei, 4_97o Commander Nemet ("any starship he pilots" before Glossary 2.0).
+"4_94o":"https://wiki.swccg.com/images/a/a8/Dagobah-D-commchief-decipher-archive.gif",
+"4_95o":"https://wiki.swccg.com/images/7/74/Dagobah-D-commanderbrandei-decipher-archive.gif",
+"4_97o":"https://wiki.swccg.com/images/5/5c/Dagobah-D-commandernemet-decipher-archive.gif",
 // Batch B36 (source research R2-R4): Imperial Occupation (V) PC-E1 (CBT errata of 2012-09-21, replaced 2012-11-19) shows the E-marked PC card image of the 0 side, which prints that text; its 7 side shows the PC card image of Imperial Control (the 2012-09-21 back text, unchanged since). 2220_72_BACK (original back) now shows its release-sheet slip ("At marker sites, AT-ATs move for free"), edited in place below.
 "2220_1072":"https://wiki.swccg.com/images/9/93/VB2-D-imperialoccupation-pre.gif",
 "2220_1072_BACK":"https://res.starwarsccg.org/cards/legacy/VirtualBlock2-Dark/large/imperialcontrol.gif",

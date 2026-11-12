@@ -3,3 +3,6 @@
 # The card pool (deck builder, Anything Goes) lists exactly these ids; TextStatesTests checks every class is listed.
 2_45o
 2_45d
+4_94o
+4_95o
+4_97o
