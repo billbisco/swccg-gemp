@@ -225,11 +225,19 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
             if (collectionType == null || collectionType.isEmpty())
                 collectionType = "default";
 
+            // #221: the join screen's deck editor asks for "save as new" (never overwrite) or an overwrite checked
+            // against the revision it started from; other callers send neither and save as before.
+            boolean createOnly = "true".equals(getFormParameterSafely(postDecoder, "createOnly"));
+            String expectedRevision = getFormParameterSafely(postDecoder, "expectedRevision");
+
             Player resourceOwner = getResourceOwnerSafely(request, participantId);
 
             SwccgDeck swccgDeck = _swccgoServer.createDeckWithValidate(deckName, contents);
             if (swccgDeck == null)
                 throw new HttpProcessingException(400);
+
+            if (createOnly || (expectedRevision != null && !expectedRevision.isEmpty()))
+                DeckSaveGuard.check(_deckDao.getDeckForPlayer(resourceOwner, deckName), createOnly, expectedRevision);
 
             // #145: the Starting Effects' 10 / 15 cap on Defensive Shields outside the deck is a format rule, checked
             // when the deck is used (every format still enforces it). Saving no longer refuses an over-cap deck, so it
@@ -243,6 +251,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
 
             Document doc = documentBuilder.newDocument();
             Element deckElem = doc.createElement("ok");
+            deckElem.setAttribute("revision", DeckSaveGuard.revisionOf(_deckDao.getDeckForPlayer(resourceOwner, deckName)));
             doc.appendChild(deckElem);
 
             responseWriter.writeXmlResponse(doc);
@@ -592,6 +601,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
 
         Document doc = documentBuilder.newDocument();
         Element deckElem = doc.createElement("deck");
+        deckElem.setAttribute("revision", DeckSaveGuard.revisionOf(deck));
         doc.appendChild(deckElem);
 
         for (CardItem cardItem : _sortAndFilterCards.process("sort:cardCategory,name", createCardItems(deck.getCards()), _library, _formatLibrary, null)) {

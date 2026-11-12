@@ -1250,6 +1250,17 @@ var GempSwccgHallUI = Class.extend({
         this.joinLibraryDeckRow.append("<span class='play-form-label'>Library Deck</span>");
         this.joinLibraryDeckRow.append(this.joinLibraryDeckSelect);
         this.joinSingleDeckBlock.append(this.joinLibraryDeckRow);
+
+        // work#221: list the player's decks that fail this format too, so one can be picked, refused and fixed here.
+        this.joinShowAllDecksBox = $("<input type='checkbox'/>");
+        var showAllRow = $("<label class='play-form-row join-show-all-decks'></label>");
+        showAllRow.append(this.joinShowAllDecksBox);
+        showAllRow.append(" Also list my decks not legal here (to fix them)");
+        this.joinShowAllDecksBox.change(function () {
+            if (that.joinPending != null)
+                that.loadJoinDecks(that.joinPending.formatCode, that.joinPending.collectionCode, that.joinPending.requiredSide);
+        });
+        this.joinSingleDeckBlock.append(showAllRow);
         form.append(this.joinSingleDeckBlock);
 
         this.joinDualDeckBlock = $("<div class='join-dual-deck' style='display:none'></div>");
@@ -1373,6 +1384,9 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         this.joinPending = pending;
+        this.joinPreferDeck = null;
+        if (this.joinShowAllDecksBox != null)
+            this.joinShowAllDecksBox.prop("checked", false);
         this.joinResultDiv.hide().empty();
         this.setJoinSubmitEnabled(false);
         this.setJoinLibraryVisible(pending.kind !== "lockDecks");
@@ -1463,6 +1477,8 @@ var GempSwccgHallUI = Class.extend({
 
     loadJoinDecks:function(format, collection, requiredSide) {
         var that = this;
+        // work#221: no format filter on the player's own decks when asked to list ones that are not legal here
+        var playerFormat = (this.joinShowAllDecksBox != null && this.joinShowAllDecksBox.is(":checked")) ? null : format;
         var gen = (this.joinDeckLoadGen || 0) + 1;
         this.joinDeckLoadGen = gen;
         var errorMap = {
@@ -1488,7 +1504,7 @@ var GempSwccgHallUI = Class.extend({
                         return;
                     that.applyJoinDeckXml(xml, xml2, requiredSide, true);
                 }, errorMap, format, collection);
-            }, errorMap, format, collection);
+            }, errorMap, playerFormat, collection);
         };
         this.resolveJoinLibraryVisible(format, fetchDecks);
     },
@@ -1552,7 +1568,97 @@ var GempSwccgHallUI = Class.extend({
         } else {
             this.setJoinSubmitEnabled(true);
         }
+        this.applyJoinPreferredDeck(playerSelect, libSelect);
         this.refreshExclusiveDeckPairHighlight(playerSelect, libSelect);
+    },
+
+    /*
+     * work#221: after the join screen's deck editor saved a deck, select it (listing it even when it is still not legal
+     * here, so the table can say why) and offer Retry join. The join itself rechecks the saved deck on the server.
+     */
+    applyJoinPreferredDeck:function(playerSelect, libSelect) {
+        var name = this.joinPreferDeck;
+        if (name == null)
+            return;
+        this.joinPreferDeck = null;
+        var exists = false;
+        playerSelect.find("option").each(function () {
+            if ($(this).attr("value") === name)
+                exists = true;
+        });
+        if (!exists) {
+            if (playerSelect.find("option").length === 1 && playerSelect.find("option").eq(0).attr("value") === "")
+                playerSelect.empty();
+            var opt = $("<option></option>").attr("value", name).attr("data-sample-deck", "false").text(name);
+            if (this.joinPreferDeckSide)
+                opt.attr("data-side", this.joinPreferDeckSide);
+            playerSelect.append(opt);
+        }
+        playerSelect.val(name);
+        if (libSelect != null)
+            libSelect.val("");
+        this.setJoinSubmitEnabled(true);
+        var button = $(this.joinSubmitButton);
+        if (button.hasClass("ui-button"))
+            button.button("option", "label", "Retry join");
+        else
+            button.text("Retry join");
+        this.joinResultDiv.text("Saved \"" + name + "\". Press Retry join: the table checks the saved deck against its current rules.").show();
+    },
+
+    showJoinDeckFix:function(message, deckName, deckSide) {
+        var that = this;
+        this.joinResultDiv.empty();
+        this.joinResultDiv.append($("<div></div>").text(message));
+        var edit = $("<button type='button' class='join-edit-deck-button'>Edit deck</button>");
+        edit.button().click(function () {
+            that.openJoinDeckEditor(deckName, deckSide, message);
+        });
+        this.joinResultDiv.append(edit);
+        this.joinResultDiv.show();
+    },
+
+    /** Opens the Deckbuilder for this deck and this table's rules in a frame over the join screen (same tab). */
+    openJoinDeckEditor:function(deckName, deckSide, reason) {
+        var that = this;
+        var pending = this.joinPending;
+        if (pending == null)
+            return;
+        if (this.joinEditorOverlay == null) {
+            this.joinEditorOverlay = $("<div class='join-deck-editor' style='display:none;position:fixed;left:0;top:0;right:0;bottom:0;z-index:20000;background:#000'></div>");
+            $("body").append(this.joinEditorOverlay);
+            window.addEventListener("message", function (event) {
+                if (event.origin !== window.location.origin || that.joinEditorFrame == null
+                        || event.source !== that.joinEditorFrame[0].contentWindow)
+                    return;
+                var data = event.data || {};
+                if (data.type !== "gemp-join-fix")
+                    return;
+                that.closeJoinDeckEditor();
+                if (data.action === "saved" && that.joinPending != null) {
+                    that.joinPreferDeck = data.deckName;
+                    that.joinPreferDeckSide = that.joinEditorDeckSide;
+                    that.loadJoinDecks(that.joinPending.formatCode, that.joinPending.collectionCode, that.joinPending.requiredSide);
+                }
+            });
+        }
+        this.joinEditorDeckSide = deckSide || null;
+        var url = "deckBuild.html?joinFix=1"
+            + "&deckName=" + encodeURIComponent(deckName)
+            + "&format=" + encodeURIComponent(pending.formatCode || "")
+            + "&formatName=" + encodeURIComponent(pending.formatName || "")
+            + "&reason=" + encodeURIComponent(reason || "");
+        var participantId = getUrlParam("participantId");
+        if (participantId)
+            url += "&participantId=" + encodeURIComponent(participantId);
+        this.joinEditorFrame = $("<iframe title='Edit deck' style='width:100%;height:100%;border:0'></iframe>").attr("src", url);
+        this.joinEditorOverlay.empty().append(this.joinEditorFrame).show();
+    },
+
+    closeJoinDeckEditor:function() {
+        if (this.joinEditorOverlay != null)
+            this.joinEditorOverlay.hide().empty();
+        this.joinEditorFrame = null;
     },
 
     closeJoinOverlay:function() {
@@ -1631,7 +1737,10 @@ var GempSwccgHallUI = Class.extend({
                 var root = xml.documentElement;
                 if (root != null && root.tagName == "error") {
                     var message = root.getAttribute("message");
-                    that.showJoinError(message != null ? message : "Unable to join.");
+                    if (sampleDeck !== "true" && DeckDraftHistory.isDeckJoinFailure(message))
+                        that.showJoinDeckFix(message, deck, picked.side);
+                    else
+                        that.showJoinError(message != null ? message : "Unable to join.");
                     that.chat.appendMessage(message, "warningMessage");
                     return;
                 }
