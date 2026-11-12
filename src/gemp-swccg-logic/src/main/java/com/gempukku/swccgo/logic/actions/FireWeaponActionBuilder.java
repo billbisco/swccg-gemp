@@ -22,6 +22,7 @@ import com.gempukku.swccgo.logic.conditions.TrueCondition;
 import com.gempukku.swccgo.logic.decisions.DecisionResultInvalidException;
 import com.gempukku.swccgo.logic.decisions.IntegerAwaitingDecision;
 import com.gempukku.swccgo.logic.decisions.MultipleChoiceAwaitingDecision;
+import com.gempukku.swccgo.logic.decisions.YesNoDecision;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfBattleModifierEffect;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.logic.effects.CancelGameTextEffect;
@@ -135,6 +136,7 @@ public class FireWeaponActionBuilder {
     private boolean _characterDefenseValueIsAbility;
     private boolean _ionHitLosesAllWeaponsAboard;
     private boolean _hitsCardsAtSiteNotOnlyPresent;
+    private boolean _captureIsTargetOwnersChoice;
 
     private Map<TargetingReason, Filterable> _targetFiltersMap = new HashMap<TargetingReason, Filterable>();
 
@@ -614,6 +616,17 @@ public class FireWeaponActionBuilder {
      */
     public FireWeaponActionBuilder hitsCardsAtSiteNotOnlyPresent() {
         _hitsCardsAtSiteNotOnlyPresent = true;
+        return this;
+    }
+
+    /**
+     * Printed Zuckuss' Snare Rifle text: "Character may be immediately captured". When the capture destiny succeeds, the
+     * owner of the target character chooses whether it is captured (Bill 2026-11-12, ai-team-skills RULINGS.md
+     * "printed-text readings" 5), instead of it being captured.
+     * @return this builder
+     */
+    public FireWeaponActionBuilder captureIsTargetOwnersChoice() {
+        _captureIsTargetOwnersChoice = true;
         return this;
     }
 
@@ -5099,8 +5112,27 @@ public class FireWeaponActionBuilder {
                                                                 || (_targetedAsCharacter != null && _targetedAsCharacter.accepts(game, cardFiredAt))) {
                                                             if ((totalDestiny - 1) > valueToCompare) {
                                                                 gameState.sendMessage("Result: Succeeded");
-                                                                action.appendEffect(
-                                                                        new CaptureCharacterOnTableEffect(action, cardFiredAt, action.getCardFiringWeapon()));
+                                                                if (_captureIsTargetOwnersChoice) {
+                                                                    final String targetOwner = cardFiredAt.getOwner();
+                                                                    action.appendEffect(
+                                                                            new PlayoutDecisionEffect(action, targetOwner,
+                                                                                    new YesNoDecision("Do you want " + GameUtils.getCardLink(cardFiredAt) + " to be captured?") {
+                                                                                        @Override
+                                                                                        protected void yes() {
+                                                                                            _game.getGameState().sendMessage(targetOwner + " chooses to have " + GameUtils.getCardLink(cardFiredAt) + " captured");
+                                                                                            action.appendEffect(
+                                                                                                    new CaptureCharacterOnTableEffect(action, cardFiredAt, action.getCardFiringWeapon()));
+                                                                                        }
+                                                                                        @Override
+                                                                                        protected void no() {
+                                                                                            _game.getGameState().sendMessage(targetOwner + " chooses not to have " + GameUtils.getCardLink(cardFiredAt) + " captured");
+                                                                                        }
+                                                                                    }));
+                                                                }
+                                                                else {
+                                                                    action.appendEffect(
+                                                                            new CaptureCharacterOnTableEffect(action, cardFiredAt, action.getCardFiringWeapon()));
+                                                                }
                                                             }
                                                             else {
                                                                 gameState.sendMessage("Result: Failed");
@@ -5116,6 +5148,10 @@ public class FireWeaponActionBuilder {
                                                             else {
                                                                 gameState.sendMessage("Result: Failed");
                                                             }
+                                                        }
+                                                        else {
+                                                            // Printed text state (Card4_180o): may target any card; only a character or creature is affected
+                                                            gameState.sendMessage("Result: No effect (target is not a character or creature)");
                                                         }
                                                     }
                                                 }

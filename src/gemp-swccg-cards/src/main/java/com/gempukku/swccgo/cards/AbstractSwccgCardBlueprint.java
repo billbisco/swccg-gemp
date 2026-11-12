@@ -155,6 +155,28 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
         return _uniqueness;
     }
 
+    /**
+     * Changes the uniqueness set by the constructor. For a text state printed with another uniqueness than its errata
+     * (Bill 2026-11-12, ai-team-skills RULINGS.md "printed-text readings" 6): e.g. Do, Or Do Not was printed non-unique
+     * and is unique (•) by errata, so the printed state 4_21o is non-unique. Everything else about the card still
+     * matches the bare card (docs/legacy-versions.md, "Text states").
+     * @param uniqueness the uniqueness
+     */
+    protected final void setUniqueness(Uniqueness uniqueness) {
+        if (_titleIdentityUniqueness == null) {
+            _titleIdentityUniqueness = _uniqueness;
+        }
+        _uniqueness = uniqueness;
+    }
+
+    /**
+     * The uniqueness of the bare card's title, kept by {@link #setUniqueness(Uniqueness)} so the text state's title
+     * components stay the bare card's: the printed and errata copies have "the same card title for all game play
+     * purposes (e.g. uniqueness rules, Grimtaash, etc.)" (SWCCG 2023 Advanced Rulebook, "Cards"). The uniqueness the
+     * printed card plays with is {@link #getUniqueness()} (CardTraits.getComponentUniqueness).
+     */
+    private Uniqueness _titleIdentityUniqueness;
+
     @Override
     public String getTitle() {
         return _title;
@@ -181,7 +203,14 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
 
     @Override
     public List<TitleComponent> getTitleComponents() {
-        return _titleComponents != null ? _titleComponents : SwccgCardBlueprint.super.getTitleComponents();
+        if (_titleComponents != null) {
+            return _titleComponents;
+        }
+        if (_titleIdentityUniqueness != null) {
+            // A text state printed with another uniqueness (setUniqueness): its title is still the bare card's title
+            return getTitles().stream().map(title -> new TitleComponent(title, _titleIdentityUniqueness)).toList();
+        }
+        return SwccgCardBlueprint.super.getTitleComponents();
     }
 
     /** Sets canonical component names and their independent printed restriction symbols. */
@@ -3070,7 +3099,8 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
     /**
      * Marks this blueprint as an older text state of a printing (docs/legacy-versions.md, "Text states"): e.g.
      * 2_45o (as printed) or 2_45d (Decipher's last word). Its title, uniqueness and persona must match the card at
-     * {@code textState.currentId()}.
+     * {@code textState.currentId()}, except the uniqueness of a card whose errata only made it unique (see
+     * {@link #setUniqueness(Uniqueness)}; its title components keep the bare card's).
      * @param textState the text-state information
      */
     protected void setTextState(com.gempukku.swccgo.common.TextState textState) {

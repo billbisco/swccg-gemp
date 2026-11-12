@@ -37,10 +37,14 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Used Or Lost
  * Title: Innocent Scoundrel
+ * <p>
+ * Unique (•) by errata: Decipher Glossary Supplement (29 January 2002, "Erratum: This card is now unique (•)") and the
+ * SWCCG 2023 Advanced Rulebook Appendix A (p. 117, "This interrupt is now unique (•)"). The printed card, non-unique,
+ * is the text state 5_53o.
  */
 public class Card5_053 extends AbstractUsedOrLostInterrupt {
     public Card5_053() {
-        super(Side.LIGHT, 3, Title.Innocent_Scoundrel, Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.U);
+        super(Side.LIGHT, 3, Title.Innocent_Scoundrel, Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.U);
         setLore("'Well, that was a long time ago. I'm sure he's forgotten about that.' Since he needed Calrissian's help, Han regretted having introduced Lando to the Tonnika sisters.");
         setGameText("USED: If your gambler was just targeted by a weapon, opponent must choose to select a new target or lose 2 Force. LOST: Cancel any Effect (except those immune to Alter) deployed on Han or your Lando.");
         addIcons(Icon.CLOUD_CITY);

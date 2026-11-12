@@ -216,7 +216,8 @@ public class GameUtils {
         String fullTitle = blueprint.getDisplayTitle() != null
                 ? (blueprint.getUniqueness() != null ? blueprint.getUniqueness().getHumanReadable() : "") + blueprint.getDisplayTitle()
                 : blueprint.getTitleComponents().stream()
-                .map(component -> component.uniqueness().getHumanReadable() + component.name())
+                .map(component -> ((blueprint.getTextState() != null && blueprint.getUniqueness() != null && blueprint.getTitleComponents().size() == 1)
+                        ? blueprint.getUniqueness() : component.uniqueness()).getHumanReadable() + component.name())
                 .collect(java.util.stream.Collectors.joining(" & "));
         fullTitle += getTitleSuffix(blueprint, blueprint.getDisplayTitle() != null);
 

@@ -485,6 +485,12 @@ public interface CardTraits extends BaseQuery, Limits, Piloting, Weapons {
     default Uniqueness getComponentUniqueness(GameState gameState, PhysicalCard card, TitleComponent component) {
         if (!getModifiersAffectingCard(gameState, ModifierType.NOT_UNIQUE, card).isEmpty()) return null;
         if (!getModifiersAffectingCard(gameState, ModifierType.UNIQUE, card).isEmpty()) return Uniqueness.UNIQUE;
+        // A text state printed with another uniqueness than its errata (e.g. 4_21o, non-unique; docs/legacy-versions.md
+        // "Printed readings ruled by Bill"): its title component is the bare card's, its uniqueness is the printed one.
+        if (card.getBlueprint().getTextState() != null && card.getBlueprint().getTitleComponents().size() == 1
+                && card.getBlueprint().getUniqueness() != null && card.getBlueprint().getUniqueness() != component.uniqueness()) {
+            return card.getBlueprint().getUniqueness();
+        }
         // Null and UNRESTRICTED have the same printed symbol, but legacy predicates distinguish them.
         return component.uniqueness() == Uniqueness.UNRESTRICTED && card.getBlueprint().getUniqueness() == null
                 ? null : component.uniqueness();
