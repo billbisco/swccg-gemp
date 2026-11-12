@@ -474,6 +474,15 @@ public abstract class AbstractSwccgCardBlueprint implements SwccgCardBlueprint {
         _immuneToCardTitles.add(title);
     }
 
+    /**
+     * Removes a card title that this card is immune to (an older text state printed without that immunity, e.g. a
+     * card whose "(Immune to Alter.)" came with errata).
+     * @param title the card title
+     */
+    protected final void removeImmuneToCardTitle(String title) {
+        _immuneToCardTitles.remove(title);
+    }
+
     @Override
     public boolean isImmuneToOwnersCardTitle(String title) {
         return isImmuneToCardTitle(title) || _immuneToOwnersCardTitles.contains(title);

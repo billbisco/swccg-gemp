@@ -47,7 +47,8 @@ public class Card_2_ANH_TextStates_Tests {
         assertEquals(bare.getRarity(), state.getRarity());
         assertEquals(bare.getLore(), state.getLore());
         for (Icon icon : Icon.values())
-            assertEquals(icon.name(), bare.getIconCount(icon), state.getIconCount(icon));
+            if (icon != Icon.GRABBER)
+                assertEquals(icon.name(), bare.getIconCount(icon), state.getIconCount(icon));
     }
 
     @Test
@@ -93,6 +94,8 @@ public class Card_2_ANH_TextStates_Tests {
         assertEquals(LocalDate.of(1997, 7, 1), state.printedOn());
         assertNull(bare.getTextState());
         assertNotEquals(printed.getGameText(), bare.getGameText());
+        assertEquals(0, printed.getIconCount(Icon.GRABBER));
+        assertEquals(1, bare.getIconCount(Icon.GRABBER));
     }
 
     @Test
