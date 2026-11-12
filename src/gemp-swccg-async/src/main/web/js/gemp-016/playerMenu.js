@@ -94,7 +94,7 @@ var PlayerMenu = (function () {
         var status = $("<span class='player-menu-copied' role='status' aria-live='polite'></span>");
         var button = $("<button type='button' class='player-menu-copy'>Copy</button>")
             .attr("aria-label", "Copy Player ID " + info.playerId)
-            .on("click", function (e) {
+            .bind("click", function (e) {
                 e.stopPropagation();
                 copyText(String(info.playerId), function (ok) {
                     if (ok) {
@@ -128,7 +128,7 @@ var PlayerMenu = (function () {
                 var item = a.href
                     ? $("<a class='player-menu-action'></a>").attr("href", a.href).text(a.label)
                     : $("<button type='button' class='player-menu-action'></button>").text(a.label);
-                item.on("click", function (e) {
+                item.bind("click", function (e) {
                     if (a.run) {
                         e.preventDefault();
                         a.run(info);
@@ -139,7 +139,7 @@ var PlayerMenu = (function () {
             });
             menu.append(list);
         }
-        menu.on("click mousedown", function (e) { e.stopPropagation(); });
+        menu.bind("click mousedown", function (e) { e.stopPropagation(); });
         $("body").append(menu);
         var r = anchor.getBoundingClientRect();
         var left = Math.max(4, Math.min(r.left + window.pageXOffset, window.pageXOffset + document.documentElement.clientWidth - menu.outerWidth() - 4));
@@ -156,12 +156,12 @@ var PlayerMenu = (function () {
     /** Makes el (a name) open the menu on click, Enter or Space. getInfo() and getActions() are read on each open. */
     function bind(el, getInfo, getActions) {
         $(el).addClass("player-menu-target").attr({role: "button", tabindex: "0", "aria-haspopup": "dialog", "aria-expanded": "false"})
-            .on("click", function (e) {
+            .bind("click", function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 open(this, getInfo(), getActions ? getActions() : []);
             })
-            .on("keydown", function (e) {
+            .bind("keydown", function (e) {
                 if (e.key === "Enter" || e.key === " " || e.keyCode === 13 || e.keyCode === 32) {
                     e.preventDefault();
                     e.stopPropagation();
@@ -172,12 +172,12 @@ var PlayerMenu = (function () {
     }
 
     if (typeof document !== "undefined" && window.jQuery) {
-        $(document).on("mousedown", function (e) {
+        $(document).bind("mousedown", function (e) {
             if (anchorEl && (anchorEl === e.target || $.contains(anchorEl, e.target)))
                 return;   // the name's own click toggles the menu
             close();
         });
-        $(document).on("keydown", function (e) {
+        $(document).bind("keydown", function (e) {
             if (menu && (e.key === "Escape" || e.keyCode === 27)) {
                 var a = anchorEl;
                 close();

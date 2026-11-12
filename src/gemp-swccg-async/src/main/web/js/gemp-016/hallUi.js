@@ -199,7 +199,6 @@ var HallChatResizer = Class.extend({
     init: function (chat) {
         var that = this;
         this.chat = chat;
-        this.showGuestCarryOverNotice();
         if (!chat.length)
             return;
         this.handle = $("<div class='ui-resizable-handle ui-resizable-n hall-chat-resizer' role='separator' tabindex='0'></div>")
@@ -454,6 +453,7 @@ var GempSwccgHallUI = Class.extend({
             }
         });
         this.chat = chat;
+        this.showGuestCarryOverNotice();
         this.readyChecks = {};
         this.readyModals = {};
         this.offeredGames = {};
