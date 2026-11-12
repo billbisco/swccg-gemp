@@ -34,12 +34,14 @@ import static com.gempukku.swccgo.filters.Filters.Star_Destroyer;
  * Set: Second Anthology
  * Type: Effect
  * Title: Flagship Operations
+ * <p>
+ * Text as printed on the white-border Second Anthology preview card (July 1998), which differs from the later Death Star II printing (Bill 2026-11-12; wiki: Second Anthology).
  */
 public class Card107_004 extends AbstractNormalEffect {
     public Card107_004() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.Flagship_Operations, Uniqueness.UNIQUE, ExpansionSet.SECOND_ANTHOLOGY, Rarity.PV);
         setLore("'There's too many of them!'");
-        setGameText("Deploy on any Star Destroyer if at least 5 Executor sites on table. Your TIEs are deploy -1, forfeit +2 and destiny +2. At systems where you have a TIE, your Imperial capital starships are deploy -3 and your battle destiny draws are +1 each. (If on Executor, immune to Alter.)");
+        setGameText("Deploy on a Star Destroyer if at least five Executor sites on table. Your TIEs are deploy -1, forfeit +2 and destiny +2. At systems where you have a TIE, your Imperial capital starships are deploy -3 and your battle destiny draws are +1 each. (If on Executor, immune to Alter.)");
         addIcons(Icon.DEATH_STAR_II);
     }
 

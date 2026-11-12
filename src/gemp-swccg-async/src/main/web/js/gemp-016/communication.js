@@ -578,17 +578,24 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    saveDeck:function (deckName, contents, callback, errorMap, collectionType) {
+    // options (work#221): {createOnly:true} never replaces an existing deck; {expectedRevision:r} refuses (409) an
+    // overwrite when the stored deck changed since revision r was loaded.
+    saveDeck:function (deckName, contents, callback, errorMap, collectionType, options) {
+        var data = {
+            participantId:getUrlParam("participantId"),
+            deckName:deckName,
+            deckContents:contents,
+            collectionType:collectionType || "default"};
+        if (options != null && options.createOnly)
+            data.createOnly = "true";
+        if (options != null && options.expectedRevision)
+            data.expectedRevision = options.expectedRevision;
         $.ajax({
             type:"POST",
             url:this.url + "/deck",
             cache:false,
             async:false,
-            data:{
-                participantId:getUrlParam("participantId"),
-                deckName:deckName,
-                deckContents:contents,
-                collectionType:collectionType || "default"},
+            data:data,
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"

@@ -105,6 +105,13 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
         // a table option is not part of the pool: an allow does not lift it
         if (_rules.isNoShields() && blueprint.hasIcon(Icon.DEFENSIVE_SHIELD))
             throw new DeckInvalidException("Defensive Shields are not permitted at this table (Shields: none).");
+        if (_rules.isFourTwenty()) {
+            // "Deck: 420" (#224) is a table option too: an allow does not lift it
+            String violation = FourTwenty.violation(blueprint);
+            if (violation != null)
+                throw new DeckInvalidException("<span class=\"validate-invalid-card\">" + fullName
+                        + "</span> not permitted at this table (Deck: 420): " + violation + ".");
+        }
         if (anyPrintingIn(blueprintId, _bannedPrintings))
             throw new DeckInvalidException("Deck contains <span class=\"validate-invalid-card\">" + fullName
                     + "</span> (" + blueprintId + "), banned in this tournament's custom card pool.");
