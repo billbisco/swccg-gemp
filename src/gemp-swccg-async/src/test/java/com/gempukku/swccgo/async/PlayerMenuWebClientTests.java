@@ -67,6 +67,25 @@ public class PlayerMenuWebClientTests {
         assertEquals(0, p.exitValue(), out);
     }
 
+    @Test
+    public void PlayerMenuWorksOnJquery16Pages() throws IOException {
+        //test5: game.html, index.html and the other old pages still run jQuery 1.6.2, which has no .on()/.off()
+        String menu = read("js/gemp-016/playerMenu.js");
+        assertFalse(menu.matches("(?s).*\\.(on|off)\\(.*"), "playerMenu.js must use .bind()/.unbind(), not .on()/.off()");
+        assertTrue(read("game.html").contains("jquery-1.6.2.js"), "if game.html moves off jQuery 1.6.2 this check can go");
+    }
+
+    @Test
+    public void HallShowsTheCarryOverNoticeFromTheHallUi() throws IOException {
+        //test6: the notice is shown by GempSwccgHallUI's init (HallChatResizer has no such method)
+        String hall = read("js/gemp-016/hallUi.js");
+        int hallUi = hall.indexOf("var GempSwccgHallUI = Class.extend(");
+        int call = hall.indexOf("this.showGuestCarryOverNotice();");
+        assertTrue(hallUi > 0 && call > hallUi, "showGuestCarryOverNotice is called inside GempSwccgHallUI");
+        assertEquals(call, hall.lastIndexOf("this.showGuestCarryOverNotice();"), "called once");
+        assertTrue(hall.indexOf("showGuestCarryOverNotice: function") > hallUi);
+    }
+
     private static boolean nodeAvailable() {
         try {
             Process p = new ProcessBuilder("node", "--version").redirectErrorStream(true).start();
