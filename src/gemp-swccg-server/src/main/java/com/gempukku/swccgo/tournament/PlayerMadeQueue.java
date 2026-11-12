@@ -96,8 +96,15 @@ public class PlayerMadeQueue extends AbstractTournamentQueue implements Tourname
 
     private com.gempukku.swccgo.game.setup.GameSetup _gameSetup;
 
-    /** The options chosen when the event was created (#119); null keeps what the format code implies. */
+    /**
+     * The options chosen when the event was created (#119); null keeps what the format code implies. Sets the event's setup when it is created. The setup, custom card pool included (#222), is locked from then on:
+     * the tournament is open (Bill, 8 Nov 2026), so every player and round shares this one snapshot.
+     *
+     * @throws IllegalStateException when a different setup is set on an event that is already open
+     */
     public void setGameSetup(com.gempukku.swccgo.game.setup.GameSetup gameSetup) {
+        if (_gameSetup != null && !_gameSetup.equals(gameSetup))
+            throw new IllegalStateException("This tournament's rules are locked: it is already open");
         _gameSetup = gameSetup;
     }
 

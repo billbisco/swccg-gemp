@@ -4,6 +4,7 @@ import com.gempukku.swccgo.game.DeckSize;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgFormat;
 import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.CardPool;
 import com.gempukku.swccgo.game.setup.GameSetup;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -14,7 +15,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+import com.gempukku.swccgo.game.SwccgCardBlueprint;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -302,7 +307,184 @@ public class SwccgoFormatLibrary {
                 "true".equals(setup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, format)),
                 intOption(setup, GameOptions.STARTING_EFFECTS, format),
                 "true".equals(setup.get(GameOptions.FOUR_TWENTY, format)));
-        return rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
+        SwccgFormat withRules = rules.isNone() ? sized : new DeckRulesSwccgFormat(sized, rules, _cardLibrary);
+        // a tournament's custom card pool (#222): the event's sets and card exceptions on top of the rest
+        CardPool pool = setup.getPool();
+        return pool.isNone() ? withRules : new CustomPoolSwccgFormat(withRules, pool, _cardLibrary);
+    }
+
+    /**
+     * Checks a custom card pool (#222) before an event is created with it: every set and card must be one GEMP
+     * supports, playtesting cards only in a playtesting format, and no card may be both allowed and banned (on any
+     * printing). Reports every problem at once.
+     *
+     * @throws IllegalArgumentException listing the problems, for the organizer
+     */
+    public void checkPool(SwccgFormat format, CardPool pool) {
+        if (pool == null || pool.isNone())
+            return;
+        List<String> problems = new ArrayList<>();
+        if (pool.hasSets()) {
+            if (pool.getSets().isEmpty())
+                problems.add("Choose at least one set for the custom card pool");
+            for (Integer set : pool.getSets()) {
+                if (!isSupportedSet(set))
+                    problems.add("Set " + set + " is not a set GEMP supports");
+                else if (isPlaytestingSet(set) && !format.isPlaytesting())
+                    problems.add("Set " + set + " is a playtesting set and can only be used in a playtesting format");
+            }
+        }
+        for (List<String> ids : java.util.Arrays.asList(pool.getAllowed(), pool.getBanned())) {
+            for (String id : ids) {
+                if (_cardLibrary.getSwccgoCardBlueprint(_cardLibrary.getBaseBlueprintId(id)) == null)
+                    problems.add("Card " + id + " is not a card GEMP supports");
+                else if (isPlaytestingSet(setOf(id)) && !format.isPlaytesting())
+                    problems.add("Card " + id + " is a playtesting card and can only be used in a playtesting format");
+            }
+        }
+        Set<String> bannedPrintings = CustomPoolSwccgFormat.printings(_cardLibrary, pool.getBanned());
+        for (String id : pool.getAllowed()) {
+            for (String printing : CustomPoolSwccgFormat.printingsOf(_cardLibrary, id)) {
+                if (bannedPrintings.contains(printing)) {
+                    problems.add("Card " + cardLabel(id) + " is both allowed and banned; choose one");
+                    break;
+                }
+            }
+        }
+        if (!problems.isEmpty())
+            throw new IllegalArgumentException("Custom card pool: " + String.join("; ", problems) + ".");
+    }
+
+    private boolean isSupportedSet(int set) {
+        return set > 0 && _cardLibrary.getSwccgoCardBlueprint(set + "_1") != null;
+    }
+
+    private static boolean isPlaytestingSet(Integer set) {
+        return set != null && set >= 501 && set < 501 + com.gempukku.swccgo.common.CardCounts.PLAYTESTING_SETS_CARD_COUNTS.length;
+    }
+
+    private static Integer setOf(String id) {
+        int underscore = id.indexOf('_');
+        if (underscore <= 0)
+            return null;
+        try {
+            return Integer.parseInt(id.substring(0, underscore));
+        } catch (NumberFormatException exp) {
+            return null;
+        }
+    }
+
+    /**
+     * A card as the rules summary names it (#222): full title, side, set and GEMP id, so cards with the same title (a
+     * Light and Dark version, an original and a Virtual one) are told apart: {@code "Han Solo (Light, set 1, 1_80)"}.
+     */
+    public String cardLabel(String id) {
+        SwccgCardBlueprint blueprint = _cardLibrary.getSwccgoCardBlueprint(_cardLibrary.getBaseBlueprintId(id));
+        if (blueprint == null)
+            return id;
+        String side = blueprint.getSide() == null ? "" : blueprint.getSide().getHumanReadable() + ", ";
+        Integer set = setOf(id);
+        return com.gempukku.swccgo.logic.GameUtils.getFullName(blueprint) + " (" + side
+                + (set != null ? "set " + set + ", " : "") + id + ")";
+    }
+
+    private volatile List<String[]> _searchIndex;
+
+    /** Every card a pool can name, as {id, lower-case title}, built once (#222 card search). */
+    private List<String[]> searchIndex() {
+        List<String[]> index = _searchIndex;
+        if (index != null)
+            return index;
+        index = new ArrayList<>();
+        int[][] ranges = {
+                com.gempukku.swccgo.common.CardCounts.FULL_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.REFLECTIONS_GOLD_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.PREMIUM_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.VIRTUAL_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.VIRTUAL_PREMIUM_SETS_CARD_COUNTS,
+                com.gempukku.swccgo.common.CardCounts.LEGACY_SETS_CARD_COUNTS};
+        int[] firstSets = {1, 15, 101, 200, 301, 601};
+        for (int r = 0; r < ranges.length; r++) {
+            for (int i = 0; i < ranges[r].length; i++) {
+                for (int j = 1; j <= ranges[r][i]; j++) {
+                    String id = (firstSets[r] + i) + "_" + j;
+                    SwccgCardBlueprint blueprint;
+                    try {
+                        blueprint = _cardLibrary.getSwccgoCardBlueprint(id);
+                    } catch (RuntimeException exp) {
+                        blueprint = null;
+                    }
+                    if (blueprint != null && blueprint.getTitle() != null)
+                        index.add(new String[] {id, blueprint.getTitle().toLowerCase(java.util.Locale.ROOT)});
+                }
+            }
+        }
+        _searchIndex = index;
+        return index;
+    }
+
+    /**
+     * Cards for the organizer's pool search (#222): ids whose title contains {@code query} (case-insensitive), or the
+     * card with that exact id. At most {@code limit}, in set order. Labels come from {@link #cardLabel}.
+     */
+    public List<String> searchCards(String query, int limit) {
+        List<String> result = new ArrayList<>();
+        if (query == null || query.trim().length() < 2)
+            return result;
+        String q = query.trim().toLowerCase(java.util.Locale.ROOT);
+        if (q.matches("\\d+_\\d+") && _cardLibrary.getSwccgoCardBlueprint(q) != null) {
+            result.add(q);
+            return result;
+        }
+        for (String[] entry : searchIndex()) {
+            if (entry[1].contains(q)) {
+                result.add(entry[0]);
+                if (result.size() >= limit)
+                    break;
+            }
+        }
+        return result;
+    }
+
+    /**
+     * The Create Tournament form's live preview of a pool (#222): the same lines the saved event's summary shows, after
+     * the same checks creating the event runs, so the preview and the saved event agree.
+     *
+     * @throws IllegalArgumentException for an unknown format or a pool the event would refuse
+     */
+    public List<String> previewPool(String formatCode, CardPool pool) {
+        SwccgFormat format = getFormat(DeckSize.baseCode(formatCode));
+        if (format == null)
+            throw new IllegalArgumentException("This format is not supported: " + formatCode);
+        SwccgFormat base = getFormat(format.getBaseCode());
+        checkPool(base != null ? base : format, pool);
+        return describePool(GameSetup.defaults(format.getBaseCode()).withPool(pool));
+    }
+
+    /**
+     * The public rules summary of an event's card pool (#222), one line per part, shown to players before they join and
+     * in the event while it runs. Empty when the event plays its format's own pool.
+     */
+    public List<String> describePool(GameSetup setup) {
+        List<String> lines = new ArrayList<>();
+        if (setup == null || setup.getPool().isNone())
+            return lines;
+        CardPool pool = setup.getPool();
+        SwccgFormat format = getFormat(setup.getFormatCode());
+        String formatName = format != null ? format.getName() : setup.getFormatCode();
+        if (pool.hasSets()) {
+            List<String> sets = new ArrayList<>();
+            for (Integer set : pool.getSets())
+                sets.add(String.valueOf(set));
+            lines.add("Sets: " + String.join(", ", sets) + " (instead of " + formatName + "'s sets)");
+        } else {
+            lines.add("Sets: " + formatName + "'s sets");
+        }
+        for (String id : pool.getAllowed())
+            lines.add("Allowed: " + cardLabel(id));
+        for (String id : pool.getBanned())
+            lines.add("Banned: " + cardLabel(id));
+        return lines;
     }
 
     /**
