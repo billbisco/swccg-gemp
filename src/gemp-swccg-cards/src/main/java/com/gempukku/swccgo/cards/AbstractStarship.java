@@ -120,6 +120,17 @@ public abstract class AbstractStarship extends AbstractDeployable {
     }
 
     /**
+     * Replaces the armor and maneuver, for a text state printed with different statistics than the current card
+     * (docs/legacy-versions.md "Text states"), e.g. a starfighter printed with armor that now has maneuver.
+     * @param armor the armor value, or null if none
+     * @param maneuver the maneuver value, or null if none
+     */
+    protected final void setArmorAndManeuver(Float armor, Float maneuver) {
+        _armor = armor;
+        _maneuver = maneuver;
+    }
+
+    /**
      * Determines if this has an armor attribute.
      * @return true if has attribute, otherwise false
      */

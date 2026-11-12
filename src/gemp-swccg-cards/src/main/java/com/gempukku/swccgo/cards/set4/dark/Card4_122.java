@@ -55,7 +55,7 @@ public class Card4_122 extends AbstractNormalEffect {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MayMoveOtherCardsAsReactToLocationForFreeModifier(self, "Move starship as a 'react' for free", self.getOwner(), Filters.and(Filters.your(self), Filters.starship), Filters.sameSystemOrSectorAs(self, Filters.hasAttached(self))));
+        modifiers.add(new MayMoveOtherCardsAsReactToLocationForFreeModifier(self, "Move starship as a 'react' for free", self.getOwner(), Filters.and(Filters.your(self), Filters.starship), getReactLocation(self)));
         return modifiers;
     }
 
@@ -78,5 +78,10 @@ public class Card4_122 extends AbstractNormalEffect {
            }
         }
         return null;
+    }
+
+    /** Where your other starships may move as a 'react' (same system or sector). Text states override it (docs/legacy-versions.md "Text states"). */
+    protected Filter getReactLocation(PhysicalCard self) {
+        return Filters.sameSystemOrSectorAs(self, Filters.hasAttached(self));
     }
 }

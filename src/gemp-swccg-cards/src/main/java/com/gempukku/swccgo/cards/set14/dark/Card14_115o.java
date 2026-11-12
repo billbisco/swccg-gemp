@@ -6,21 +6,23 @@ import java.time.LocalDate;
 
 /**
  * Set: Theed Palace
+ * Type: Starship
+ * Subtype: Starfighter
  * Title: DFS Squadron Starfighter
- * Text state: o (as printed, December 2001; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed; docs/legacy-versions.md "Text states")
  * <p>
- * Printed text from wiki.swccg.com [[DFS Squadron Starfighter]] (Decipher archive scan); the current text is [[DFS Squadron Starfighter (PC Errata)]]
- * (Players Committee errata, Advanced Rulebook 2023 Appendix A). The printed stat box says ARMOR 2, a misprint for MANEUVER 2 (Appendix A); like every text state this one keeps
- * the bare card's stats. The PC errata's "during your deploy phase ... one" plays as GEMP already did, so this state
- * reuses the current card's game text code.
- * supersededOn is an upper bound (Advanced Rulebook 2023 Appendix A, PDF dated 30 July 2023).
+ * Printed Theed Palace (December 2001) card, from wiki.swccg.com [[DFS Squadron Starfighter]] (Decipher archive scan):
+ * armor 2 and no maneuver, and "may deploy Droid Starfighter Laser Cannons here from Reserve Deck" with no limit of one.
+ * The Players Committee's errata ([[DFS Squadron Starfighter (PC Errata)]], SWCCG 2023 Advanced Rulebook Appendix A)
+ * gave it maneuver 2 instead of armor and limited the download to one during your deploy phase. GEMP's current card
+ * (Card14_115) has the errata statistics; its download already has no limit of one, and plays the same here.
  */
 public class Card14_115o extends Card14_115 {
     public Card14_115o() {
         super();
+        setArmorAndManeuver(2f, null);
         setGameText("Deploys -1 to Naboo or same system as your battleship. While at same system as your battleship, may deploy Droid Starfighter Laser Cannons here from Reserve Deck; reshuffle.");
-        setTextState(new TextState("14_115", "Printed",
-                "Theed Palace printing (Decipher, December 2001)",
+        setTextState(new TextState("14_115", "Printed", "Theed Palace printing (Decipher, December 2001)",
                 LocalDate.of(2001, 12, 1), LocalDate.of(2023, 7, 30)));
     }
 }

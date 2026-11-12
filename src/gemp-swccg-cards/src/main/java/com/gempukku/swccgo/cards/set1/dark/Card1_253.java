@@ -46,7 +46,7 @@ public class Card1_253 extends AbstractLostInterrupt {
     @Override
     protected List<PlayInterruptAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self) {
         // Check condition(s)
-        if (TriggerConditions.battleEndedAt(game, effectResult, Filters.system_or_sector)
+        if (TriggerConditions.battleEndedAt(game, effectResult, getBattleLocation())
                 && GameConditions.canUseForceToPlayInterrupt(game, playerId, self, 1)) {
             PhysicalCard location = ((BattleEndedResult) effectResult).getLocation();
             Filter filter = Filters.and(Filters.opponents(self), Filters.starfighter, Filters.hasManeuverDefined, Filters.at(location));
@@ -111,5 +111,10 @@ public class Card1_253 extends AbstractLostInterrupt {
             }
         }
         return null;
+    }
+
+    /** Where the battle just finished (a system or sector). Text states override it (docs/legacy-versions.md "Text states"). */
+    protected Filter getBattleLocation() {
+        return Filters.system_or_sector;
     }
 }

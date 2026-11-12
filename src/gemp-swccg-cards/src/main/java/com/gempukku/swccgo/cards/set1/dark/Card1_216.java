@@ -50,7 +50,7 @@ public class Card1_216 extends AbstractNormalEffect {
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         String playerId = self.getOwner();
         String opponent = game.getOpponent(playerId);
-        Condition atSystemOrSectorYouControl = new AtCondition(self, Filters.and(Filters.system_or_sector, Filters.controls(playerId)));
+        Condition atSystemOrSectorYouControl = new AtCondition(self, Filters.and(getControlledLocation(), Filters.controls(playerId)));
         Filter relatedBattleSitesToAddPower = Filters.and(Filters.relatedSite(self), Filters.locationWherePowerCanBeAddedInBattleFromStarshipsControllingSystem(playerId));
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
@@ -59,5 +59,10 @@ public class Card1_216 extends AbstractNormalEffect {
                 new GameTextModificationCondition(self, ModifyGameTextType.FEAR_WILL_KEEP_THEM_IN_LINE__ADDS_1_TO_ATTRITION)),
                 1, opponent));
         return modifiers;
+    }
+
+    /** Where that starship must be (a system or sector you control). Text states override it (docs/legacy-versions.md "Text states"). */
+    protected Filter getControlledLocation() {
+        return Filters.system_or_sector;
     }
 }
