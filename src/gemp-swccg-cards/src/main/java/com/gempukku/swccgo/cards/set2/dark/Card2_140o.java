@@ -26,7 +26,7 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Lost
  * Title: Stunning Leader
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Stunning Leader]] (Decipher archive scan); superseded by the Players Committee
  * errata, wiki [[Stunning Leader (PC Errata)]] (date unknown; upper bound March 2017). The Dark Side counterpart of
@@ -39,8 +39,8 @@ public class Card2_140o extends Card2_140 {
         super();
         setGameText("After a battle at an interior site is initiated, use 1 Force to cause all leaders and all characters with ability > 2 (on both sides) to be completely excluded from that battle.");
         setTextState(new TextState("2_140", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(2017, 3, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(2017, 3, 1)));
     }
 
     @Override

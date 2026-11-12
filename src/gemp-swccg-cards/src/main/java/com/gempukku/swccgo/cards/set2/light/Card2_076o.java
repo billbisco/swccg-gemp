@@ -7,7 +7,7 @@ import java.time.LocalDate;
 /**
  * Set: A New Hope
  * Title: Rogue Bantha
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Rogue Bantha]] (Decipher archive scan); superseded by the Players Committee errata, wiki
  * [[Rogue Bantha (PC Errata)]] (date unknown; upper bound March 2017).
@@ -20,7 +20,7 @@ public class Card2_076o extends Card2_076 {
         super();
         setGameText("May carry 2 passengers. Bantha ability = ½. May move as a ‘react.’ At start of battle at same exterior site, one Tusken Raider present (your choice) is ‘trampled’ (immediately lost).");
         setTextState(new TextState("2_76", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(2017, 3, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(2017, 3, 1)));
     }
 }

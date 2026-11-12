@@ -6678,6 +6678,14 @@ const fixedImages = {
 "2_42d":"https://wiki.swccg.com/images/f/ff/ANH-L-attackrun-wb-decipher.gif",
 "2_76o":"https://wiki.swccg.com/images/6/65/ANH-L-roguebantha-decipher-archive.gif",
 "2_109o":"https://wiki.swccg.com/images/4/49/ANewHope-D-wed1517septoiddroid-decipher-archive.gif",
+// A New Hope printed "During your control phase, may" (no per-phase limit) text states: Decipher archive scans.
+"2_19o":"https://wiki.swccg.com/images/a/ab/ANH-L-rebeltech-decipher-archive.gif",
+"2_26o":"https://wiki.swccg.com/images/a/a1/ANH-L-magneticsuctiontube-decipher-archive.gif",
+"2_28o":"https://wiki.swccg.com/images/2/2c/ANH-L-remote-decipher-archive.gif",
+"2_36o":"https://wiki.swccg.com/images/c/c0/ANH-L-mercsunlet-decipher-archive.gif",
+"2_83o":"https://wiki.swccg.com/images/5/55/ANH-D-captainkhurgee-decipher-archive.gif",
+"2_114o":"https://wiki.swccg.com/images/6/6b/ANH-D-magneticsuctiontube-decipher-archive.gif",
+"2_126o":"https://wiki.swccg.com/images/c/c8/ANH-D-swillacorey-decipher-archive.gif",
 // Cloud City / Jabba's Palace printed text states (o): the plain wiki article's Decipher archive scan.
 "6_103o":"https://wiki.swccg.com/images/b/ba/JabbasPalace-D-fozec-decipher-archive.gif",
 "6_104o":"https://wiki.swccg.com/images/b/bb/JabbasPalace-D-gailid-decipher-archive.gif",

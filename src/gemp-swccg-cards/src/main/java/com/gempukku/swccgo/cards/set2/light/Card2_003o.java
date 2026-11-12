@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: Chewbacca
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Chewbacca]] (Decipher archive scan); superseded by Decipher errata, wiki [[Chewbacca (Errata)]] (Glossary; upper bound November 1998).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -25,8 +25,8 @@ public class Card2_003o extends Card2_003 {
         super();
         setGameText("Power +1 at same location as Han. Adds 2 to power of any starship he pilots. On Millennium Falcon, also adds 1 to maneuver. Your vehicles, starships and droids at same site go to Used Pile (rather than Lost Pile) when they are 'hit.'");
         setTextState(new TextState("2_3", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(1998, 11, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(1998, 11, 1)));
     }
 
     @Override

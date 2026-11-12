@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: Rodian
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Rodian]] (Decipher archive scan); superseded by the Players Committee errata, wiki [[Rodian (PC Errata)]] (date unknown; upper bound March 2017).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -25,8 +25,8 @@ public class Card2_104o extends Card2_104 {
         super();
         setGameText("Your Bounty Hunters and Smugglers are power +1 (but Greedo is power -1) at same site. Adds 1 to power of any starship he pilots.");
         setTextState(new TextState("2_104", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(2017, 3, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(2017, 3, 1)));
     }
 
     @Override

@@ -43,7 +43,7 @@ public class Card2_083 extends AbstractImperial {
         GameTextActionId gameTextActionId = GameTextActionId.CAPTAIN_KHURGEE__UPLOAD_SCANNING_CREW;
 
         // Check condition(s)
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL)
+        if (isControlPhaseUseAvailable(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canUseForce(game, playerId, 2)
                 && GameConditions.canTakeCardsIntoHandFromReserveDeck(game, playerId, self, gameTextActionId)) {
 
@@ -51,8 +51,7 @@ public class Card2_083 extends AbstractImperial {
             action.setText("Take card into hand from Reserve Deck");
             action.setActionMsg("Take a Scanning Crew into hand from Reserve Deck");
             // Update usage limit(s)
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
+            appendControlPhaseUsageLimit(action);
             // Pay cost(s)
             action.appendCost(
                     new UseForceEffect(action, playerId, 2));
@@ -62,5 +61,22 @@ public class Card2_083 extends AbstractImperial {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /**
+     * Whether the control-phase action may be used now: "Once during each of your control phases" (Decipher Glossary
+     * 2.0 / PC text). The printed text state (o) overrides this: printed "During your control phase, may" had no
+     * per-phase limit.
+     */
+    protected boolean isControlPhaseUseAvailable(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId, GameTextActionId gameTextActionId) {
+        return GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL);
+    }
+
+    /**
+     * Adds the "once during each of your control phases" usage limit to the action; the printed text state (o) adds none.
+     */
+    protected void appendControlPhaseUsageLimit(TopLevelGameTextAction action) {
+        action.appendUsage(
+                new OncePerPhaseEffect(action));
     }
 }

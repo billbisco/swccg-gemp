@@ -14,7 +14,7 @@ import java.util.List;
 /**
  * Set: A New Hope
  * Title: Wedge Antilles
- * Text state: o (as printed, 1997; docs/legacy-versions.md "Text states")
+ * Text state: o (as printed, 1996; docs/legacy-versions.md "Text states")
  * <p>
  * Printed text from wiki.swccg.com [[Wedge Antilles]] (Decipher archive scan); superseded by Decipher errata, wiki [[Wedge Antilles (Errata)]] (Glossary; upper bound November 1998).
  * As printed, the pilot bonus applies only to a starship he pilots ("any starship he pilots"); the errata made it
@@ -25,8 +25,8 @@ public class Card2_023o extends Card2_023 {
         super();
         setGameText("Adds 3 to power of any starship he pilots. On Red 2, also adds 2 to maneuver and draws one battle destiny if not able to otherwise. May use 1 Force to search your Reserve Deck and take one Corellian Slip into hand. Shuffle, cut and replace.");
         setTextState(new TextState("2_23", "Printed",
-                "A New Hope printing (Decipher, July 1997)",
-                LocalDate.of(1997, 7, 1), LocalDate.of(1998, 11, 1)));
+                "A New Hope printing (Decipher, July 1996)",
+                LocalDate.of(1996, 7, 1), LocalDate.of(1998, 11, 1)));
     }
 
     @Override

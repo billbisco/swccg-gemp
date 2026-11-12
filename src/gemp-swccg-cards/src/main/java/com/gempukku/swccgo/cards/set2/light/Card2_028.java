@@ -4,6 +4,7 @@ import com.gempukku.swccgo.cards.AbstractDevice;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
+import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Keyword;
 import com.gempukku.swccgo.common.Phase;
@@ -70,14 +71,13 @@ public class Card2_028 extends AbstractDevice {
         Filter seekerFilter = Filters.and(Filters.seeker, Filters.present(self));
 
         // Check condition(s)
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)) {
+        if (isControlPhaseUseAvailable(game, self, playerId, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_DEFAULT)) {
             if (GameConditions.canTarget(game, self, characterFilter)) {
 
                 final TopLevelGameTextAction action1 = new TopLevelGameTextAction(self, gameTextSourceCardId);
                 action1.setText("Make a character power +1");
                 // Update usage limit(s)
-                action1.appendUsage(
-                        new OncePerPhaseEffect(action1));
+                appendControlPhaseUsageLimit(action1);
                 // Choose target(s)
                 action1.appendTargeting(
                         new TargetCardOnTableEffect(action1, playerId, "Choose character", characterFilter) {
@@ -103,8 +103,7 @@ public class Card2_028 extends AbstractDevice {
                 final TopLevelGameTextAction action2 = new TopLevelGameTextAction(self, gameTextSourceCardId);
                 action2.setText("Make a character forfeit +1");
                 // Update usage limit(s)
-                action2.appendUsage(
-                        new OncePerPhaseEffect(action2));
+                appendControlPhaseUsageLimit(action2);
                 // Choose target(s)
                 action2.appendTargeting(
                         new TargetCardOnTableEffect(action2, playerId, "Choose character", characterFilter) {
@@ -136,8 +135,7 @@ public class Card2_028 extends AbstractDevice {
                 final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId);
                 action.setText("Cancel a seeker");
                 // Update usage limit(s)
-                action.appendUsage(
-                        new OncePerPhaseEffect(action));
+                appendControlPhaseUsageLimit(action);
                 // Choose target(s)
                 action.appendTargeting(
                         new TargetCardOnTableEffect(action, playerId, "Choose seeker", targetingReason, seekerFilter) {
@@ -169,5 +167,22 @@ public class Card2_028 extends AbstractDevice {
             }
         }
         return actions;
+    }
+
+    /**
+     * Whether the control-phase action may be used now: "Once during each of your control phases" (Decipher Glossary
+     * 2.0 / PC text). The printed text state (o) overrides this: printed "During your control phase, may" had no
+     * per-phase limit.
+     */
+    protected boolean isControlPhaseUseAvailable(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId, GameTextActionId gameTextActionId) {
+        return GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.CONTROL);
+    }
+
+    /**
+     * Adds the "once during each of your control phases" usage limit to the action; the printed text state (o) adds none.
+     */
+    protected void appendControlPhaseUsageLimit(TopLevelGameTextAction action) {
+        action.appendUsage(
+                new OncePerPhaseEffect(action));
     }
 }
