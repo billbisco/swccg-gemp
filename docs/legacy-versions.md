@@ -234,6 +234,13 @@ Done: `2_45o`, `2_45d` (Blast The Door, Kid!). As printed, `2_45o` excludes only
 ability > 2 in the battle when it resolves; the 2002 Glossary Supplement added that ones introduced later are excluded
 too, which `2_45d` and the bare `2_45` do.
 
+A New Hope (tests `cards/set2/Card_2_ANH_TextStates*_Tests.java`): printed texts that play as the bare card
+`2_5o 2_9o 2_35o 2_39o 2_58o 2_60o 2_61o 2_66o 2_70o 2_71o 2_73o 2_76o 2_93o 2_94o 2_95o 2_99o 2_109o 2_113o 2_125o
+2_135o 2_136o 2_149o 2_152o 2_156o`; Decipher Glossary texts `2_35d 2_42d`. Printed behaviour that differs: pilots
+that add power only to "any starship he pilots" (`2_3o 2_8o 2_21o 2_23o 2_85o 2_88o 2_98o 2_103o 2_104o`; the errata
+says "anything", so vehicles too), Grabbers printed without the Grabber icon (`2_33o 2_41o 2_127o 2_128o`), Undercover
+printed without "(Immune to Alter.)" (`2_40o 2_129o`, `removeImmuneToCardTitle`), and Stunning Leader excluding only
+the characters in the battle when it resolves (`2_140o`, as `2_45o`).
 Done (TS-LATE, Reflections II through Theed Palace and the premium sets; tests
 `cards/set106/Card_106_TextStates_Tests.java`, `cards/textstates/LateSetsTextStatesTests.java`): printed (`o`) states
 `106_1o` Arleil Schous and `106_11o` Chall Bekan (add 2 to power of starships they pilot only), `106_7o`, `106_10o`,
