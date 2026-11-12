@@ -41,7 +41,7 @@ public class Card210_020 extends AbstractJediMaster {
     public Card210_020() {
         super(Side.LIGHT, 4, 5, 5, 7, 8, "Luke Skywalker, The Last Jedi", Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
         setLore("");
-        setGameText("Never deploys to a site opponent occupies. Deploys -2 to Ahch-To. Once per turn, may [upload] Force Projection. During battle, may cancel an opponent's just drawn destiny to cause a re-draw. Immune to attrition.");
+        setGameText("Never deploys to a site opponent occupies. Deploys -2 to Ahch-To. Once per turn, may [upload] Force Projection. During battle, may cancel an opponent's just drawn destiny to cause a redraw. Immune to attrition.");
         addPersona(Persona.LUKE);
         addIcons(Icon.VIRTUAL_SET_10, Icon.PILOT, Icon.WARRIOR, Icon.EPISODE_VII);
     }

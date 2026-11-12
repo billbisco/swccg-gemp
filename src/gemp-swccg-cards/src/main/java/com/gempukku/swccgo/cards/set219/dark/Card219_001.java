@@ -46,7 +46,7 @@ public class Card219_001 extends AbstractObjective {
         setGameText("Deploy Lothal system, Advanced Projects Laboratory, Imperial Complex, and Thrawn's Art Collection. " +
                     "For remainder of game, you may not deploy Chiraneau or [Episode I] (or [Episode VII]) cards with ability or [Presence]. Once per turn, may [download] a battleground system (or a site to Lothal). " +
                     "While this side up, Imperial Star Destroyers deploy -1 (-3 if Chimaera deploying to Lothal). " +
-                    "Flip this card during any deploy phase if Thrawn at a battleground and two or more artwork cards on table.");
+                    "Flip this card during any deploy phase if Thrawn at a battleground and two artwork cards on table.");
         addIcons(Icon.VIRTUAL_SET_19);
     }
 

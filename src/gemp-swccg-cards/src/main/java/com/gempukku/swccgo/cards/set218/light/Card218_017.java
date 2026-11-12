@@ -29,7 +29,7 @@ public class Card218_017 extends AbstractSite {
         super(Side.LIGHT, "Death Star: Level 6 Core Shaft Corridor", Title.Death_Star, Uniqueness.UNIQUE, ExpansionSet.SET_18, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("If you occupy, opponent's Level 6 Core Shaft Corridor game text is canceled.");
-        setLocationLightSideGameText("Your stormtroopers here may move as a 'react' to a battle or Force drain at an adjacent site.");
+        setLocationLightSideGameText("Your stormtroopers here may move to an adjacent site as a 'react.'");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_18);

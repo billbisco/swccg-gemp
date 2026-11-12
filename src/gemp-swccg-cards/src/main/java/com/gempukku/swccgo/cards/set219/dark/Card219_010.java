@@ -30,7 +30,7 @@ public class Card219_010 extends AbstractSystem {
     public Card219_010() {
         super(Side.DARK, Title.Lothal, 6, ExpansionSet.SET_19, Rarity.V);
         setLocationDarkSideGameText("While you occupy, gains one [Dark Side] icon.");
-        setLocationLightSideGameText("Rebel starships here are power and forfeit +1 and immune to Gravity Shadow.");
+        setLocationLightSideGameText("Piloted Rebel starships here are power and forfeit +1 and immune to Gravity Shadow.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.PLANET, Icon.VIRTUAL_SET_19);

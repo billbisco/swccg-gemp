@@ -33,7 +33,7 @@ public class Card226_019 extends AbstractJediMaster {
     public Card226_019() {
         super(Side.LIGHT, 2, 5, 5, 7, 7, "Kelnacca", Uniqueness.UNIQUE, ExpansionSet.SET_26, Rarity.V);
         setLore("Wookiee.");
-        setGameText("Once per turn, if Wookiee Homestead on table, may place a card from hand on top of Force Pile to draw bottom card from Force Pile. Once per game, may [download] a unique (•) Forest. Immune to Wookiee Strangle and You Are Beaten.");
+        setGameText("Once per turn, if Wookiee Homestead on table, may place a card from hand on Force Pile to draw bottom card of your Force Pile. Once per game, may [download] a unique (•) forest. Immune to Wookiee Strangle and You Are Beaten.");
         addIcons(Icon.EPISODE_I, Icon.WARRIOR, Icon.VIRTUAL_SET_26);
         setSpecies(Species.WOOKIEE);
         addImmuneToCardTitle(Title.Wookiee_Strangle);

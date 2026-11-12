@@ -33,7 +33,7 @@ public class Card209_043 extends AbstractNormalEffect {
     public Card209_043() {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Shadows Of The Empire", Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
         setLore("");
-        setGameText ("If Agents Of Black Sun on table, deploy on table. Once per turn, may use 1 Force to [download] Imperial Square. Once per turn, if Emperor on Coruscant, may draw top card of Force Pile (if during your turn and you occupy three battlegrounds, opponent also loses 1 Force). [Immune to Alter.]");
+        setGameText ("If Agents Of Black Sun on table, deploy on table. May use 1 Force to [download] Imperial Square. Once per turn, if Emperor on Coruscant, may draw top card of Force Pile (if during your turn and you occupy three battlegrounds, opponent also loses 1 Force). [Immune to Alter.]");
         addIcons(Icon.VIRTUAL_SET_9);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -50,16 +50,12 @@ public class Card209_043 extends AbstractNormalEffect {
 
         // Check conditions for Coruscant site download action
         gameTextActionId = GameTextActionId.SHADOWS_OF_THE_EMPIRE__DOWNLOAD_IMPERIAL_SQUARE;
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canUseForce(game, playerId, 1)
+        if (GameConditions.canUseForce(game, playerId, 1)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Title.Coruscant_Imperial_Square)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy Imperial Square from Reserve Deck");
             action.setActionMsg("Deploy Imperial Square from Reserve Deck");
-            // Update usage limit(s)
-            action.appendUsage(
-                    new OncePerTurnEffect(action));
             // Pay cost(s)
             action.appendCost(
                     new UseForceEffect(action, playerId, 1));

@@ -38,7 +38,7 @@ public class Card201_020 extends AbstractCombatVehicle {
     public Card201_020() {
         super(Side.LIGHT, 2, 3, 5, null, 5, 4, 5, "Dash In Rogue 12", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
         setLore("Enclosed.");
-        setGameText("May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. Unless this card 'hit', other T-47s here may not be targeted by Crash Landing, High-speed Tactics, or weapons. Immune to attrition < 4.");
+        setGameText("May add 1 pilot. Permanent pilot is •Dash, who provides ability of 3. Unless this card 'hit,' other T-47s here may not be targeted by Crash Landing, High-speed Tactics, or weapons. Immune to attrition < 4.");
         addModelType(ModelType.T_47);
         addIcons(Icon.HOTH, Icon.PILOT, Icon.VIRTUAL_SET_1);
         addKeywords(Keyword.ENCLOSED, Keyword.SNOWSPEEDER, Keyword.ROGUE_SQUADRON);

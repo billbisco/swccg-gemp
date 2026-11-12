@@ -34,7 +34,7 @@ public class Card223_011 extends AbstractDevice {
         super(Side.DARK, 6, PlayCardZoneOption.ATTACHED, "Electro-Rangefinder", Uniqueness.UNRESTRICTED, ExpansionSet.SET_23, Rarity.V);
         setVirtualSuffix(true);
         setLore("Long-range stereoscopic sighting device connected to the cannons of an Imperial walker. Calibrated to allow the AT-AT commander to accurately fire at distant targets.");
-        setGameText("Deploy on an AT-AT; may immediately search your Used Pile and take an AT-AT Cannon or [Hoth] Epic Event into hand; reshuffle. Adds 2 to this AT-AT's weapon destiny draws (unless targeting a character).");
+        setGameText("Deploy on an AT-AT; may immediately search your Used Pile and take an AT-AT Cannon or [Hoth] Epic Event into hand; reshuffle. Adds 2 to each of this AT-AT's weapon destiny draws (unless targeting a character).");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_23);
     }
 

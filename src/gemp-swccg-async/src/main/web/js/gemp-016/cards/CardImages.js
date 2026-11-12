@@ -8559,4 +8559,7 @@ const fixedImages = {
 "6_177o":"https://wiki.swccg.com/images/0/08/JabbasPalace-D-gamorreanax-decipher-archive.gif",
 "6_178o":"https://wiki.swccg.com/images/7/75/JabbasPalace-D-moseisleyblaster-decipher-archive.gif",
 "6_180o":"https://wiki.swccg.com/images/6/62/JabbasPalace-D-vibroax-decipher-archive.gif",
+// Virtual Modern text states (docs/legacy-versions.md, "Text states"): Imperial Enforcement 201_30o = the original PC image (12 Jul 2020), 201_30o1 = the PC-E2 image (12 Dec 2022).
+"201_30o":"https://wiki.swccg.com/images/b/b4/V1-D-imperialenforcement-original.gif",
+"201_30o1":"https://wiki.swccg.com/images/4/45/V1-D-imperialenforcement-PC-E2.png",
 };

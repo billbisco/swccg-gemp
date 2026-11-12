@@ -32,7 +32,7 @@ public class Card210_039 extends AbstractSystem {
     public Card210_039() {
         super(Side.DARK, Title.Mustafar, 7, ExpansionSet.SET_10, Rarity.V);
         setLocationDarkSideGameText("While Anakin or Vader here, gains one [Dark Side] icon and one [Light Side] icon.");
-        setLocationLightSideGameText("While Vader on table, unless Padme at a Mustafar location, Force drain -1 here.");
+        setLocationLightSideGameText("If Vader on table, unless Amidala at a Mustafar location, Force drain -1 here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.VIRTUAL_SET_10, Icon.PLANET, Icon.EPISODE_I);

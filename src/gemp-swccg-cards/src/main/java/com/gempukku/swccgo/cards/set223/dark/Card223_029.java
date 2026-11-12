@@ -36,7 +36,7 @@ public class Card223_029 extends AbstractDefensiveShield {
     public Card223_029() {
         super(Side.DARK, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "You've Never Won A Race?", ExpansionSet.SET_23, Rarity.V);
         setLore("'Not even finished?'");
-        setGameText("Plays on table. You lose no Force to Boonta Eve Podrace. Unless opponent occupies three battlegrounds, I Did It! is suspended. Double Agent may not target opponent's Undercover spies. If an Undercover spy is about to be lost, place it out of play instead.");
+        setGameText("Plays on table. You lose no Force to Boonta Eve Podrace. Unless opponent occupies three battlegrounds, I Did It! is suspended. Double Agent may not target opponent's Undercover spies. If an Undercover spy is about to be lost (for any reason), place it out of play instead.");
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I, Icon.VIRTUAL_DEFENSIVE_SHIELD);
         setVirtualSuffix(true);
     }

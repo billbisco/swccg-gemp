@@ -35,7 +35,7 @@ import java.util.List;
 public class Card223_040 extends AbstractUsedInterrupt {
     public Card223_040() {
         super(Side.LIGHT, 4, Title.Life_Day, Uniqueness.UNIQUE, ExpansionSet.SET_23, Rarity.V);       
-        setGameText("Destiny +2 if 3 Wookiees and/or Ewoks on table. Take an Ewok or Wookiee of power < 6 into hand from reserve deck; reshuffle. OR Deploy a Bowcaster or Ewok Weapon from your lost pile. OR Add one battle destiny at same site as Part of the Tribe.");
+        setGameText("When drawn for destiny, if three Ewoks and/or Wookiees on table, destiny +2. Deploy a bowcaster or Ewok weapon from Lost Pile. OR [upload] an Ewok or Wookiee of power < 6. OR During battle at same site as Part Of The Tribe, add one battle destiny.");
         addIcon(Icon.VIRTUAL_SET_23);
     }
 

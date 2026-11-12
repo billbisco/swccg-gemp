@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set216.light;
 
 import com.gempukku.swccgo.cards.AbstractSite;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.cards.conditions.CommuningCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
@@ -31,8 +32,8 @@ import java.util.List;
 public class Card216_025 extends AbstractSite {
     public Card216_025() {
         super(Side.LIGHT, "Coruscant: Jedi Temple Meditation Room", Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.SET_16, Rarity.V);
-        setLocationDarkSideGameText("If Qui-Gon 'communing,' may [download] Theed Palace Generator.");
-        setLocationLightSideGameText("While Qui-Gon 'communing,' no Force drains here.");
+        setLocationDarkSideGameText("");
+        setLocationLightSideGameText("While Qui-Gon 'communing,' no Force drains here and, once per turn, may [download] Theed Palace Generator.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.INTERIOR_SITE, Icon.PLANET, Icon.EPISODE_I, Icon.VIRTUAL_SET_16);
     }
@@ -41,9 +42,11 @@ public class Card216_025 extends AbstractSite {
     protected List<TopLevelGameTextAction> getGameTextLightSideTopLevelActions(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self, int gameTextSourceCardId) {
         GameTextActionId gameTextActionId = GameTextActionId.CORUSCANT_JEDI_TEMPLE_MEDITATION_ROOM__DOWNLOAD_THEED_PALACE_GENERATOR;
         if (game.getModifiersQuerying().isCommuning(game.getGameState(), Filters.QuiGon)
+                && GameConditions.isOncePerTurn(game, self, playerOnLightSideOfLocation, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerOnLightSideOfLocation, self, gameTextActionId, Title.Theed_Palace_Generator)) {
             TopLevelGameTextAction action = new TopLevelGameTextAction(self, playerOnLightSideOfLocation, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy Theed Palace Generator from Reserve Deck");
+            action.appendUsage(new OncePerTurnEffect(action));
             action.appendEffect(new DeployCardFromReserveDeckEffect(action, Filters.Theed_Palace_Generator, true));
             return Collections.singletonList(action);
         }
