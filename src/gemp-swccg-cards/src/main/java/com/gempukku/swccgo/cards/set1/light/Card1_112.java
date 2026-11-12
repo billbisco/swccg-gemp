@@ -2,6 +2,7 @@ package com.gempukku.swccgo.cards.set1.light;
 
 import com.gempukku.swccgo.cards.AbstractUsedInterrupt;
 import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.cards.set7.light.Card7_015o;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -16,6 +17,7 @@ import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.ActivateForceEffect;
 import com.gempukku.swccgo.logic.effects.DrawDestinyEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.effects.PlaceCardInUsedPileFromTableEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
 import com.gempukku.swccgo.logic.effects.TargetCardOnTableEffect;
 import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
@@ -74,8 +76,15 @@ public class Card1_112 extends AbstractUsedInterrupt {
                                                             game.getGameState().sendMessage(playerId + " sells " + GameUtils.getCardLink(finalTarget) + " for " + GuiUtils.formatAsString(offer));
                                                             action.appendEffect(
                                                                     new ActivateForceEffect(action, playerId, (int) Math.floor(offer)));
-                                                            action.appendEffect(
-                                                                    new LoseCardFromTableEffect(action, finalTarget));
+                                                            // Droid Merchant as printed (Card7_015o): a droid sold at its site goes to the Used Pile instead of the Lost Pile
+                                                            if (Filters.droid.accepts(game, finalTarget)
+                                                                    && Filters.at(Filters.sameSiteAs(self, Card7_015o.PRINTED_DROID_MERCHANT)).accepts(game, finalTarget)) {
+                                                                action.appendEffect(
+                                                                        new PlaceCardInUsedPileFromTableEffect(action, finalTarget));
+                                                            } else {
+                                                                action.appendEffect(
+                                                                        new LoseCardFromTableEffect(action, finalTarget));
+                                                            }
                                                         }
                                                     });
                                         }
