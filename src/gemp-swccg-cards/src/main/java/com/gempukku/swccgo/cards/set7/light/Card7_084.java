@@ -32,7 +32,7 @@ public class Card7_084 extends AbstractUsedInterrupt {
     public Card7_084() {
         super(Side.LIGHT, 4, "Balanced Attack", Uniqueness.UNIQUE, ExpansionSet.SPECIAL_EDITION, Rarity.U);
         setLore("Alliance starfighter pilots cross-train with other starship types to maximize combat efficiency.");
-        setGameText("If you have more than one class of 'snub fighter' (Z-95, A-wing, Bwing, X-wing or Y-wing) in a battle, for each different class, add 1 to attrition against opponent (add 2 more if Falcon present). OR Take one admiral or general into hand from Reserve Deck; reshuffle.");
+        setGameText("If you have more than one class of 'snub fighter' (Z-95, A-wing, B-wing, X-wing or Y-wing) in a battle, for each different class, add 1 to attrition against opponent (add 2 more if Falcon present). OR Take one admiral or general into hand from Reserve Deck; reshuffle.");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

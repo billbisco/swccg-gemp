@@ -40,7 +40,7 @@ public class Card10_018 extends AbstractRebel {
         addPersona(Persona.OWEN);
         addComboCardTitles(Title.Owen_Lars, Title.Beru_Lars);
         setLore("Watchful guardians of Luke Skywalker. When the Lars' moisture farm was attacked by stormtroopers, Luke's life changed forever.");
-        setGameText("Deploy free to Lars' Moisture Farm. Draws one battle destiny if not able to otherwise. If opponent has a Stormtrooper at a Tatooine site, you may not play Harvest. If lost during opponent's turn, Luke is power +6 until end of your next turn.");
+        setGameText("Deploys free to Lars' Moisture Farm. Draws one battle destiny if not able to otherwise. If opponent has a Stormtrooper at a Tatooine site, you may not play Harvest. If lost during opponent's turn, Luke is power +6 until end of your next turn.");
         addIcons(Icon.REFLECTIONS_II);
         addKeywords(Keyword.MALE, Keyword.FEMALE);
     }
