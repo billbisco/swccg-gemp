@@ -38,7 +38,7 @@ public class Card1_015 extends AbstractAlien {
     public Card1_015() {
         super(Side.LIGHT, 2, 0, 1, 1, 5, Title.KalFalnl_Cndros, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.R1);
         setLore("A female Quor'sav, a warm-blooded, avian/monotreme species. 3.5 meters tall. Over-protective mother. Freelance pilot. Has custom-built ship with tall corridors. Lays eggs.");
-        setGameText("When in a battle, if both players draw only one battle destiny and yours is higher, reduces opponent's destiny to zero. Landspeed = 3. Adds 2 to power of anything she pilots. May not deploy to or board starfighters or enclosed vehicles.");
+        setGameText("When in a battle, if both players draw only one battle destiny and yours is higher, reduces opponent's total battle destiny to zero. Landspeed = 3. Adds 2 to power of anything she pilots. May not be aboard starfighters or enclosed vehicles.");
         addIcons(Icon.PILOT);
         addKeywords(Keyword.FEMALE);
         setSpecies(Species.QUORSAV);

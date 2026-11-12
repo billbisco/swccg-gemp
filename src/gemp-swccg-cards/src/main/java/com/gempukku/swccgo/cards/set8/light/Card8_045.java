@@ -28,7 +28,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-
 /**
  * Set: Endor
  * Type: Interrupt
@@ -74,7 +73,8 @@ public class Card8_045 extends AbstractUsedOrLostInterrupt {
         GameTextActionId gameTextActionId = GameTextActionId.COVERT_LANDING__DOWNLOAD_SCOUTS_AND_WEAPONS;
 
         // Check condition(s)
-        if (TriggerConditions.justLandedAt(game, effectResult, Filters.and(Filters.starfighter, Filters.hasAnyAvailablePilotOrPassengerCapacity), Filters.and(Filters.site, Filters.not(Filters.occupies(opponent))))
+        // Luminous: "May use Covert Landing like a shuttle or starfighter"
+        if (TriggerConditions.justLandedAt(game, effectResult, Filters.and(Filters.or(Filters.starfighter, Filters.grantedMayBeTargetedBy(self)), Filters.hasAnyAvailablePilotOrPassengerCapacity), Filters.and(Filters.site, Filters.not(Filters.occupies(opponent))))
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, true, false)) {
             final PhysicalCard cardLanded = ((LandedResult) effectResult).getMovedCards().iterator().next();
 

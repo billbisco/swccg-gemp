@@ -1,6 +1,9 @@
 package com.gempukku.swccgo.cards.set2.light;
 
 import com.gempukku.swccgo.common.TextState;
+import com.gempukku.swccgo.filters.Filter;
+import com.gempukku.swccgo.filters.Filters;
+import com.gempukku.swccgo.game.PhysicalCard;
 
 import java.time.LocalDate;
 
@@ -10,8 +13,8 @@ import java.time.LocalDate;
  * Text state: d (Decipher's last word; docs/legacy-versions.md "Text states")
  * <p>
  * Decipher errata text from wiki.swccg.com [[Attack Run (Errata)]] (Glossary 2.0); superseded by the Players Committee errata, wiki [[Attack Run (PC Errata)]] (date unknown; upper bound March 2017).
- * The printed wording plays the same as the current text in GEMP, so this state reuses the bare card's game text
- * code (Card2_042) and differs only in its game text and text-state information.
+ * This state reuses the bare card's game text code (Card2_042) except Z: its "highest ability of TIE pilots in trench"
+ * counts every TIE there, not only opponent's (PC errata).
  */
 public class Card2_042d extends Card2_042 {
     public Card2_042d() {
@@ -20,5 +23,10 @@ public class Card2_042d extends Card2_042 {
         setTextState(new TextState("2_42", "D-E1",
                 "Decipher Glossary Version 2.0, November 1998",
                 LocalDate.of(1998, 11, 1), LocalDate.of(2017, 3, 1)));
+    }
+
+    @Override
+    protected Filter getTiesCountedForZ(PhysicalCard self) {
+        return Filters.TIE;
     }
 }

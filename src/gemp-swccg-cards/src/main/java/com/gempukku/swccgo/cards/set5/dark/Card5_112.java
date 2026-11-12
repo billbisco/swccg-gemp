@@ -9,6 +9,7 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -18,8 +19,10 @@ import com.gempukku.swccgo.logic.actions.PlayCardAction;
 import com.gempukku.swccgo.logic.actions.RequiredGameTextTriggerAction;
 import com.gempukku.swccgo.logic.effects.CaptureCharacterOnTableEffect;
 import com.gempukku.swccgo.logic.effects.LoseCardFromTableEffect;
+import com.gempukku.swccgo.logic.timing.PassthruEffect;
 import com.gempukku.swccgo.logic.effects.RestoreCardToNormalEffect;
 import com.gempukku.swccgo.logic.timing.EffectResult;
+import com.gempukku.swccgo.logic.timing.results.AboutToBeHitResult;
 import com.gempukku.swccgo.logic.timing.results.HitResult;
 
 import java.util.Collections;
@@ -41,9 +44,33 @@ public class Card5_112 extends AbstractImmediateEffect {
     }
 
     @Override
-    protected List<PlayCardAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
-        // Check condition(s)
-        if (TriggerConditions.justHitBy(game, effectResult, Filters.and(Filters.opponents(self), Filters.character, Filters.at(Filters.Carbonite_Chamber)), Filters.lightsaber)) {
+    protected List<PlayCardAction> getGameTextOptionalAfterActions(final String playerId, SwccgGame game, final EffectResult effectResult, final PhysicalCard self, int gameTextSourceCardId) {
+        Filter opponentsCharacterAtCarboniteChamber = Filters.and(Filters.opponents(self), Filters.character, Filters.at(Filters.Carbonite_Chamber));
+        if (deploysWhenAboutToBeHit()) {
+            // PC errata (Advanced Rulebook 2023 Appendix A): deploy when the character "is about to be 'hit'" by a
+            // lightsaber; the character is not 'hit' ("is instead immediately captured and 'frozen'").
+            if (TriggerConditions.isAboutToBeHitBy(game, effectResult, opponentsCharacterAtCarboniteChamber, Filters.lightsaber)) {
+                final AboutToBeHitResult aboutToBeHitResult = (AboutToBeHitResult) effectResult;
+                final PhysicalCard cardToBeHit = aboutToBeHitResult.getCardToBeHit();
+                final PlayCardAction action = getPlayCardAction(playerId, game, self, self, false, 0, null, null, null, null, null, false, 0, Filters.sameCardId(cardToBeHit), null);
+                if (action != null) {
+                    action.appendAfterEffect(
+                            new PassthruEffect(action) {
+                                @Override
+                                protected void doPlayEffect(SwccgGame game) {
+                                    // Only once this Effect actually deployed on that character
+                                    if (Filters.and(Filters.onTable, Filters.attachedTo(Filters.sameCardId(cardToBeHit))).accepts(game, self)) {
+                                        aboutToBeHitResult.getPreventableCardEffect().preventEffectOnCard(cardToBeHit);
+                                    }
+                                }
+                            });
+                    return Collections.singletonList(action);
+                }
+            }
+            return null;
+        }
+        // Printed text (o): "was just 'hit' by a lightsaber"
+        if (TriggerConditions.justHitBy(game, effectResult, opponentsCharacterAtCarboniteChamber, Filters.lightsaber)) {
             PhysicalCard cardHit = ((HitResult) effectResult).getCardHit();
             PlayCardAction action = getPlayCardAction(playerId, game, self, self, false, 0, null, null, null, null, null, false, 0, Filters.sameCardId(cardHit), null);
             if (action != null) {
@@ -51,6 +78,14 @@ public class Card5_112 extends AbstractImmediateEffect {
             }
         }
         return null;
+    }
+
+    /**
+     * Whether this card deploys when the character is about to be 'hit' (PC errata, bare card). The printed text
+     * state (o) overrides this: printed "was just 'hit'", after which the character is restored to normal and captured.
+     */
+    protected boolean deploysWhenAboutToBeHit() {
+        return true;
     }
 
     @Override

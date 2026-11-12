@@ -18,7 +18,7 @@ import static org.junit.Assert.assertNull;
  */
 public class Card_1_165_TextStates_Tests {
     private static final String PRINTED_TEXT = "If aboard a starship at the start of a battle, can immediately evacuate with one other person to a related site. Power +1 if at same site as Tarkin. Adds 2 to power of any starship he pilots.";
-    private static final String CURRENT_TEXT = "Adds 2 to power of anything he pilots. Power +1 if at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character aboard a starship, may 'evacuate' (relocate) both to a related site.";
+    private static final String CURRENT_TEXT = "Adds 2 to power of anything he pilots. Power +1 at same site as Tarkin. If a battle was just initiated at a system where Bast is present with your non-droid character, may 'evacuate' (relocate) both to a related site.";
 
     private static VirtualTableScenario GetScenario(String pilotId) {
         return new VirtualTableScenario(

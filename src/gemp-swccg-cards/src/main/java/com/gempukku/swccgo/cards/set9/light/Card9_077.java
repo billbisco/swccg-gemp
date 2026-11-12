@@ -37,6 +37,8 @@ public class Card9_077 extends AbstractCapitalStarship {
         addModelType(ModelType.TRANSPORT);
         setPilotCapacity(1);
         setPassengerCapacity(6);
+        // PC errata (Advanced Rulebook 2023 Appendix A p. 121): no "Has ship-docking capability."
+        removeKeyword(Keyword.SHIP_DOCKING_CAPABILITY);
     }
 
     @Override
@@ -55,7 +57,9 @@ public class Card9_077 extends AbstractCapitalStarship {
     }
 
     @Override
-    protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
+    protected List<Modifier> getGameTextWhileActiveInPlayModifiersEvenIfUnpiloted(SwccgGame game, final PhysicalCard self) {
+        // PC errata: "May use Covert Landing like a shuttle or starfighter (even while landed)." A landed starship's
+        // game text otherwise applies only while it is piloted, which a landed starship is not.
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new MayBeTargetedByModifier(self, Title.Covert_Landing));
         return modifiers;

@@ -16,8 +16,8 @@ import static org.junit.Assert.assertNull;
 
 /**
  * Luminous text states (docs/legacy-versions.md, "Text states"): 9_77o as printed and the bare card 9_77
- * unchanged. Printed text from wiki.swccg.com [[Luminous]] (Decipher archive scan); current text
- * [[Luminous (PC Errata)]]. The PC errata changed wording only, so both play the same game text code.
+ * unchanged text. Printed text from wiki.swccg.com [[Luminous]] (Decipher archive scan); current text
+ * [[Luminous (PC Errata)]]. Play differences (ship-docking, Covert Landing while landed) are tested in ErrataPlayFixesTests.
  */
 public class Card_9_077_TextStates_Tests {
     private SwccgCardBlueprint blueprint(String id) {
