@@ -1328,9 +1328,7 @@ public class HallServer extends AbstractServer {
                 throw new HallException("You're not in that league");
 
             if (awaitingTable.isInviteOnly()) {
-                String invitee = awaitingTable.getTableDesc();
-                boolean isInvitee = invitee != null && invitee.equalsIgnoreCase(player.getName());
-                if (!isInvitee && !player.hasType(Player.Type.ADMIN))
+                if (!awaitingTable.isInvitee(player.getName()) && !player.hasType(Player.Type.ADMIN))
                     throw new HallException("This table is invite-only; only the invited player can join it.");
             }
 
@@ -1552,7 +1550,8 @@ public class HallServer extends AbstractServer {
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
                         table.getPlayerNames().contains(player.getName()), null, hidePlayerId, _library,
                         table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true,
-                        table.getCreatedAt(), table.getGameSetup().chipsText());
+                        table.getCreatedAt(), table.getGameSetup().chipsText(),
+                        table.isInviteOnly(), table.isInvitee(player.getName()));
             }
 
             // Then non-finished
@@ -1587,7 +1586,8 @@ public class HallServer extends AbstractServer {
                                         || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                         || !swccgGameMediator.isAllowSpectators(),
 
-                                swccgGameMediator.isPrivate(), runningTable.getStartedAt(), setupChips(swccgGameMediator));
+                                swccgGameMediator.isPrivate(), runningTable.getStartedAt(), setupChips(swccgGameMediator),
+                                false, false);
                     } else {
                         finishedTables.put(runningGame.getKey(), runningTable);
                     }
@@ -1621,7 +1621,7 @@ public class HallServer extends AbstractServer {
                                     || (swccgGameMediator.getFormat().isPlaytesting() && !playtestingVisible)
                                     || !swccgGameMediator.isAllowSpectators(),
 
-                            swccgGameMediator.isPrivate(), 0L, setupChips(swccgGameMediator));
+                            swccgGameMediator.isPrivate(), 0L, setupChips(swccgGameMediator), false, false);
                 }
             }
 

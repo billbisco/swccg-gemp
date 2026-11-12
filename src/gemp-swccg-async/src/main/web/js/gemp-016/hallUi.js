@@ -1721,6 +1721,24 @@ var GempSwccgHallUI = Class.extend({
         this.playOverlay.removeClass("play-flow-league");
     },
 
+    // LOTR Gemp port: the hall user-menu item "Invite to table" opens Casual with Invite Only
+    // checked and this player pre-filled. The host still chooses format, deck and timer, then creates
+    // the table. Always Casual, even if "Open this flow by default" is Bot.
+    openCasualInvite:function(playerName) {
+        var name = this.bareHallPlayerName(playerName);
+        if (!name || this.playOverlay == null)
+            return false;
+        this.showPlayForm("casual");
+        this.playOverlay.css("display", "flex");
+        $("body").addClass("play-flow-open");
+        if (this.isInviteOnlyCheckbox)
+            this.isInviteOnlyCheckbox.find("input").prop("checked", true);
+        this.syncInviteeRowVisibility();
+        if (this.invitePicker)
+            this.invitePicker.val(name);
+        return true;
+    },
+
     setPlayFlowTitle:function(suffix) {
         if (this.playFlowTitle == null) {
             return;
@@ -3945,7 +3963,7 @@ var GempSwccgHallUI = Class.extend({
             var shown = playerNameText(entry);
             var nameShown = playerNameText(name);
             var span = $("<span class='table-player'></span>").text(nameShown);
-            PlayerMenu.bind(span[0], this.menuInfo(name, ids[i]));
+            PlayerMenu.bind(span[0], this.menuInfo(name, ids[i]), this.menuActions(name, ids[i]));
             td.append(span);
             if (shown.length > nameShown.length && shown.indexOf(nameShown) === 0)
                 td.append(document.createTextNode(shown.substring(nameShown.length)));
@@ -3956,6 +3974,18 @@ var GempSwccgHallUI = Class.extend({
     menuInfo: function(name, id) {
         var info = {name: name, kind: PlayerMenu.kindOf(name), playerId: id && /^[0-9]+$/.test(id) ? id : null};
         return function () { return info; };
+    },
+
+    // Hall table seats (and a finished table's winner): Invite to table when the viewer may invite this player.
+    menuActions: function(name, id) {
+        var that = this;
+        return function () {
+            var info = that.menuInfo(name, id)();
+            var selfName = (that.userInfo && that.userInfo.name) ? that.userInfo.name : "";
+            if (typeof PlayerMenu !== "undefined" && PlayerMenu.canInviteToTable(info, selfName))
+                return [{label: "Invite to table", run: function () { that.openCasualInvite(info.name); }}];
+            return [];
+        };
     },
 
     // A comma-separated list of player names from the server, each ready to show (#249).
@@ -4605,7 +4635,7 @@ var GempSwccgHallUI = Class.extend({
                                     };
                                 })(id));
                             lastField.append(but);
-                        } else {
+                        } else if (table.getAttribute("isInviteOnly") !== "true" || table.getAttribute("invitedYou") === "true") {
                             var that = this;
 
                             var formatCode = table.getAttribute("formatCode");
@@ -4647,7 +4677,8 @@ var GempSwccgHallUI = Class.extend({
                             var winnerI = $.inArray(winner, $.map(players, function (p) { return tablePlayerName(p); }));
                             if (winner && typeof PlayerMenu !== "undefined")
                                 PlayerMenu.bind(lastField.wrapInner("<span></span>").children()[0],
-                                    this.menuInfo(winner, winnerI >= 0 ? tablePlayerIds[winnerI] : null));
+                                    this.menuInfo(winner, winnerI >= 0 ? tablePlayerIds[winnerI] : null),
+                                    this.menuActions(winner, winnerI >= 0 ? tablePlayerIds[winnerI] : null));
                         }
                         if (gameId)
                             this.closeReadyModal("game:" + gameId);
@@ -4700,6 +4731,8 @@ var GempSwccgHallUI = Class.extend({
 
                     if (playing == "true")
                         row.addClass("played");
+                    if (table.getAttribute("invitedYou") === "true")
+                        row.addClass("invitedYou");
                 } else if (action == "remove") {
                     $(".table" + id, this.tablesDiv).remove();
                 }
@@ -4774,3 +4807,11 @@ var GempSwccgHallUI = Class.extend({
         }
     }
 });
+
+// The hall user list's "Invite to table" calls this when it exists (LOTR Gemp contract C1).
+window.gempOpenCasualInvite = function (playerName) {
+    var hall = window.hall;
+    if (hall == null || typeof hall.openCasualInvite !== "function")
+        return false;
+    return hall.openCasualInvite(playerName);
+};

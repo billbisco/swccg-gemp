@@ -69,6 +69,20 @@ public class AwaitingTable {
         return _isInviteOnly;
     }
 
+    /**
+     * Whether {@code playerName} is the player this invite-only table was opened for. The invitee is the table
+     * description (the create form stores their account name there). Names are compared case-insensitively.
+     */
+    public boolean isInvitee(String playerName) {
+        return isInvitee(_isInviteOnly, _tableDesc, playerName);
+    }
+
+    static boolean isInvitee(boolean inviteOnly, String tableDesc, String playerName) {
+        if (!inviteOnly || playerName == null || tableDesc == null)
+            return false;
+        return tableDesc.trim().equalsIgnoreCase(playerName.trim());
+    }
+
     public HallGameTimer getGameTimer() {
         return _gameTimer;
     }

@@ -23,6 +23,19 @@ var PlayerMenu = (function () {
         return "player";
     }
 
+    // Hall "Invite to table" (LOTR Gemp port): only a real player, and only when the viewer is also a
+    // real player (not a guest or bot host) and is not clicking themselves.
+    function canInviteToTable(info, selfName) {
+        if (!info || info.kind !== "player")
+            return false;
+        var me = selfName == null ? "" : String(selfName);
+        if (me === "")
+            return false;
+        if (kindOf(me) === "guest" || kindOf(me) === "bot")
+            return false;
+        return String(info.name).toLowerCase() !== me.toLowerCase();
+    }
+
     /** {name, kind, playerId} from a chat <user> element (ChatRequestHandler); older servers send only the text. */
     function infoFromUser(user) {
         var text = user.childNodes.length ? user.childNodes[0].nodeValue : "";
@@ -219,7 +232,7 @@ var PlayerMenu = (function () {
         });
     }
 
-    var api = {open: open, close: close, bind: bind, copyText: copyText, kindOf: kindOf, infoFromUser: infoFromUser};
+    var api = {open: open, close: close, bind: bind, copyText: copyText, kindOf: kindOf, infoFromUser: infoFromUser, canInviteToTable: canInviteToTable};
     if (typeof module === "object" && module.exports)
         module.exports = api;
     return api;
