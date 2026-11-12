@@ -35,7 +35,7 @@ public class Card5_066 extends AbstractLostInterrupt {
     public Card5_066() {
         super(Side.LIGHT, 4, "Rendezvous Point On Tatooine", Uniqueness.UNRESTRICTED, ExpansionSet.CLOUD_CITY, Rarity.R);
         setLore("'When we find Jabba the Hutt and that bounty hunter, we'll contact you.'");
-        setGameText("During your control phase, use 1 Force to move one of your [Cloud City] characters of ability > 1 to any [Jabba's Palace] location where you have presence. If moving to any Jabba's Palace site, this movement is free and you do not need presence.");
+        setGameText("During your control phase, use 1 Force to move one of your [Cloud City] icon characters of ability > 1 to any [Jabba's Palace] icon location where you have presence. If moving to any Jabba's Palace site, this movement is free and you do not need presence.");
         addIcons(Icon.CLOUD_CITY);
     }
 
