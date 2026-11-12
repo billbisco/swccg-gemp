@@ -93,6 +93,14 @@ var PlayerMenu = (function () {
         if (r.bottom + menu.outerHeight() + 4 > document.documentElement.clientHeight)
             top = Math.max(window.pageYOffset + 4, r.top + window.pageYOffset - menu.outerHeight() - 2);
         menu.css({left: left + "px", top: top + "px"});
+        // A page whose body is positioned and has a margin (the hall) offsets "left"; correct by what was drawn.
+        var drawn = menu[0].getBoundingClientRect(), maxRight = document.documentElement.clientWidth - 4, shift = 0;
+        if (drawn.right > maxRight)
+            shift = drawn.right - maxRight;
+        if (drawn.left - shift < 4)
+            shift = drawn.left - 4;
+        if (shift)
+            menu.css({left: (left - shift) + "px"});
     }
 
     function idLine(info) {
