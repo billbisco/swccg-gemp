@@ -7,6 +7,8 @@ import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Title;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.cards.effects.CancelBattleEffect;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -63,9 +65,17 @@ public class Card1_098 extends AbstractUsedInterrupt {
                                         @Override
                                         protected void performActionResults(Action targetingAction) {
                                             // Perform result(s)
+                                            Filter cardsToMoveAway = Filters.and(Filters.your(self),
+                                                    getCardsToMoveAway(), Filters.participatingInBattle, Filters.canBeTargetedBy(self));
+                                            if (cancelsBattle()) {
+                                                // Text states that cancel the battle: cancel it (while it can still
+                                                // continue), then move away the cards that were in it.
+                                                cardsToMoveAway = Filters.in(Filters.filterActive(game, self, cardsToMoveAway));
+                                                action.appendEffect(
+                                                        new CancelBattleEffect(action));
+                                            }
                                             action.appendEffect(
-                                                    new MoveCardsAwayEffect(action, playerId, Filters.and(Filters.your(self),
-                                                            Filters.hasAbility, Filters.participatingInBattle, Filters.canBeTargetedBy(self))));
+                                                    new MoveCardsAwayEffect(action, playerId, cardsToMoveAway));
                                         }
                                     }
                             );
@@ -75,5 +85,15 @@ public class Card1_098 extends AbstractUsedInterrupt {
             return Collections.singletonList(action);
         }
         return null;
+    }
+
+    /** The cards moved away: your cards with ability. Text states override it (docs/legacy-versions.md "Text states"). */
+    protected Filter getCardsToMoveAway() {
+        return Filters.hasAbility;
+    }
+
+    /** Whether the battle is then canceled (not on the current card; the printed and Decipher texts cancel it). */
+    protected boolean cancelsBattle() {
+        return false;
     }
 }

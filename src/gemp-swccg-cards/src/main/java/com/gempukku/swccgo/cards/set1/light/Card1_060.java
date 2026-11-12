@@ -69,8 +69,18 @@ public class Card1_060 extends AbstractNormalEffect {
         };
 
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new TotalPowerModifier(self, Filters.relatedSystemOrSector(self), new NotCondition(gameTextModified), evaluator, playerId));
-        modifiers.add(new TotalPowerModifier(self, Filters.or(Filters.system, Filters.relatedSector(self)), gameTextModified, evaluator, playerId));
+        modifiers.add(new TotalPowerModifier(self, getRelatedLocations(self), new NotCondition(gameTextModified), evaluator, playerId));
+        modifiers.add(new TotalPowerModifier(self, getLocationsWhenModified(self), gameTextModified, evaluator, playerId));
         return modifiers;
+    }
+
+    /** The related system and related sectors. Text states override it (docs/legacy-versions.md "Text states"). */
+    protected Filter getRelatedLocations(PhysicalCard self) {
+        return Filters.relatedSystemOrSector(self);
+    }
+
+    /** Every system and the related sectors, while game text is modified to apply to every system. */
+    protected Filter getLocationsWhenModified(PhysicalCard self) {
+        return Filters.or(Filters.system, Filters.relatedSector(self));
     }
 }
