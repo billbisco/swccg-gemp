@@ -32,12 +32,14 @@ import java.util.List;
  * Type: Interrupt
  * Subtype: Lost
  * Title: Rapid Deployment
+ * <p>
+ * Text as printed on the white-border Second Anthology preview card (July 1998), which differs from the later Endor printing (Bill 2026-11-12; wiki: Second Anthology).
  */
 public class Card107_003 extends AbstractLostInterrupt {
     public Card107_003() {
         super(Side.LIGHT, 5, "Rapid Deployment", Uniqueness.UNIQUE, ExpansionSet.SECOND_ANTHOLOGY, Rarity.PV);
         setLore("General Solo's strike team was made up of the Alliance's finest ground troops.");
-        setGameText("At the beginning of your deploy phase, if you occupy an Endor or rebel base site, deploy up to 5 troopers there from Reserve Deck (those troopers deploy -1) and reshuffle. You may not deploy any other characters or starships this turn.");
+        setGameText("If you occupy an Endor or Rebel Base site at the beginning of your deploy phase, deploy up to 5 troopers there from Reserve Deck (those troopers deploy -1) and reshuffle. You may not deploy any other characters or starships this turn.");
         addIcons(Icon.ENDOR);
     }
 

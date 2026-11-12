@@ -33,13 +33,15 @@ import java.util.List;
  * Type: Character
  * Subtype: Alien
  * Title: Boba Fett
+ * <p>
+ * Text as printed on the white-border First Anthology preview card (May 1997), which differs from the later Special Edition printing (Bill 2026-11-12; wiki: First Anthology).
  */
 public class Card105_004 extends AbstractAlien {
     public Card105_004() {
         super(Side.DARK, 1, 5, 3, 2, 4, "Boba Fett", Uniqueness.UNIQUE, ExpansionSet.FIRST_ANTHOLOGY, Rarity.PV);
         setArmor(5);
         setLore("Infamous bounty hunter. Hired to help Jabba intimidate debtors and smugglers. Crack shot. Mandalorian armor and jet pack provide protection and flight capability.");
-        setGameText("Adds 2 to power and 1 to maneuver of anything he pilots. May deploy -1 as a 'react' to same site as a gangster or smuggler. When firing weapons, any 'hit' characters are forfeit = 0. May 'fly' (landspeed = 3). Immune to attrition < 3.");
+        setGameText("Adds 2 to power and 1 to maneuver of any starship he pilots. May deploy -1 as a 'react' to same site as a gangster or smuggler. When firing weapons, any 'hit' characters are forfeit = 0. May 'fly' (landspeed = 3). Immune to attrition < 3.");
         addPersona(Persona.BOBA_FETT);
         addIcons(Icon.SPECIAL_EDITION, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.BOUNTY_HUNTER);
@@ -48,8 +50,8 @@ public class Card105_004 extends AbstractAlien {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 2));
-        modifiers.add(new ManeuverModifier(self, Filters.hasPiloting(self), 1));
+        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 2, Filters.starship));
+        modifiers.add(new ManeuverModifier(self, Filters.and(Filters.starship, Filters.hasPiloting(self)), 1));
         modifiers.add(new DefinedByGameTextLandspeedModifier(self, 3));
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, 3));
         return modifiers;

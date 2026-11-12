@@ -48,6 +48,14 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
             if (card != null && card.hasIcon(Icon.DEFENSIVE_SHIELD))
                 throw new DeckInvalidException("Defensive Shields are not permitted at this table (Shields: none).");
         }
+        // and "Deck: 420" (#224) leaves out every card that fails it
+        if (_rules.isFourTwenty() && _library != null) {
+            SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(cardId);
+            String violation = FourTwenty.violation(card);
+            if (violation != null)
+                throw new DeckInvalidException(com.gempukku.swccgo.logic.GameUtils.getFullName(card)
+                        + " is not permitted at this table (Deck: 420): " + violation + ".");
+        }
     }
 
     @Override

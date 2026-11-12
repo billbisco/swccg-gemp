@@ -610,8 +610,8 @@
     "cardTypes": [
       "REBEL"
     ],
-    "lore": "Promoted to commander for his heroism in the Battle of Yavin. Leader in charge of training new pilots assigned to Echo Base. Piloted Rogue 3 in the battle of Hoth.",
-    "gameText": "Adds 3 to power of anything he pilots. When piloting Rogue 3, also adds 2 to maneuver and draws battle destiny if not able to otherwise. May use 2 Force to take one One More Pass into hand from Reserve Deck; reshuffle.",
+    "lore": "Promoted to commander for his heroism in the Battle of Yavin. Leader in charge of training new pilots assigned to Echo Base. Piloted Rogue 3 in the Battle of Hoth.",
+    "gameText": "Adds 3 to power of any starship he pilots. On Rogue 3, also adds 2 to maneuver and draws one battle destiny if not able to otherwise. May use 2 Force to search your Reserve Deck and take one One More Pass into hand. Shuffle, cut and replace.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -669,7 +669,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Many pilots for the Rebellion learned their skills using modified T-47s and other airspeeders. Being able to weave in and out of combat has become second nature to them.",
-    "gameText": "Just after the weapons segment of a battle, you may move any or all of your starships there away. ('Hit' cards must still be lost.)",
+    "gameText": "Just after the weapons phase of a battle, you may move any or all of your starships there away, at normal use of the Force. ('Hit' cards must still be lost.)",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -704,7 +704,7 @@
     ],
     "cardSubtype": "SQUADRON",
     "lore": "A squadron of X-wings ran interference for Y-wings during their assault on the Death Star. Keeping a tight formation dramatically increased the squadron's efficiency.",
-    "gameText": "* Replaces 3 X-wings at one location (X-wings go to Used Pile). Permanent pilots provide total ability of 3.",
+    "gameText": "*Replaces 3 X-wings at one location (X-wings go to Used Pile). Permanent pilots aboard provide total ability of 3.",
     "destiny": 2.0,
     "credits": 0,
     "power": 9.0,
@@ -1247,8 +1247,8 @@
     "cardTypes": [
       "REBEL"
     ],
-    "lore": "Native of Chandrila. Leader of the Alliance. A former member of the Imperial Senate where she was a formidable opponent of then-Senator Palpatine. Friend of Bail Organa.",
-    "gameText": "While at your war room, subtracts 1 from each opponent's battle destiny at all system locations and adds 2 to forfeit of all non-unique Rebels. Once during each of your deploy phases, may deploy one non-unique Rebel from Reserve Deck; reshuffle.",
+    "lore": "Native of Chandrila. Leader of the Alliance. A former member of the Imperial Senate where she was a formidable opponent to then-Senator Palpatine. Friend of Bail Organa.",
+    "gameText": "While at your war room, subtracts 1 from each opponent's battle destiny at all system locations and adds 2 to forfeit of all non-unique Rebels. During your deploy phase, may deploy one non-unique Rebel from Reserve Deck and reshuffle.",
     "deployCost": 5.0,
     "destiny": 1.0,
     "credits": 0,
@@ -1297,7 +1297,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "General Solo's strike team was made up of the Alliance's finest ground troops.",
-    "gameText": "At the beginning of your deploy phase, if you occupy an Endor or rebel base site, deploy up to 5 troopers there from Reserve Deck (those troopers deploy -1) and reshuffle. You may not deploy any other characters or starships this turn.",
+    "gameText": "If you occupy an Endor or Rebel Base site at the beginning of your deploy phase, deploy up to 5 troopers there from Reserve Deck (those troopers deploy -1) and reshuffle. You may not deploy any other characters or starships this turn.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
