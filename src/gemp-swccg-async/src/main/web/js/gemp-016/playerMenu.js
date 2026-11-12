@@ -82,6 +82,19 @@ var PlayerMenu = (function () {
         }
     }
 
+    // Keeps the menu inside the window, under the name (or above it near the bottom). Called again when the copy
+    // feedback widens the menu, so a name at the right edge (the hall's user list) never pushes it off screen.
+    function place() {
+        if (!menu || !anchorEl)
+            return;
+        var r = anchorEl.getBoundingClientRect();
+        var left = Math.max(4, Math.min(r.left + window.pageXOffset, window.pageXOffset + document.documentElement.clientWidth - menu.outerWidth() - 4));
+        var top = r.bottom + window.pageYOffset + 2;
+        if (r.bottom + menu.outerHeight() + 4 > document.documentElement.clientHeight)
+            top = Math.max(window.pageYOffset + 4, r.top + window.pageYOffset - menu.outerHeight() - 2);
+        menu.css({left: left + "px", top: top + "px"});
+    }
+
     function idLine(info) {
         var line = $("<div class='player-menu-id'></div>");
         if (info.kind === "guest")
@@ -103,6 +116,7 @@ var PlayerMenu = (function () {
                         selectText(num[0]);
                         status.text("Press Ctrl+C to copy");
                     }
+                    place();
                 });
             });
         return line.append("Player ID ").append(num).append(" ").append(button).append(" ").append(status);
@@ -141,12 +155,7 @@ var PlayerMenu = (function () {
         }
         menu.bind("click mousedown", function (e) { e.stopPropagation(); });
         $("body").append(menu);
-        var r = anchor.getBoundingClientRect();
-        var left = Math.max(4, Math.min(r.left + window.pageXOffset, window.pageXOffset + document.documentElement.clientWidth - menu.outerWidth() - 4));
-        var top = r.bottom + window.pageYOffset + 2;
-        if (r.bottom + menu.outerHeight() + 4 > document.documentElement.clientHeight)
-            top = Math.max(window.pageYOffset + 4, r.top + window.pageYOffset - menu.outerHeight() - 2);
-        menu.css({left: left + "px", top: top + "px"});
+        place();
         var first = menu.find("button, a").first();
         if (first.length)
             first.focus();
