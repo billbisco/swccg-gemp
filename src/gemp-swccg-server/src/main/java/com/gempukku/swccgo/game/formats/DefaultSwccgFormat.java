@@ -273,6 +273,14 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     @Override
     public void validateCard(String blueprintId, boolean skipIfNotExists) throws DeckInvalidException {
+        validateCard(blueprintId, skipIfNotExists, _validSets);
+    }
+
+    /**
+     * Checks one card against this format's pool, with {@code validSets} in place of the format's own sets (a
+     * tournament's custom card pool, #222). Everything else is the format's: banned cards, icons and rarities.
+     */
+    void validateCard(String blueprintId, boolean skipIfNotExists, List<Integer> validSets) throws DeckInvalidException {
         String listedBlueprintId = blueprintId;
         blueprintId = _library.getBaseBlueprintId(blueprintId);
         SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(blueprintId);
@@ -295,7 +303,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         if (_validCards.contains(blueprintId) || _validCards.contains(listedBlueprintId))
             return;
 
-        if (!_validSets.isEmpty() && !isValidInSets(listedBlueprintId) && !isValidInSets(blueprintId))
+        if (!validSets.isEmpty() && !isValidInSets(listedBlueprintId, validSets) && !isValidInSets(blueprintId, validSets))
             throw new DeckInvalidException("Deck contains card, <span class=\"validate-invalid-card-set\">" + fullName + "</span>, from set banned in this format.");
 
         if (_skipFormatPool)
@@ -311,11 +319,11 @@ public class DefaultSwccgFormat implements SwccgFormat {
         // Banned rarity
         for (String rarityName: _bannedRarity) {
             Rarity rarity = Rarity.getRarityFromString(rarityName);
-            for (int validSet : _validSets)
+            for (int validSet : validSets)
                 if (blueprintId.startsWith(validSet + "_")
                         || _library.hasAlternateInSet(blueprintId, validSet)) {
                     SetRarity setRarity = _rarity.get(validSet);
-                    if (setRarity.getCardRarity(blueprintId).equals(rarity))
+                    if (setRarity != null && rarity != null && rarity.equals(setRarity.getCardRarity(blueprintId)))
                         throw new DeckInvalidException("Deck contains a card with a banned rarity: <span class=\"validate-invalid-rarity\">" + fullName + "</span>");
                 }
         }
@@ -390,8 +398,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
         }
     }
 
-    private boolean isValidInSets(String blueprintId) throws DeckInvalidException {
-        for (int validSet : _validSets)
+    private boolean isValidInSets(String blueprintId, List<Integer> validSets) {
+        for (int validSet : validSets)
             if (blueprintId.startsWith(validSet + "_")
                     || _library.hasAlternateInSet(blueprintId, validSet))
                 return true;
@@ -483,6 +491,20 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     /** The same, with the deck rules a table's game options add (#142/#144). */
     public void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize, DeckRules rules) throws DeckInvalidException {
+        validateDeck(deck, minDeckSize, maxDeckSize, rules, id -> validateCard(id, false));
+    }
+
+    /** How one card is checked against the pool while a deck is validated (#222: a tournament's custom card pool). */
+    @FunctionalInterface
+    interface CardCheck {
+        void check(String blueprintId) throws DeckInvalidException;
+    }
+
+    /**
+     * The same, with each card checked by {@code cardCheck} instead of this format's pool (#222). Every other deck rule
+     * (side, Objectives, Starting Effects, shields, restricted copies, deck size) is unchanged.
+     */
+    void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize, DeckRules rules, CardCheck cardCheck) throws DeckInvalidException {
         if (rules.isNoShields()) {
             // "Shields: none" (#144): as Open (no shields), which bans the Defensive Shield icon
             for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
@@ -588,10 +610,10 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
             // Verify that all cards are valid
             for (String card : deck.getCards())
-                validateCard(card, false);
+                cardCheck.check(card);
 
             for (String card : deck.getCardsOutsideDeck())
-                validateCard(card, false);
+                cardCheck.check(card);
 
             // Card count in deck
             Map<String, Integer> cardCountByName = new HashMap<String, Integer>();

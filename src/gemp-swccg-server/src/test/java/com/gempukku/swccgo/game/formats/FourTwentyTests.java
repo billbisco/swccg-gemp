@@ -187,4 +187,48 @@ public class FourTwentyTests {
                 Map.of(GameOptions.DECK_SIZE, "45"), GameOption.Scope.LEAGUE).toJson());
         assertFalse(LIBRARY.effectiveFormat(oldJson) instanceof DeckRulesSwccgFormat);
     }
+
+    // --- with a tournament's custom card pool (#222): both apply ---
+
+    @Test
+    public void FourTwentyAndACustomCardPoolBothApply() {
+        java.util.function.BiFunction<java.util.List<String>, java.util.List<String>, SwccgFormat> table = (allowed, banned) ->
+                LIBRARY.effectiveFormat(GameSetup.of(LIBRARY.getFormat("open"), ON, GameOption.Scope.TOURNAMENT)
+                        .withPool(com.gempukku.swccgo.game.setup.CardPool.of(java.util.List.of(1), allowed, banned)));
+        SwccgFormat both = table.apply(java.util.List.of(), java.util.List.of());
+        assertTrue(both instanceof CustomPoolSwccgFormat);
+
+        // a Premiere-only 420 deck: legal
+        assertNull(error(both, deck()));
+        // 420 still refuses a destiny 1 card from a set the pool plays
+        String one = error(both, deck("1_194"));
+        assertNotNull(one);
+        assertTrue(one, one.contains("Deck: 420"));
+        // the pool still refuses a 420-legal card from a set it leaves out
+        String outside = error(both, deck("9_134"));
+        assertNotNull(outside);
+        assertTrue(outside, outside.contains("custom card pool"));
+        // allowing that card lets it in
+        assertNull(error(table.apply(java.util.List.of("9_134"), java.util.List.of()), deck("9_134")));
+        // the pool's ban applies to a 420-legal card
+        String banned = error(table.apply(java.util.List.of(), java.util.List.of("1_163")), deck());
+        assertNotNull(banned);
+        assertTrue(banned, banned.contains("banned in this tournament's custom card pool"));
+
+        // an allow does not lift 420: Emperor Palpatine (destiny 6), deck and card filter both refuse him
+        SwccgFormat allowsPalpatine = table.apply(java.util.List.of("9_109"), java.util.List.of());
+        String palpatine = error(allowsPalpatine, deck("9_109"));
+        assertNotNull(palpatine);
+        assertTrue(palpatine, palpatine.contains("Deck: 420"));
+        try {
+            allowsPalpatine.validateCard("9_109", false);
+            fail("the card filter must refuse a 420 failure even when the pool allows it");
+        } catch (DeckInvalidException e) {
+            assertTrue(e.getMessage(), e.getMessage().contains("Deck: 420"));
+        }
+        // and without 420 the allow does let him in
+        SwccgFormat poolOnly = LIBRARY.effectiveFormat(GameSetup.of(LIBRARY.getFormat("open"), Map.of(), GameOption.Scope.TOURNAMENT)
+                .withPool(com.gempukku.swccgo.game.setup.CardPool.of(java.util.List.of(1), java.util.List.of("9_109"), java.util.List.of())));
+        assertNull(error(poolOnly, deck("9_109")));
+    }
 }
