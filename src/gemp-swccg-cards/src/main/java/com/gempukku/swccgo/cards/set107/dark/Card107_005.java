@@ -30,12 +30,14 @@ import java.util.List;
  * Set: Second Anthology
  * Type: Creature
  * Title: Sarlacc
+ * <p>
+ * Text as printed on the white-border Second Anthology preview card (July 1998), the same words as the Special Edition printing (Bill 2026-11-12; wiki: Second Anthology).
  */
 public class Card107_005 extends AbstractCreature {
     public Card107_005() {
         super(Side.DARK, 2, 4, null, 12, 0, Title.Sarlacc, Uniqueness.UNIQUE, ExpansionSet.SECOND_ANTHOLOGY, Rarity.PV);
         setLore("Very patient predator in the Dune Sea. Tentacles can grab prey up to four meters away. Digests victims for 1000 years. Often fed prisoners by Jabba the Hutt.");
-        setGameText("* Ferocity = 4 + destiny. Habitat: Great Pit Of Carkoon. If Sarlacc eats a captive, may retrieve 1 Force for each of your aliens here. Anything eaten by Sarlacc is placed out of play.");
+        setGameText("*Ferocity = 4 + destiny. Habitat: Great Pit Of Carkoon. If Sarlacc eats a captive, may retrieve 1 Force for each of your aliens here. Anything eaten by Sarlacc is placed out of play.");
         addModelType(ModelType.ANCIENT_DESERT);
         addIcons(Icon.SPECIAL_EDITION);
     }

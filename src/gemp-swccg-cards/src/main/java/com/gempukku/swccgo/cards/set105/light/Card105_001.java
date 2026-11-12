@@ -33,12 +33,14 @@ import java.util.List;
  * Type: Character
  * Subtype: Rebel
  * Title: Commander Wedge Antilles
+ * <p>
+ * Text as printed on the white-border First Anthology preview card (May 1997), which differs from the later Special Edition printing (Bill 2026-11-12; wiki: First Anthology).
  */
 public class Card105_001 extends AbstractRebel {
     public Card105_001() {
         super(Side.LIGHT, 3, 3, 3, 2, 6, "Commander Wedge Antilles", Uniqueness.UNIQUE, ExpansionSet.FIRST_ANTHOLOGY, Rarity.PV);
-        setLore("Promoted to commander for his heroism in the Battle of Yavin. Leader in charge of training new pilots assigned to Echo Base. Piloted Rogue 3 in the battle of Hoth.");
-        setGameText("Adds 3 to power of anything he pilots. When piloting Rogue 3, also adds 2 to maneuver and draws battle destiny if not able to otherwise. May use 2 Force to take one One More Pass into hand from Reserve Deck; reshuffle.");
+        setLore("Promoted to commander for his heroism in the Battle of Yavin. Leader in charge of training new pilots assigned to Echo Base. Piloted Rogue 3 in the Battle of Hoth.");
+        setGameText("Adds 3 to power of any starship he pilots. On Rogue 3, also adds 2 to maneuver and draws one battle destiny if not able to otherwise. May use 2 Force to search your Reserve Deck and take one One More Pass into hand. Shuffle, cut and replace.");
         addPersona(Persona.WEDGE);
         addIcons(Icon.SPECIAL_EDITION, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.COMMANDER, Keyword.LEADER, Keyword.ROGUE_SQUADRON);
@@ -49,7 +51,7 @@ public class Card105_001 extends AbstractRebel {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3));
+        modifiers.add(new AddsPowerToPilotedBySelfModifier(self, 3, Filters.starship));
         modifiers.add(new ManeuverModifier(self, Filters.and(Filters.Rogue_3, Filters.hasPiloting(self)), 2));
         modifiers.add(new DrawsBattleDestinyIfUnableToOtherwiseModifier(self, new PilotingCondition(self, Filters.Rogue_3), 1));
         return modifiers;

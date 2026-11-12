@@ -382,3 +382,16 @@
 2282_25,1282_25
 # Removed Legacy version ids (batch B39, Bill 2026-11-10: one Galen Marek, Starkiller AI version, the Master List text) -> the current AI card (docs/legacy-versions.md)
 2240_8ai,1240_8ai
+# White-border anthology previews (Bill 2026-11-12): the wiki/identity ids 57_/58_/59_ (shared/swccg-card-identity) load the PC preview cards 105_/107_, which carry the printed preview text
+57_12,105_1
+57_92,105_2
+57_150,105_3
+57_167,105_4
+57_303,105_5
+57_231,105_6
+59_79,107_1
+58_22,107_2
+58_58,107_3
+59_125,107_4
+57_214,107_5
+59_174,107_6
