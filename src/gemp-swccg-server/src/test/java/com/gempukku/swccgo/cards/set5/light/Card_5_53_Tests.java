@@ -87,7 +87,7 @@ public class Card_5_53_Tests {
 		var scn = GetScenario();
 		var card = scn.GetLSCard("scoundrel").getBlueprint();
 		assertEquals(Title.Innocent_Scoundrel, card.getTitle());
-		assertEquals(Uniqueness.UNRESTRICTED, card.getUniqueness());
+		assertEquals(Uniqueness.UNIQUE, card.getUniqueness()); // unique by errata (Glossary Supplement 2002; 2023 Advanced Rulebook); printed 5_53o is non-unique
 		assertEquals(Side.LIGHT, card.getSide());
 		scn.BlueprintCardTypeCheck(card, new ArrayList<>() {{
 			add(CardType.INTERRUPT);

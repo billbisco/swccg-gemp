@@ -8,6 +8,7 @@ import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Uniqueness;
+import com.gempukku.swccgo.filters.Filter;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
@@ -66,12 +67,13 @@ public class Card102_001 extends AbstractNormalEffect {
                             "Adds one destiny to total"));
             actions.add(action);
         }
+        final Filter excludableFilter = getExcludableFromHighestAbilityFilter();
         // Check condition(s)
-        if (TriggerConditions.isPlayingCardTargeting(game, effect, Filters.or(Filters.Sense, Filters.Alter), Filters.Dark_Jedi)
+        if (TriggerConditions.isPlayingCardTargeting(game, effect, Filters.or(Filters.Sense, Filters.Alter), excludableFilter)
                 && GameConditions.canUseForce(game, playerId, 1)) {
             final RespondablePlayingCardEffect playingCardEffect = (RespondablePlayingCardEffect) effect;
             final PhysicalCard cardPlayed = playingCardEffect.getCard();
-            int numDarkJedi = Filters.countActive(game, self, Filters.Dark_Jedi);
+            int numDarkJedi = Filters.countActive(game, self, excludableFilter);
             int forceAvailableToUse = GameConditions.forceAvailableToUse(game, playerId);
             final int maxForceToUse = Math.min(numDarkJedi, forceAvailableToUse);
             if (maxForceToUse > 0) {
@@ -80,7 +82,7 @@ public class Card102_001 extends AbstractNormalEffect {
                 action.setText("Exclude Dark Jedi from being 'highest-ability character'");
                 // Choose target(s)
                 action.appendTargeting(
-                        new TargetCardsOnTableEffect(action, playerId, "Target Dark Jedi to exclude from being 'highest-ability character'", 1, maxForceToUse, Filters.Dark_Jedi) {
+                        new TargetCardsOnTableEffect(action, playerId, "Target Dark Jedi to exclude from being 'highest-ability character'", 1, maxForceToUse, excludableFilter) {
                             @Override
                             protected void cardsTargeted(int targetGroupId, final Collection<PhysicalCard> darkJedi) {
                                 action.addAnimationGroup(darkJedi);
@@ -108,5 +110,14 @@ public class Card102_001 extends AbstractNormalEffect {
             }
         }
         return actions;
+    }
+
+    /**
+     * Gets the characters that may be excluded from being the 'highest-ability character': Dark Jedi (either player's).
+     * The printed text state (Card102_001o) says "Jedi", which includes Dark Jedi.
+     * @return the filter
+     */
+    protected Filter getExcludableFromHighestAbilityFilter() {
+        return Filters.Dark_Jedi;
     }
 }
