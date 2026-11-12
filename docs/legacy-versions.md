@@ -248,3 +248,38 @@ Done (TS-LATE, Reflections II through Theed Palace and the premium sets; tests
 `12_37o`, `12_128o`, `12_131o` (no Grabber icon), `13_29o` Leia, Rebel Princess (non-alien must be present),
 `13_62o` Conduct Your Search (takes a 'door' card into hand once per turn) and `13_92o` Thok & Thug (any battle
 opponent initiates; adds to his own power).
+
+### Printed weapons (o)
+
+Decipher's printed weapons (1995–1998) say "Character hit if destiny > ability. Vehicle hit if destiny > maneuver or
+armor" and "deploy on any warrior"; the Decipher Glossary 2.0 (November 1998) rewrote them to "Target hit if destiny >
+defense value", added creature targets and "your warrior". Rules that decide how the printed text plays (Glossary 2.0):
+
+- "any warrior" is still your own warrior: "You may not deploy weapons or devices on your opponent's characters
+  (unless specifically allowed to by the card itself)" ("weapons — deploying and carrying").
+- A character's defense value is its ability or armor, whichever is higher; a vehicle's or starship's is its armor or
+  maneuver ("defense value"). So printed "ability" differs for armored characters (and droids), and printed "armor"
+  / "maneuver" for a starship or vehicle is its defense value.
+
+`FireWeaponActionBuilder` options for these states (the default is unchanged):
+
+| Option | Printed text |
+|---|---|
+| `characterDefenseValueIsAbility()` | a character target is compared to its ability (every hit, capture, lost, forfeit and Jawa Ion Gun check in the builder) |
+| `ionHitLosesAllWeaponsAboard()` | ion cannons: "all weapons aboard target are lost" (also weapons on cards aboard) |
+| `hitsCardsAtSiteNotOnlyPresent()` | Concussion Grenade: cards "at that site" (also aboard vehicles and starships there) |
+
+A printed weapon that names no creature target targets no creatures; Bowcaster and the two hunting rifles fire at
+characters (hit by ability) or creatures ("immediately lost") as two actions.
+
+Done (tests `cards/PrintedWeaponTextStatesTests.java` one per state, `cards/PrintedWeaponTextStatesGameplayTests.java`):
+- Play as the bare card (wording only): `1_158o 1_159o 1_313o 1_315o 1_323o 2_158o 2_161o 3_72o 6_90o 6_176o 6_180o`.
+- Character compared to ability, no creatures: `1_152o 1_153o 1_154o 1_156o 1_311o 1_312o 1_317o 1_319o 1_320o`
+  (`1_320o`: either player's power droid or fusion generator), `2_78o 2_159o 3_74o 3_77o` (exactly two characters),
+  `3_80o 3_158o` (targets only at an adjacent site), `3_159o 3_161o 4_174o 4_176o 4_178o 5_89o 5_90o 5_179o 5_180o
+  6_89o 6_174o 6_175o 6_177o 6_178o`.
+- Creature lost, character hit by ability: `2_77o 2_79o 2_162o`. Ion cannons: `1_318o 2_81o 3_78o`. Concussion
+  Grenade: `3_73o`.
+- Not done (need a ruling): the four Premiere lightsabers (`1_155 1_157 1_314 1_324`, printed "use as follows: Add 1 to
+  Force drain … OR Target …") and Zuckuss' Snare Rifle (`4_180`, printed "may be immediately captured"). Timer Mine
+  (`1_162`, `1_322`) has no errata.
