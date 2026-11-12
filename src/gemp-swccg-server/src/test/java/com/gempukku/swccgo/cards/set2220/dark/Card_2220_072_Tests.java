@@ -103,7 +103,7 @@ public class Card_2220_072_Tests {
         assertEquals(7, back.getDestiny(), scn.epsilon);
         assertEquals("While this side up, Revolution is canceled. At marker sites, AT-ATs move for free. Rebels are deploy +1 to Hoth sites. Your total battle destiny at Hoth system is +1 for each Imperial there. Unless opponent controls a Hoth location, your Force drain bonuses may not be canceled. Once per turn, when you deploy an AT-AT, may retrieve any one card (except an Interrupt or vehicle) into hand. During your deploy phase, may deploy a marker site from Reserve Deck; reshuffle. Flip this card if Hoth Blockade not on Hoth.",
                 back.getGameText());
-        assertEquals("1220_72", back.getLegacyVersion().currentPrintingId());
+        assertEquals("1220_72_BACK", back.getLegacyVersion().currentPrintingId());
     }
 
     @Test(timeout = 10000)

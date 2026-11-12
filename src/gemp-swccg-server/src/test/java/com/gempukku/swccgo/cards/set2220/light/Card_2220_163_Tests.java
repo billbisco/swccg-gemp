@@ -79,7 +79,7 @@ public class Card_2220_163_Tests {
         var back = new Card2220_163_BACK();
         assertEquals("Liberation", back.getTitle());
         assertEquals(new com.gempukku.swccgo.cards.set1220.light.Card1220_163_BACK().getGameText(), back.getGameText());
-        assertEquals("1220_163", back.getLegacyVersion().currentPrintingId());
+        assertEquals("1220_163_BACK", back.getLegacyVersion().currentPrintingId());
     }
 
     @Test

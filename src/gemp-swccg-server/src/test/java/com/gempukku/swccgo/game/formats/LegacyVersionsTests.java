@@ -133,6 +133,26 @@ public class LegacyVersionsTests {
         return false;
     }
 
+    /** The back of a two-sided version names its own back id ("<current>_BACK") in LegacyVersion, like its front names the front (FIX-SMALL, 2026-11-12). */
+    @Test
+    public void EveryVersionBackNamesTheCurrentBack() {
+        int backs = 0;
+        for (String id : LegacyCardPool.implementedVersionIds(library)) {
+            SwccgCardBlueprint back;
+            try {
+                back = library.getSwccgoCardBlueprint(id + "_BACK");
+            } catch (RuntimeException noBackSide) {
+                continue;
+            }
+            if (back == null)
+                continue;
+            backs++;
+            assertNotNull(id + "_BACK has no setLegacyVersion", back.getLegacyVersion());
+            assertEquals(id + "_BACK", LegacyVersion.currentPrintingIdOf(id + "_BACK"), back.getLegacyVersion().currentPrintingId());
+        }
+        assertTrue("no two-sided versions found", backs > 0);
+    }
+
     /** A two-sided version whose front is unchanged differs on its back (Wookiee Slaving Operation, 2014 errata to the 7 side; batch B39). */
     private boolean backSideDiffers(String versionId, String currentId) {
         if (versionId.endsWith("_BACK"))

@@ -41,7 +41,7 @@ public class Card2220_072_BACK extends AbstractObjective {
         super(Side.DARK, 7, Title.Imperial_Control, ExpansionSet.VIRTUAL_BLOCK_2, Rarity.V);
         setVirtualSuffix(true);
         setGameText("While this side up, Revolution is canceled. At marker sites, AT-ATs move for free. Rebels are deploy +1 to Hoth sites. Your total battle destiny at Hoth system is +1 for each Imperial there. Unless opponent controls a Hoth location, your Force drain bonuses may not be canceled. Once per turn, when you deploy an AT-AT, may retrieve any one card (except an Interrupt or vehicle) into hand. During your deploy phase, may deploy a marker site from Reserve Deck; reshuffle. Flip this card if Hoth Blockade not on Hoth.");
-        setLegacyVersion(new LegacyVersion("1220_72", "",
+        setLegacyVersion(new LegacyVersion("1220_72_BACK", "",
                 "Virtual Block 2 release sheet (2009-12-07), card #72", LocalDate.of(2009, 12, 7), LocalDate.of(2012, 9, 21)));
         addIcons(Icon.SPECIAL_EDITION);
     }
