@@ -81,6 +81,8 @@ public class PlayerMenuWebClientTests {
         String menu = read("js/gemp-016/playerMenu.js");
         int copy = menu.indexOf("status.text(\"Press Ctrl+C to copy\");");
         assertTrue(copy > 0 && menu.indexOf("place();", copy) > copy && menu.indexOf("place();", copy) < menu.indexOf("function open("));
+        //test8: and placement is corrected by where the menu was actually drawn (the hall's body is offset)
+        assertTrue(menu.contains("menu[0].getBoundingClientRect()"));
     }
 
     @Test
