@@ -784,6 +784,8 @@ var GempSwccgCommunication = Class.extend({
             darkDeckName: params.darkDeckName,
             darkSampleDeck: params.darkSampleDeck,
             gameOptions: params.gameOptions || "{}",
+            // #222: optional custom card pool, JSON {"sets":[..],"allow":[..],"ban":[..]}; empty for the format's own
+            cardPool: params.cardPool || "",
             participantId:getUrlParam("participantId")
         };
         $.ajax({
@@ -791,6 +793,48 @@ var GempSwccgCommunication = Class.extend({
             url:this.url + "/tournament/create",
             cache:false,
             data:data,
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    /** #222: cards for the Create Tournament form's pool search, <cards><card id title side set label/></cards>. */
+    searchPoolCards:function (query, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/tournament/cardSearch",
+            cache:false,
+            data:{
+                q:query,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    /** #222: what the saved event will show for this pool, <rules>..., or <error message/> when it would be refused. */
+    previewCardPool:function (formatCode, cardPool, callback, errorMap) {
+        $.ajax({
+            type:"POST",
+            url:this.url + "/tournament/poolPreview",
+            cache:false,
+            data:{
+                formatCode:formatCode,
+                cardPool:cardPool,
+                participantId:getUrlParam("participantId")},
+            success:this.deliveryCheck(callback),
+            error:this.errorCheck(errorMap),
+            dataType:"xml"
+        });
+    },
+    /** #222: the public rules summary of a player-made event, <rules><rule text="..."/></rules>. */
+    getEventRules:function (eventId, callback, errorMap) {
+        $.ajax({
+            type:"GET",
+            url:this.url + "/tournament/rules/" + encodeURIComponent(eventId),
+            cache:false,
+            data:{
+                participantId:getUrlParam("participantId")},
             success:this.deliveryCheck(callback),
             error:this.errorCheck(errorMap),
             dataType:"xml"

@@ -17,7 +17,8 @@ import java.util.Objects;
  * A game's setup (swccg-guild/work#114/#116): the format, the mode, and the options chosen at setup. Only values that
  * differ from the format's defaults are kept, so an empty setup is "the format as it is". Immutable.
  * <p>
- * Stored as versioned JSON: {@code {"v":1,"format":"open","mode":"1v1","options":{"deckSize":"100"}}}.
+ * Stored as versioned JSON: {@code {"v":1,"format":"open","mode":"1v1","options":{"deckSize":"100"}}}, plus
+ * {@code "pool":{...}} when a tournament has a custom card pool (#222, {@link CardPool}).
  */
 public final class GameSetup {
     public static final int VERSION = 1;
@@ -26,11 +27,17 @@ public final class GameSetup {
     private final String _formatCode;
     private final String _mode;
     private final Map<String, String> _values;
+    private final CardPool _pool;
 
     private GameSetup(String formatCode, String mode, Map<String, String> values) {
+        this(formatCode, mode, values, CardPool.NONE);
+    }
+
+    private GameSetup(String formatCode, String mode, Map<String, String> values, CardPool pool) {
         _formatCode = formatCode;
         _mode = mode == null || mode.isEmpty() ? MODE_1V1 : mode;
         _values = Collections.unmodifiableMap(new LinkedHashMap<>(values));
+        _pool = pool == null ? CardPool.NONE : pool;
     }
 
     /** The format with every option at its default. */
@@ -75,7 +82,18 @@ public final class GameSetup {
     public Map<String, String> getValues() { return _values; }
 
     public boolean isDefault() {
-        return _values.isEmpty() && MODE_1V1.equals(_mode);
+        return _values.isEmpty() && MODE_1V1.equals(_mode) && _pool.isNone();
+    }
+
+    /** The event's custom card pool (#222), or {@link CardPool#NONE} for the format's own pool. */
+    public CardPool getPool() { return _pool; }
+
+    /**
+     * A copy with this custom card pool (#222). Not checked against the card library here: the format library's
+     * {@code checkPool} does that before an event is created.
+     */
+    public GameSetup withPool(CardPool pool) {
+        return new GameSetup(_formatCode, _mode, _values, pool);
     }
 
     /** The chosen value, or {@code null} when the option is at the format's default. */
@@ -99,13 +117,16 @@ public final class GameSetup {
             values.remove(optionId);
         else
             values.put(optionId, value);
-        return new GameSetup(_formatCode, _mode, values);
+        return new GameSetup(_formatCode, _mode, values, _pool);
     }
 
     /** A copy for another format code (for example a tournament product's format). */
     public GameSetup forFormat(String formatCode) {
-        return new GameSetup(formatCode, _mode, _values);
+        return new GameSetup(formatCode, _mode, _values, _pool);
     }
+
+    /** The chip a custom card pool (#222) adds; the full pool is in the event's rules summary. */
+    public static final String POOL_CHIP = "Custom card pool";
 
     /** Short labels of the non-default options, in display order ("100 cards", "Blitz"). */
     public List<String> chips() {
@@ -115,6 +136,8 @@ public final class GameSetup {
             if (value != null)
                 chips.add(option.getShortLabel(value));
         }
+        if (!_pool.isNone())
+            chips.add(POOL_CHIP);
         return chips;
     }
 
@@ -146,6 +169,8 @@ public final class GameSetup {
         for (Map.Entry<String, String> entry : _values.entrySet())
             options.addProperty(entry.getKey(), entry.getValue());
         root.add("options", options);
+        if (!_pool.isNone())
+            root.add("pool", _pool.toJsonObject());
         return GSON.toJson(root);
     }
 
@@ -164,7 +189,9 @@ public final class GameSetup {
             for (Map.Entry<String, com.google.gson.JsonElement> entry : root.getAsJsonObject("options").entrySet())
                 values.put(entry.getKey(), entry.getValue().getAsString());
         }
-        return new GameSetup(format, mode, values);
+        CardPool pool = root.has("pool") && root.get("pool").isJsonObject()
+                ? CardPool.fromJsonObject(root.getAsJsonObject("pool")) : CardPool.NONE;
+        return new GameSetup(format, mode, values, pool);
     }
 
     @Override
@@ -172,12 +199,13 @@ public final class GameSetup {
         if (!(o instanceof GameSetup))
             return false;
         GameSetup other = (GameSetup) o;
-        return Objects.equals(_formatCode, other._formatCode) && _mode.equals(other._mode) && _values.equals(other._values);
+        return Objects.equals(_formatCode, other._formatCode) && _mode.equals(other._mode) && _values.equals(other._values)
+                && _pool.equals(other._pool);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(_formatCode, _mode, _values);
+        return Objects.hash(_formatCode, _mode, _values, _pool);
     }
 
     @Override
