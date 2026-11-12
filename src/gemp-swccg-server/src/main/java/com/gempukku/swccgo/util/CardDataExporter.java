@@ -7,7 +7,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import java.io.File;
-import java.io.FileWriter;
+import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,11 +28,36 @@ import java.util.stream.Stream;
 public class CardDataExporter {
 
     private static final String CARDS_BASE_PATH = "gemp-swccg-cards/src/main/java/com/gempukku/swccgo/cards";
+    /** The committed card database files, generated from the card classes. Never edit them by hand. */
+    public static final String DATABASE_FILE = "card_blueprint_database.json";
+    public static final String LIGHT_DATABASE_FILE = "card_blueprint_database_light.json";
+    public static final String DARK_DATABASE_FILE = "card_blueprint_database_dark.json";
+    /** Where the database files live, relative to the src directory. */
+    public static final String DEFAULT_RESOURCES_DIR = "gemp-swccg-cards/src/main/resources";
+    public static final String REGENERATE_COMMAND = "bin/regen-blueprint-db";
+
     private static final Pattern CARD_FILE_PATTERN = Pattern.compile("Card(\\d+)_(\\d+)(?:_(.+))?\\.java$");
 
     public static void main(String[] args) {
         System.out.println("GEMP-SWCCG Card Data Exporter");
         System.out.println("=============================\n");
+
+        if (args.length > 0 && args[0].equals("--resources")) {
+            try {
+                Path dir = Paths.get(args.length > 1 ? args[1] : DEFAULT_RESOURCES_DIR);
+                CardDataExporter exporter = new CardDataExporter();
+                Map<String, String> files = renderDatabaseFiles(exporter.exportAllCards());
+                for (Map.Entry<String, String> file : files.entrySet()) {
+                    Files.writeString(dir.resolve(file.getKey()), file.getValue(), StandardCharsets.UTF_8);
+                    System.out.println("Wrote " + dir.resolve(file.getKey()));
+                }
+            } catch (Exception e) {
+                System.err.println("Error during export: " + e.getMessage());
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return;
+        }
 
         String outputPath = args.length > 0 ? args[0] : "card_data.json";
 
@@ -159,6 +185,11 @@ public class CardDataExporter {
             cardsPath = Paths.get(currentDir, CARDS_BASE_PATH);
         }
 
+        // Running from a module directory such as src/gemp-swccg-server (Maven tests)
+        if (!Files.exists(cardsPath)) {
+            cardsPath = Paths.get(currentDir, "..", CARDS_BASE_PATH);
+        }
+
         // If still not found, try parent directory
         if (!Files.exists(cardsPath)) {
             cardsPath = Paths.get(currentDir, "..", "src", CARDS_BASE_PATH);
@@ -248,7 +279,12 @@ public class CardDataExporter {
         data.put("side", safeToString(blueprint.getSide()));
         data.put("uniqueness", safeToString(blueprint.getUniqueness()));
         data.put("titleComponents", blueprint.getTitleComponents().stream()
-                .map(component -> Map.of("name", component.name(), "uniqueness", component.uniqueness().name()))
+                .map(component -> {
+                    Map<String, Object> c = new LinkedHashMap<>();
+                    c.put("name", component.name());
+                    c.put("uniqueness", component.uniqueness().name());
+                    return c;
+                })
                 .collect(Collectors.toList()));
         data.put("expansionSet", safeToString(expansionSet));
         data.put("rarity", safeToString(blueprint.getRarity()));
@@ -258,6 +294,7 @@ public class CardDataExporter {
         Set<CardType> cardTypes = blueprint.getCardTypes();
         if (cardTypes != null && !cardTypes.isEmpty()) {
             data.put("cardTypes", cardTypes.stream()
+                .sorted()
                 .map(Object::toString)
                 .collect(Collectors.toList()));
         }
@@ -333,7 +370,7 @@ public class CardDataExporter {
         for (Icon icon : Icon.values()) {
             int count = blueprint.getIconCount(icon);
             if (count > 0) {
-                Map<String, Object> iconData = new HashMap<>();
+                Map<String, Object> iconData = new LinkedHashMap<>();
                 iconData.put("icon", icon.toString());
                 iconData.put("count", count);
                 icons.add(iconData);
@@ -358,6 +395,7 @@ public class CardDataExporter {
         Set<Persona> personas = blueprint.getPersonas();
         if (personas != null && !personas.isEmpty()) {
             data.put("personas", personas.stream()
+                .sorted()
                 .map(Object::toString)
                 .collect(Collectors.toList()));
         }
@@ -472,6 +510,39 @@ public class CardDataExporter {
     }
 
     /**
+     * Renders the three committed database files: every card, then Light Side and Dark Side cards
+     * (filtered by side only, Defensive Shields included, as the committed files have always been).
+     * Output is deterministic, so a fresh export can be compared byte for byte with the committed files.
+     */
+    public static Map<String, String> renderDatabaseFiles(List<Map<String, Object>> cardData) {
+        Map<String, String> files = new LinkedHashMap<>();
+        files.put(DATABASE_FILE, toJson(cardData));
+        files.put(LIGHT_DATABASE_FILE, toJson(cardData.stream()
+                .filter(card -> "LIGHT".equals(card.get("side"))).collect(Collectors.toList())));
+        files.put(DARK_DATABASE_FILE, toJson(cardData.stream()
+                .filter(card -> "DARK".equals(card.get("side"))).collect(Collectors.toList())));
+        return files;
+    }
+
+    /**
+     * Names the database files in a directory that differ from the given rendered files (or are missing).
+     */
+    public static List<String> staleDatabaseFiles(Map<String, String> rendered, Path dir) throws IOException {
+        List<String> stale = new ArrayList<>();
+        for (Map.Entry<String, String> file : rendered.entrySet()) {
+            Path path = dir.resolve(file.getKey());
+            if (!Files.exists(path) || !Files.readString(path, StandardCharsets.UTF_8).equals(file.getValue())) {
+                stale.add(file.getKey());
+            }
+        }
+        return stale;
+    }
+
+    private static String toJson(List<Map<String, Object>> cards) {
+        return new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().create().toJson(cards) + "\n";
+    }
+
+    /**
      * Writes the card data to a JSON file.
      */
     private void writeToJson(List<Map<String, Object>> cardData, String outputPath) throws IOException {
@@ -480,7 +551,7 @@ public class CardDataExporter {
             .disableHtmlEscaping()
             .create();
 
-        try (FileWriter writer = new FileWriter(outputPath)) {
+        try (Writer writer = Files.newBufferedWriter(Paths.get(outputPath), StandardCharsets.UTF_8)) {
             gson.toJson(cardData, writer);
         }
 

@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# Regenerates the three card blueprint database files from the Java card classes:
+#   src/gemp-swccg-cards/src/main/resources/card_blueprint_database{,_light,_dark}.json
+# These files are build outputs. Never edit them by hand, and never take another repo's copy
+# (Players Committee syncs included): fix the card class, then run this script.
+# CI fails (CardBlueprintDatabaseUpToDateTests) when the committed files are out of date.
+#
+# Usage: bin/regen-blueprint-db            (builds the modules it needs, then exports; no Docker)
+#        bin/regen-blueprint-db --no-build (export only, from an already-built tree)
+set -euo pipefail
+cd "$(dirname "$0")/../src"
+if [[ "${1:-}" != "--no-build" ]]; then
+    mvn -q -B -DskipTests -Dcheckstyle.skip -pl gemp-swccg-server -am install
+fi
+mvn -q -B -Dcheckstyle.skip -pl gemp-swccg-server exec:java@export-blueprint-db
+git -C .. status --short -- src/gemp-swccg-cards/src/main/resources/card_blueprint_database*.json || true
