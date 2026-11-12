@@ -12,6 +12,17 @@ assert.strictEqual(M.kindOf("Dark_Side"), "guest");
 assert.strictEqual(M.kindOf("Light Side 2"), "player");
 assert.strictEqual(M.kindOf("Luke Sky"), "player");
 
+//test6: Invite to table is offered only to a real player, and only when the viewer is also a real player
+var player = {name: "Luke Sky", kind: "player", playerId: "3812"};
+assert.strictEqual(M.canInviteToTable(player, "Leia Organa"), true);
+assert.strictEqual(M.canInviteToTable(player, "luke sky"), false);           // not yourself
+assert.strictEqual(M.canInviteToTable(player, "guest-AbCdEf123456"), false); // guest host
+assert.strictEqual(M.canInviteToTable(player, "~OzzelBot"), false);
+assert.strictEqual(M.canInviteToTable(player, ""), false);
+assert.strictEqual(M.canInviteToTable({name: "guest-AbCdEf123456", kind: "guest"}, "Leia Organa"), false);
+assert.strictEqual(M.canInviteToTable({name: "~OzzelBot", kind: "bot"}, "Leia Organa"), false);
+assert.strictEqual(M.canInviteToTable({name: "Light Side", kind: "guest"}, "Leia Organa"), false);
+
 //test2: infoFromUser reads ChatRequestHandler's <user name kind playerId>; old servers send only the text
 function user(text, attrs) {
     return {childNodes: [{nodeValue: text}], getAttribute: function (n) { return attrs.hasOwnProperty(n) ? attrs[n] : null; }};

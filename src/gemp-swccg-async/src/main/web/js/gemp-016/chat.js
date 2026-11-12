@@ -332,16 +332,27 @@ var ChatBoxUI = Class.extend({
         return function () { return info; };
     },
 
-    // The hall chat's actions for a name in the user list: mute or unmute (the hall's own mute list, as on the
-    // account page). Game chat has no mute, so the game's Players tab shows only the name and id.
+    // The hall chat's actions for a name in the user list: Invite to table (Casual / invite-only, LOTR Gemp
+    // port) then mute or unmute (the hall's own mute list, as on the account page). Game chat has no mute and
+    // no invite, so the game's Players tab shows only the name and id.
     menuActions:function (info) {
         var that = this;
         return function () {
-            if (!that.isHallMuteActive || info.kind === "bot" || typeof isUserMuted !== "function")
-                return [];
-            if (isUserMuted(info.name))
-                return [{label: "Unmute in hall chat", run: function () { removeMutedUser(info.name); }}];
-            return [{label: "Mute in hall chat", run: function () { addMutedUser({name: info.name, reason: ""}); }}];
+            var actions = [];
+            var selfName = (window.hall && hall.userInfo && hall.userInfo.name) ? hall.userInfo.name : "";
+            if (that.isHallMuteActive && typeof PlayerMenu !== "undefined" && typeof window.gempOpenCasualInvite === "function"
+                    && PlayerMenu.canInviteToTable(info, selfName)) {
+                actions.push({label: "Invite to table", run: function () {
+                    window.gempOpenCasualInvite(info.name);
+                }});
+            }
+            if (that.isHallMuteActive && info.kind !== "bot" && typeof isUserMuted === "function") {
+                if (isUserMuted(info.name))
+                    actions.push({label: "Unmute in hall chat", run: function () { removeMutedUser(info.name); }});
+                else
+                    actions.push({label: "Mute in hall chat", run: function () { addMutedUser({name: info.name, reason: ""}); }});
+            }
+            return actions;
         };
     },
 

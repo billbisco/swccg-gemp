@@ -88,7 +88,7 @@ public class HallCommunicationChannel implements LongPollableResource {
                     }
 
                     @Override
-                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt, String setupChips) {
+                    public void visitTable(String tableId, String gameId, boolean watchable, TableStatus status, String statusDescription, String formatName, String formatCode, String collectionCode, String tournamentName, String tableDesc, List<SwccgGameParticipant> players, Map<String, String> deckArchetypeMap, boolean playing, String winner, boolean hidePlayerId, SwccgCardBlueprintLibrary library, boolean hideDesc, boolean hideDecks, boolean hideWinner, long ageAt, String setupChips, boolean isInviteOnly, boolean invitedYou) {
 
                         List<String> playerInfo = new LinkedList<String>();
                         // #264 AC6: the player menu's ids, one per entry of "players" ("" for guests, bots, hidden)
@@ -134,6 +134,11 @@ public class HallCommunicationChannel implements LongPollableResource {
                             props.put("winner", hideWinner?"":winner);
                         if (ageAt > 0)
                             props.put("ageAt", String.valueOf(ageAt));
+                        // Invite-only tables (LOTR hall user-menu port): the invitee gets invitedYou so the hall
+                        // can highlight the row and show Join; everyone else still sees the table without Join.
+                        props.put("isInviteOnly", String.valueOf(isInviteOnly));
+                        if (invitedYou)
+                            props.put("invitedYou", "true");
 
                         tablesOnServer.put(tableId, props);
                     }

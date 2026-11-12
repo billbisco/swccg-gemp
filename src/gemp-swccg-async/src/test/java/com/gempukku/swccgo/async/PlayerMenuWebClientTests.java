@@ -39,9 +39,12 @@ public class PlayerMenuWebClientTests {
                 {"js/gemp-016/chat.js", "PlayerMenu.bind(entry[0], this.menuInfo(infos[i]), this.menuActions(infos[i]))"},
                 {"js/gemp-016/chat.js", "this.playerListener(players, infos)"},
                 {"js/gemp-016/chat.js", "Mute in hall chat"},
+                {"js/gemp-016/chat.js", "Invite to table"},
                 {"js/gemp-016/gameUi.js", "PlayerMenu.bind(entry[0]"},
                 {"js/gemp-016/hallUi.js", "row.append(this.playersCell(players, tablePlayerIds))"},
-                {"js/gemp-016/hallUi.js", "PlayerMenu.bind(span[0], this.menuInfo(name, ids[i]))"},
+                {"js/gemp-016/hallUi.js", "PlayerMenu.bind(span[0], this.menuInfo(name, ids[i]), this.menuActions(name, ids[i]))"},
+                {"js/gemp-016/hallUi.js", "openCasualInvite"},
+                {"js/gemp-016/hallUi.js", "invitedYou"},
                 {"js/gemp-016/gameHistoryUi.js", "PlayerMenu.bind(link[0]"},
                 {"js/gemp-016/gameHistoryUi.js", "opponentPlayerId: "},
         };

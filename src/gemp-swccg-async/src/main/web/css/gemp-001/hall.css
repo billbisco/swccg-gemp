@@ -973,6 +973,12 @@ tr.played {
     background-color: #990000;
 }
 
+/* An invite-only table opened for this viewer (LOTR Gemp port). Distinct from tr.played (you are seated). */
+tr.invitedYou {
+    background-color: #1e4a1e;
+    outline: 2px solid #c4a035;
+}
+
 
 
 

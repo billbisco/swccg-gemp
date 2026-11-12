@@ -104,7 +104,8 @@ public class PlayNowGameTests {
         ArgumentCaptor<String> desc = ArgumentCaptor.forClass(String.class);
         verify(visitor).visitTable(anyString(), eq(gameId), watchable.capture(), eq(HallInfoVisitor.TableStatus.PLAYING),
                 anyString(), anyString(), anyString(), any(), anyString(), desc.capture(), players.capture(), anyMap(),
-                eq(false), any(), anyBoolean(), any(), anyBoolean(), anyBoolean(), anyBoolean(), anyLong(), any());
+                eq(false), any(), anyBoolean(), any(), anyBoolean(), anyBoolean(), anyBoolean(), anyLong(), any(),
+                anyBoolean(), anyBoolean());
         assertTrue(watchable.getValue()); //test1
         List<String> names = new ArrayList<>();
         players.getValue().forEach(p -> names.add(p.getPlayerId()));
