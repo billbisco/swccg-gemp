@@ -119,6 +119,41 @@ public class VirtualImageWordingTests {
             {"220_10", "Plays on table. At end of a turn, if opponent has 15 or more cards in hand, may use 3 Force to shuffle all but 9 (random selection) into Used Pile. If Monnok or Drop! just targeted your hand, may reveal 3 cards from hand; they cannot be removed or checked for duplicates.", null, null},
             {"219_24", "If an Imperial leader just won a battle, opponent loses 1 Force (and stacks it on Thrawn's Art Collection if possible). OR Suspend Ancient Watering Hole for remainder of turn. OR If you have 4 artwork cards, you retrieve 1 Force and opponent loses 1 Force.", null, null},
             {"219_11", null, "Opponent may not reduce or cancel your Force drains here.", "Once per turn, may [download] TIE Defender Project, Pryce, or Thrawn here."},
+            // Third pass (GEMP-IMG3, 13 Nov 2026): current versions in vm-versions.json by vm-b2, vm-c2, vm-a4 (ALT) and vm-d2,
+            // read from the current Holotable image; Luke Skywalker, The Emperor's Prize (205_14) from its E1 images
+            // (16 Aug 2023). "200_20^" is the ALT printing of Luke Skywalker (V), whose image words its text differently.
+            {"211_43", null, "Once per turn, may use 1 Force to [download] a Kamino site.", "If opponent has two clones on table, Force drain -1 here."},
+            {"211_37", null, "During your deploy phase, if you just deployed a Maz's Castle location, may draw top card of Reserve Deck.", "If you just deployed a starship here, may shuffle any deck or pile."},
+            {"211_12", "If you just lost a Dark Jedi and have exactly one Dark Jedi on table, [upload] a Dark Jedi. OR Once per game, if you have exactly two Dark Jedi on table, choose: Opponent loses 2 Force. OR Make a just drawn destiny = 2.", null, null},
+            {"211_25", "Deploy on Aurra, Grievous, or your warrior of ability > 4. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.", null, null},
+            {"211_11", "If A Stunning Move on table, deploy on 500 Republica. Opponent's Force generation is -1 here. While at a site (even while on a captive), adds one [Dark Side] icon here. While on Coruscant, opponent loses no more than 1 Force from your Force drains here. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed (or docking bay transit) to a battleground site. If about to leave table, relocate to 500 Republica (if possible).", null, null},
+            {"211_5", "Non-[Maintenance] bounty hunters here are immune to Clash Of Sabers and Rebel Barrier. Whenever you draw a destiny of 3, may choose: activate 1 Force, draw bottom card of Used Pile, or place a card from hand on top of Used Pile.", null, null},
+            {"211_26", "Deploy 500 Republica (with Insidious Prisoner there) and Coruscant: Private Platform.\nFor remainder of game, you may not deploy Sidious, First Order characters, or Imperials. Grievous is immunity to attrition +2. Once per turn, may [download] an Invisible Hand site or a non-unique [Separatist] droid. \nFlip this card if Insidious Prisoner is at an Invisible Hand site.", null, null},
+            {"211_15", "If Audience Chamber on table, [download] Passenger Deck or a pit. OR [download] an alien leader or a Twi'lek to Audience Chamber.", null, null},
+            {"211_17", null, "May not be separated from Coruscant: Private Platform.", "Grievous moves from here for free."},
+            {"211_20", null, "Unless your [Clone Army] character here, Force drain -1 here.", "Once per game, if you control, may [upload] Invisible Hand."},
+            {"211_27", null, "While your [Clone Army] character here, your characters are defense value +1 here.", "While Insidious Prisoner here, your characters are power +1 here."},
+            {"211_45", null, "While Luke here, opponent must first use 1 Force to fire a weapon anywhere.", "While Luke here, destiny draws for Sense and Alter are +2."},
+            {"211_42", null, "During your deploy phase, your clone here may move to a site you occupy for free.", "If you initiate battle here, add one battle destiny. Fetts may move to and from here for free."},
+            {"211_41", null, "While you control, your non-unique clone troopers are power and forfeit +1.", "Fetts deploy -1 here."},
+            {"211_54", "Deploy on an alien of ability < 3. While present with a Scomp link, Computer Interface is a Used Interrupt and, once per turn, may use 1 Force to [upload] Computer Interface. Once per turn, if on Lobot, may [download] a trooper here.", null, null},
+            {"211_33", "Deploy on your character of ability > 4 or Padawan. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.", null, null},
+            {"211_34", "May add 2 pilots and 2 passengers. During your deploy phase, may relocate your character of ability < 4 aboard from a related exterior site. While BB-8, DJ, or Rose aboard, immune to attrition < 5.", null, null},
+            {"211_30", "LOST: [download] a Tatooine battleground. STARTING: If you have deployed a Jabba's Palace site, deploy Seeking An Audience and up to two Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.", null, null},
+            {"211_35", "Permanent pilot is •Tallie, who provides ability of 2. May move as a 'react' to same location as your [Episode VII] character. Characters here may not have their forfeit increased above their printed value.", null, null},
+            {"211_55", "[Pilot] 2: any capital starship. During battle, if piloting a capital starship, may place it and Holdo out of play to add X to your total battle destiny, where X = that starship's armor + hyperspeed.", null, null},
+            {"211_1", "[Pilot] 3. Once per turn, may target a related location; opponent loses 1 Force the next time they move to that location this turn. May lose 1 Force to cancel a just drawn weapon destiny targeting a starship he is piloting. Thrawn's game text may not be canceled.", null, null},
+            {"204_57", "Deploy on your First Order warrior. May target a character or vehicle for free. Draw destiny. Add 1 if fired by a stormtrooper. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.", null, null},
+            {"204_40", "Deploys -1 to same site as a First Order leader. Opponent's characters here are cumulatively defense value -1 (limit -3).", null, null},
+            {"204_3", "[Pilot] 3. If with an Imperial (or two Rebels), adds one battle destiny. During battle, if you just drew a destiny < number of Rebels here, may cancel and redraw that destiny.", null, null},
+            {"204_34", "May add Poe (or a spy) as a pilot and 1 passenger. Deploys free to opponent's system. While Poe piloting, maneuver +2. If Finn aboard, apply his ability toward drawing battle destiny.", null, null},
+            {"206_10", "While you have no other trooper here (except death troopers), adds one battle destiny at same site as Krennic, Tarkin, or Thrawn. May place this character in Used Pile to cancel a just drawn weapon destiny targeting your leader here.", null, null},
+            {"205_6", null, "Anakin, Beru, and Owen may move to or from here for free when using landspeed.", "Unless Vader or your trooper here, Force drain -1 here (if both here, Force drain +1 instead)."},
+            {"204_35_BACK", "May not be placed in Reserve Deck. If Falcon about to leave table, place it out of play. May add 2 pilots and 2 passengers. Immune to Trample and Unsalvageable, even if unpiloted. While Finn or Rey aboard, immune to attrition < 4 (< 6 if both). Once during your move phase, if piloted, may flip this card.", null, null},
+            {"218_4", "During battle, Mace may 'swing' one lightsaber twice. Power +1 for each opponent's character of ability < 2 here. Your clones are forfeit +1 here. Immune to attrition < 6.", null, null},
+            {"205_14", "Luke Skywalker, The Emperor's Prize is a Dark Side card and is a persona of Luke only while on table. Plays only during start of game by revealing from outside your deck if Your Destiny is on table and suspended; deploy to Throne Room as a frozen captive. If not revealed, place under your Starting Effect. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader here and not escorting a captive. Place out of play if released or about to leave table.", null, null},
+            {"205_14_BACK", "Immediately 'thaw' Luke (Luke is non-frozen, captured, and seized by Vader). While this side up, subtracts 3 from attempts to cross Luke over (even while a captive). Place out of play if released or about to leave table.", null, null},
+            {"200_20^", "Adds 3 to power of anything he pilots (and to Attack Run total if piloting lead starfighter). If piloting at a battleground during your control phase, may retrieve 1 Force or take Darklighter Spin into hand from Reserve Deck; reshuffle.", null, null},
     };
 
     @Test
@@ -286,5 +321,50 @@ public class VirtualImageWordingTests {
         scn.SkipToLSTurn(Phase.DEPLOY);
         assertEquals("", camp.getBlueprint().getLocationDarkSideGameText());
         assertFalse(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(), ModifierType.MAY_NOT_BE_TARGETED_BY, rey).isEmpty());
+    }
+
+    /**
+     * An ALT printing whose current image words its game text differently has a class of its own (deck id "200_20^"
+     * loads Card200_020ai); it is the same card as the regular printing. Cad Bane (ALT) prints the regular card's
+     * text, so "203_24^" stays the regular class.
+     */
+    @Test
+    public void AlternateImagePrintingWithItsOwnWordingHasItsOwnClass() {
+        SwccgCardBlueprintLibrary library = new SwccgCardBlueprintLibrary();
+        SwccgCardBlueprint base = library.getSwccgoCardBlueprint("200_20");
+        SwccgCardBlueprint alt = library.getSwccgoCardBlueprint("200_20^");
+        assertTrue(alt != base);
+        assertTrue(base.getClass().isInstance(alt));
+        assertEquals(base.getTitle(), alt.getTitle());
+        assertEquals(base.getUniqueness(), alt.getUniqueness());
+        assertEquals(base.getDeployCost(), alt.getDeployCost(), 0);
+        assertEquals("200_20", library.getBaseBlueprintId("200_20^"));
+        assertTrue(library.getSwccgoCardBlueprint("203_24^") == library.getSwccgoCardBlueprint("203_24"));
+        assertEquals("[Pilot] 2. Your other bounty hunters here are power +1. Draws one battle destiny if unable to otherwise. During battle, if with your other bounty hunter, may cancel the immunity to attrition of a Jedi here.",
+                library.getSwccgoCardBlueprint("203_24^").getGameText());
+    }
+
+    @Test
+    public void AlternateImageLukeInPlayShowsItsImageWordingAndIsLuke() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("luke", "200_20^");
+                }},
+                new HashMap<>(),
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var luke = scn.GetLSCard("luke");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke);
+        assertTrue(luke.getBlueprint().getGameText().startsWith("Adds 3 to power of anything he pilots (and to Attack Run total"));
+        assertTrue(Filters.Luke.accepts(scn.game(), luke));
+        assertEquals(4, luke.getBlueprint().getAbility(), 0);
     }
 }

@@ -40,7 +40,7 @@ public class Card211_005 extends AbstractAlien {
     public Card211_005() {
         super(Side.DARK, 3, 3, 3, 3, 3, Title.ReeYees, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLore("Gran convicted of murder. Exiled from his homeworld. Smuggler and bounty hunter. Slowly going insane. Fond of making things explode. Plotting to kill Jabba.");
-        setGameText("Non-[Maintenance] Bounty hunters here may not be targeted by Rebel Barrier or Clash of Sabers. Whenever you draw a destiny of 3, may choose: activate 1 Force, draw bottom card of Used Pile, or place a card from hand on top of Used Pile.");
+        setGameText("Non-[Maintenance] bounty hunters here are immune to Clash Of Sabers and Rebel Barrier. Whenever you draw a destiny of 3, may choose: activate 1 Force, draw bottom card of Used Pile, or place a card from hand on top of Used Pile.");
         addIcons(Icon.JABBAS_PALACE, Icon.VIRTUAL_SET_11, Icon.WARRIOR);
         addKeywords(Keyword.SMUGGLER, Keyword.BOUNTY_HUNTER);
         setSpecies(Species.GRAN);

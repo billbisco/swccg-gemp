@@ -30,7 +30,7 @@ import java.util.List;
 public class Card204_034 extends AbstractStarfighter {
     public Card204_034() {
         super(Side.LIGHT, 2, 2, 2, null, 4, 3, 4, "Stolen First Order TIE Fighter", Uniqueness.UNIQUE, ExpansionSet.SET_4, Rarity.V);
-        setGameText("May add Poe (or a spy) as a pilot and 1 passenger. Deploys free to opponent's system. While Poe piloting, maneuver +2. If Finn aboard, apply his ability towards drawing battle destiny.");
+        setGameText("May add Poe (or a spy) as a pilot and 1 passenger. Deploys free to opponent's system. While Poe piloting, maneuver +2. If Finn aboard, apply his ability toward drawing battle destiny.");
         addIcons(Icon.EPISODE_VII, Icon.NAV_COMPUTER, Icon.RESISTANCE, Icon.VIRTUAL_SET_4);
         addModelType(ModelType.TIE_SF);
         setPilotCapacity(1);

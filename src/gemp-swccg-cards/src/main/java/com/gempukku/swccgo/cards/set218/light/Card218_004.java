@@ -33,7 +33,7 @@ public class Card218_004 extends AbstractJediMaster {
     public Card218_004() {
         super(Side.LIGHT, 1, 7, 6, 7, 8, "Master Windu", Uniqueness.UNIQUE, ExpansionSet.SET_18, Rarity.V);
         setLore("Jedi Council member.");
-        setGameText("During battle, may swing a lightsaber twice. Power +1 for each of opponent's character of ability < 2 here. Your clones are forfeit +1 here. Immune to attrition < 6.");
+        setGameText("During battle, Mace may 'swing' one lightsaber twice. Power +1 for each opponent's character of ability < 2 here. Your clones are forfeit +1 here. Immune to attrition < 6.");
         addPersona(Persona.MACE);
         addIcons(Icon.CLONE_ARMY, Icon.EPISODE_I, Icon.WARRIOR, Icon.VIRTUAL_SET_18);
         addKeywords(Keyword.JEDI_COUNCIL_MEMBER);

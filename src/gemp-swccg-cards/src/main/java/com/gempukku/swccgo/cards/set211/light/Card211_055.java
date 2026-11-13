@@ -35,7 +35,7 @@ public class Card211_055 extends AbstractResistance {
     public Card211_055(){
         super(Side.LIGHT, 2, 3, 1, 3, 5, "Vice Admiral Holdo", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLore("Female leader.");
-        setGameText("[Pilot] 2: any capital starship. During battle, if piloting a capital starship, may place it and Holdo out of play to add X to your total battle destiny, where X is that starship's armor + hyperspeed.");
+        setGameText("[Pilot] 2: any capital starship. During battle, if piloting a capital starship, may place it and Holdo out of play to add X to your total battle destiny, where X = that starship's armor + hyperspeed.");
         setPolitics(1);
         addIcons(Icon.EPISODE_VII, Icon.VIRTUAL_SET_11, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.ADMIRAL, Keyword.FEMALE, Keyword.LEADER);

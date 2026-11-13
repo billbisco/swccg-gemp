@@ -42,7 +42,6 @@ public class Card205_014_BACK extends AbstractRebel {
         addPersona(Persona.LUKE);
         setCharacterPersonaOnlyWhileOnTable(true);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_5);
-        setMayNotBePlacedInReserveDeck(true);
     }
 
     @Override

@@ -37,8 +37,8 @@ import java.util.List;
 public class Card211_042 extends AbstractSite {
     public Card211_042() {
         super(Side.LIGHT, "Kamino: Clone Birthing Center", "Kamino", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
-        setLocationDarkSideGameText("If you initiate battle here, add one battle destiny.  Fetts may move to and from here for free");
-        setLocationLightSideGameText("During your deploy phase, your clone here may move to a battleground you occupy for free.");
+        setLocationDarkSideGameText("If you initiate battle here, add one battle destiny. Fetts may move to and from here for free.");
+        setLocationLightSideGameText("During your deploy phase, your clone here may move to a site you occupy for free.");
         // Aglets: "Treat it as saying 'your clone here may move to any site you occupy' when coding."
         addIcon(Icon.DARK_FORCE, 0);
         addIcon(Icon.LIGHT_FORCE, 2);

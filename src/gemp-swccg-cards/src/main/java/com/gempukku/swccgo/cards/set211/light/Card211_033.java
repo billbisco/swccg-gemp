@@ -35,7 +35,7 @@ public class Card211_033 extends AbstractCharacterWeapon {
     public Card211_033() {
         super(Side.LIGHT, 2, "Jedi Lightsaber", Uniqueness.UNRESTRICTED, ExpansionSet.SET_11, Rarity.V);
         setLore("Multifaceted jewels focus light into a deadly blade. Projects a meter-long beam of pure energy. A lightsaber is constructed personally by a Jedi as a part of training.");
-        setGameText("Deploy on a character of ability > 4 or a Padawan. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.");
+        setGameText("Deploy on your character of ability > 4 or Padawan. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.");
         addKeywords(Keyword.LIGHTSABER);
         addIcons(Icon.VIRTUAL_SET_11, Icon.EPISODE_I);
         // Not considered matching weapons for anyone.  Need to be unique to be matching. (per discussion with Aglets)

@@ -30,7 +30,7 @@ public class Card211_041 extends AbstractSite {
     public Card211_041() {
         super(Side.LIGHT, "Kamino: Clone Training Center", "Kamino", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLocationDarkSideGameText("Fetts deploy -1 here.");
-        setLocationLightSideGameText("If you control, your non-unique clone troopers are power and forfeit + 1.");
+        setLocationLightSideGameText("While you control, your non-unique clone troopers are power and forfeit +1.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK, Icon.EPISODE_I, Icon.VIRTUAL_SET_11);

@@ -38,8 +38,8 @@ public class Card211_026 extends AbstractObjective {
     public Card211_026() {
         super(Side.DARK, 0, Title.A_Stunning_Move, ExpansionSet.SET_11, Rarity.V);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy 500 Republica (with Insidious Prisoner there) and Private Platform.\n" +
-                "For remainder of game, you may not deploy Sidious, First Order characters, or Imperials. Grievous is immunity to attrition +2. Once per turn, may \\/ an Invisible Hand site or a non-unique [Separatist] droid. \n" +
+        setGameText("Deploy 500 Republica (with Insidious Prisoner there) and Coruscant: Private Platform.\n" +
+                "For remainder of game, you may not deploy Sidious, First Order characters, or Imperials. Grievous is immunity to attrition +2. Once per turn, may [download] an Invisible Hand site or a non-unique [Separatist] droid. \n" +
                 "Flip this card if Insidious Prisoner is at an Invisible Hand site.");
         addIcons(Icon.VIRTUAL_SET_11, Icon.THEED_PALACE, Icon.EPISODE_I);
     }

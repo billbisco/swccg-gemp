@@ -30,7 +30,7 @@ import java.util.List;
 public class Card204_040 extends AbstractFirstOrder {
     public Card204_040() {
         super(Side.DARK, 3, 2, 2, 1, 3, "First Order Stormtrooper", Uniqueness.UNRESTRICTED, ExpansionSet.SET_4, Rarity.V);
-        setGameText("Deploys free to same site as a First Order leader. Opponent's characters here are cumulatively defense value -1 (limit -3).");
+        setGameText("Deploys -1 to same site as a First Order leader. Opponent's characters here are cumulatively defense value -1 (limit -3).");
         addIcons(Icon.EPISODE_VII, Icon.WARRIOR, Icon.VIRTUAL_SET_4);
         addKeywords(Keyword.STORMTROOPER);
     }

@@ -36,7 +36,7 @@ public class Card211_043 extends AbstractSystem {
     public Card211_043() {
         super(Side.LIGHT, Title.Kamino, 7, ExpansionSet.SET_11, Rarity.V);
         setLocationDarkSideGameText("If opponent has two clones on table, Force drain -1 here.");
-        setLocationLightSideGameText("Once per turn, may use 1 Force to [download] a Kamino site");
+        setLocationLightSideGameText("Once per turn, may use 1 Force to [download] a Kamino site.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.PLANET, Icon.VIRTUAL_SET_11, Icon.EPISODE_I);

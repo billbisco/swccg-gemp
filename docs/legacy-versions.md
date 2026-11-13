@@ -53,6 +53,11 @@ deck counts, bans).
   bans still count it as the base printing (`LegacyIds.withoutAlternateImageSuffix` in
   `DefaultSwccgFormat.sameCardBlueprintId`). None needed so far (2026-11-08): every AI printing's latest text is its base
   card's latest text.
+- **Virtual Modern ALT printings (deck id `NNN_N^`):** they play as the base card, except when the current ALT
+  image words the game text differently: then the ALT printing gets a class `cards/setNNN/<side>/CardNNN_NNNai.java`
+  extending the base class with the image's words, and the library loads it for `NNN_N^`
+  (`SwccgCardBlueprintLibrary.alternateImageClassId`; ids with a `blueprintMapping.txt` alias are left alone). Done:
+  `200_20ai` Luke Skywalker (V) (ALT) (wording only, 13 Nov 2026).
 - Done: `2240_3` (Juno Eclipse AI), `2240_8ai` (Galen Marek AI; retired in batch B39 — one AI version, aliased to `1240_8ai`), `2250_2ai` (Aurra Sing AI), `2250_44ai`
   (Master Qui-Gon AI), `2250_45ai` (Mace Windu AI), `2281_30ai` (Supreme Chancellor Valorum AI).
 
@@ -259,6 +264,14 @@ uniqueness, stats, icons and game text read from the current Holotable image). B
 plays differently: Like My Father Before Me `202_5` (Lightsaber download "once during your turn", was once per turn in
 either turn) and Jakku: Rey's Encampment `204_29` (all text on the Light Side, so its weapons immunity is Light Side
 text). No older text state was added: the other changes are wording only.
+Third pass (13 Nov 2026): the current versions in `vm-versions.json` recorded by vm-b2, vm-c2, vm-a4 (ALT) and vm-d2
+(219 entries), read from the current Holotable image (OCR of every image, then each difference looked at). Wording fixed
+on 29 cards (tests `cards/VirtualImageWordingTests.java`); Luke Skywalker (V) (ALT) has its own wording (`200_20ai`).
+Behaviour: Luke Skywalker, The Emperor's Prize `205_14` follows its E1 images (16 Aug 2023): it plays at start of game
+from outside your deck if Your Destiny is on table and suspended (the player chooses to reveal it; Bring Him Before Me
+is no longer needed), is placed under your Starting Effect if not revealed (was: out of play), flips when Vader is here
+(was: present), and may be placed in Reserve Deck (tests `cards/set205/dark/Card_205_014_Tests.java`). Cad Bane (ALT)
+prints the regular card's text, so `203_24^` plays the regular class.
 
 ### Printed weapons (o)
 
