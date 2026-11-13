@@ -119651,7 +119651,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The huge strain on the little-tested power generator matrix of the superlaser's fusion reactor can require full recharging before the system can be used again.",
-    "gameText": "Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a planet, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.",
+    "gameText": "Deploy on a superlaser. May not fire at a planet unless 8 cards stacked here. If fewer than 8 cards stacked here, opponent may stack top card of Force Pile here. If just fired at a system, Effect is canceled. If Effect canceled, cards stacked here are placed in Used Pile.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
