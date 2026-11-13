@@ -119,6 +119,15 @@ public class Card_2_112_Tests {
         assertTrue(scn.LSDecisionAvailable("Choose answer to yes-or-no question"));
         scn.LSChoose(answer);
         scn.PassAllResponses();
+        if (!answer.startsWith("Refuse")) {
+            ReturnControlToDark(scn);
+        }
+    }
+
+    private void ReturnControlToDark(VirtualTableScenario scn) {
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        scn.LSPass();
+        assertTrue(scn.AwaitingDSControlPhaseActions());
     }
 
     @Test
@@ -168,6 +177,7 @@ public class Card_2_112_Tests {
         scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassForceDrainEndResponses();
         scn.PassAllResponses();
+        ReturnControlToDark(scn);
         assertTrue(scn.AwaitingDSControlPhaseActions()); //test2
         assertFalse(scn.DSCardActionAvailable(hypo, "Ask yes-or-no question")); //test2
     }
@@ -267,6 +277,7 @@ public class Card_2_112_Tests {
         scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassForceDrainEndResponses();
         scn.PassAllResponses();
+        ReturnControlToDark(scn);
         assertTrue(scn.AwaitingDSControlPhaseActions()); //test1
         assertTrue(scn.DSCardActionAvailable(hypo, "Ask yes-or-no question")); //test1
     }
@@ -289,6 +300,7 @@ public class Card_2_112_Tests {
         scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassForceDrainEndResponses();
         scn.PassAllResponses();
+        ReturnControlToDark(scn);
         scn.MoveCardsToLocation(prison, scn.GetDSCard("ito"), scn.GetDSCard("guard"), scn.GetDSCard("escort"));
         assertTrue(scn.DSForceDrainAvailable(prison)); //test1
         scn.DSForceDrainAt(prison);
@@ -314,6 +326,7 @@ public class Card_2_112_Tests {
         scn.LSPayRemainingForceLossFromReserveDeck();
         scn.PassForceDrainEndResponses();
         scn.PassAllResponses();
+        ReturnControlToDark(scn);
         scn.SkipToLSTurn(Phase.DRAW);
         scn.SkipToDSTurn(Phase.CONTROL);
         assertTrue(scn.DSForceDrainAvailable(farm)); //test1
