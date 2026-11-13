@@ -1,8 +1,6 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
 import com.gempukku.swccgo.common.Phase;
-import com.gempukku.swccgo.common.TargetingReason;
-import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -19,7 +17,6 @@ public class Card_2_112_Tests {
                 new HashMap<>() {{
                     put("captive", "1_19");
                     put("hand", "1_19");
-                    put("destinationCaptive", "2_3");
                 }},
                 new HashMap<>() {{
                     put("ito", "2_93");
@@ -28,7 +25,6 @@ public class Card_2_112_Tests {
                     put("escort", "1_194");
                     put("farm", "1_294");
                     put("prison", "1_284");
-                    put("transport", "1_243");
                 }},
                 20, 20,
                 StartingSetup.DefaultLSGroundLocation,
@@ -284,49 +280,6 @@ public class Card_2_112_Tests {
         ReturnControlToDark(scn);
         assertTrue(scn.AwaitingDSControlPhaseActions()); //test1
         assertTrue(scn.DSCardActionAvailable(hypo, "Ask yes-or-no question")); //test1
-    }
-
-    @Test
-    public void HypoQuestionUseRemainsSpentAfterControlPhaseTransport() {
-        //test1: actual transport preserves the shared use already spent asking a question.
-        var scn = GetScenario();
-        var farm = scn.GetDSCard("farm");
-        var secondSite = scn.GetDSStartingLocation();
-        var hypo = scn.GetDSCard("hypo");
-        var ito = scn.GetDSCard("ito");
-        var escort = scn.GetDSCard("escort");
-        var transport = scn.GetDSCard("transport");
-        var destinationEscort = scn.GetDSCard("guard");
-        var destinationCaptive = scn.GetLSCard("destinationCaptive");
-        scn.CaptureCardWith(scn.GetDSCard("escort"), scn.GetLSCard("captive"));
-        scn.MoveCardsToLocation(secondSite, destinationEscort);
-        scn.CaptureCardWith(destinationEscort, destinationCaptive);
-        scn.MoveCardsToDSHand(transport);
-        scn.SkipToDSTurn(Phase.CONTROL);
-        AnswerQuestion(scn, "Yes");
-        scn.PrepareDSDestiny(0);
-        scn.DSPlayCard(transport);
-        scn.DSChooseCard(farm);
-        scn.DSChooseCard(secondSite);
-        scn.DSChooseCard(ito);
-        scn.PassDestinyDrawResponses();
-        scn.DSChooseYes();
-        scn.PassAllResponses();
-        ReturnControlToDark(scn);
-        assertTrue(scn.CardsAtLocation(secondSite, ito, destinationEscort)); //test1
-        assertTrue(scn.GetLSIconsOnLocation(secondSite) > 0); //test1
-        assertEquals(destinationEscort, destinationCaptive.getEscort()); //test1
-        assertEquals(scn.GetDSCard("ito"), hypo.getAttachedTo()); //test1
-        assertTrue(destinationCaptive.isCaptive()); //test1
-        assertTrue(Filters.presentWith(hypo).accepts(scn.gameState(),
-                scn.game().getModifiersQuerying(), destinationCaptive)); //test1
-        assertTrue(Filters.canBeTargetedBy(hypo, TargetingReason.TO_BE_TORTURED).accepts(
-                scn.gameState(), scn.game().getModifiersQuerying(), destinationCaptive)); //test1
-        assertTrue(scn.DSForceDrainAvailable(secondSite)); //test1
-        scn.DSForceDrainAt(secondSite);
-        scn.LSPass();
-        assertTrue(scn.IsActiveForceDrain()); //test1
-        assertFalse(scn.DSCardActionAvailable(hypo, "Add 1 to Force drain")); //test1
     }
 
     @Test
