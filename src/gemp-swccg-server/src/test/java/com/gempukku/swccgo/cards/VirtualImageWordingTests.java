@@ -643,4 +643,202 @@ public class VirtualImageWordingTests {
         assertTrue(scn.IsParticipatingInBattle(luke, scn.GetDSCard("trooper1")));
         assertFalse(scn.LSCardActionAvailable(meditation, "Add one battle destiny"));
     }
+
+    private static VirtualTableScenario venkaScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("jawa", "1_12");           // Jawa (power 1)
+                }},
+                new HashMap<>() {{
+                    put("venka", "209_38");        // Lieutenant Venka (V), current image
+                    put("isd", "1_302");           // Imperial-Class Star Destroyer
+                    put("fear", "1_216");          // Fear Will Keep Them In Line
+                    put("tatooine", "1_289");      // Tatooine (system)
+                    put("eisley", "1_293");        // Tatooine: Jundland Wastes (related site)
+                    put("trooper1", "1_194");      // Stormtrooper (Imperial)
+                    put("trooper2", "1_194");
+                    put("raider1", "1_196");       // Tusken Raider (not an Imperial)
+                    put("raider2", "1_196");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /** Sets up Venka aboard a Star Destroyer at Tatooine with Fear Will Keep Them In Line, battles at Mos Eisley and
+     * returns the Light Side Force lost to Venka (Force loss paid from Reserve Deck before battle damage). */
+    private static int venkaForceLossAfterWinningWith(VirtualTableScenario scn, String winner1, String winner2) {
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        var isd = scn.GetDSCard("isd");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, isd);
+        scn.BoardAsPassenger(isd, scn.GetDSCard("venka"));
+        scn.AttachCardsTo(isd, scn.GetDSCard("fear"));
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard(winner1), scn.GetDSCard(winner2));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        scn.SkipToDamageSegment(false);
+        assertTrue(scn.DSWonBattle());
+        // Venka's Force loss comes before battle damage; battle damage asks "…or a card from battle to forfeit".
+        scn.PassResponses("FORCE_LOSS_INITIATED");
+        scn.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
+        int lost = 0;
+        for (int i = 0; i < 10 && scn.AwaitingLSForceLossPayment()
+                && !scn.LSDecisionAvailable("forfeit"); i++) {
+            scn.PlayerDecided(scn.LS, scn.LSGetCardChoices().getFirst());
+            scn.PassCardLeavingTable();
+            lost++;
+        }
+        return lost;
+    }
+
+    /**
+     * Lieutenant Venka (V) (current image, 209_38): "If Fear Will Keep Them In Line here and your Imperial just won a
+     * battle at a related site, opponent loses 2 Force."
+     */
+    @Test
+    public void VenkaMakesOpponentLoseTwoForceWhenYourImperialWinsAtARelatedSite() {
+        assertEquals(2, venkaForceLossAfterWinningWith(venkaScenario(), "trooper1", "trooper2"));
+    }
+
+    /** Boundary: the battle was won by your non-Imperials only, so no Force loss. */
+    @Test
+    public void VenkaNeedsAnImperialToWinTheBattle() {
+        assertEquals(0, venkaForceLossAfterWinningWith(venkaScenario(), "raider1", "raider2"));
+    }
+
+    private static VirtualTableScenario black3Scenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("jawa", "1_12");
+                }},
+                new HashMap<>() {{
+                    put("black3", "210_28");       // Black 3 (V), current image
+                    put("ds613", "1_174");         // DS-61-3
+                    put("tatooine", "1_289");
+                    put("eisley", "1_293");        // Tatooine: Jundland Wastes
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Black 3 (V) (current image, 210_28): "While DS-61-3 piloting, immune to attrition < 4 and, during battle, players
+     * draw destiny from the bottom of their Reserve Deck." Applies to a battle Black 3 is not in.
+     */
+    @Test
+    public void Black3MakesPlayersDrawFromTheBottomDuringAnyBattle() {
+        var scn = black3Scenario();
+        var black3 = scn.GetDSCard("black3");
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, black3);
+        scn.BoardAsPilot(black3, scn.GetDSCard("ds613"));
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertFalse(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        assertFalse(scn.IsParticipatingInBattle(black3));
+        assertTrue(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+    }
+
+    /** Boundary: without DS-61-3 piloting, no bottom-of-deck draws. */
+    @Test
+    public void Black3NeedsDS613Piloting() {
+        var scn = black3Scenario();
+        var black3 = scn.GetDSCard("black3");
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, black3);
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        assertFalse(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+    }
+
+    private static VirtualTableScenario reactorTerminalScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>(),
+                new HashMap<>() {{
+                    put("terminal", "210_43");     // Death Star Reactor Terminal, current image
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Death Star Reactor Terminal (current image, 210_43): "Once during your turn, may peek … or [download] (or deploy
+     * from Lost Pile) a device". The device deploy is offered outside the deploy phase (here the control phase).
+     */
+    @Test
+    public void ReactorTerminalDeploysADeviceInAnyPhaseOfYourTurn() {
+        var scn = reactorTerminalScenario();
+        var terminal = scn.GetDSCard("terminal");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(terminal);
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+        scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+    }
+
+    /** Boundary: only once per turn (the peek and the device deploy share the limit). */
+    @Test
+    public void ReactorTerminalOnlyOnceDuringYourTurn() {
+        var scn = reactorTerminalScenario();
+        var terminal = scn.GetDSCard("terminal");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(terminal);
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSUseCardAction(terminal, "Deploy device from Reserve Deck");
+        // no device in Reserve Deck: both players may verify it after the unsuccessful search
+        scn.DSPass();
+        scn.LSPass();
+        for (int i = 0; i < 5 && !scn.AwaitingDSControlPhaseActions(); i++) {
+            if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
+            else scn.PassResponses();
+        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+        scn.SkipToPhase(Phase.MOVE);
+        assertFalse(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+    }
 }

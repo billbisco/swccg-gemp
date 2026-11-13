@@ -77,8 +77,8 @@ public class Card209_038 extends AbstractImperial {
 
         // Check condition(s)
         if (GameConditions.canSpot(game, self, Filters.and(Filters.title(Title.Fear_Will_Keep_Them_In_Line), Filters.here(self)))
-                && TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.and(Filters.relatedSite(self),
-                Filters.sameSiteAs(self, Filters.and(Filters.your(self), Filters.Imperial))))) {
+                && TriggerConditions.wonBattle(game, effectResult, Filters.and(Filters.your(self), Filters.Imperial))
+                && TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.relatedSite(self))) {
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_2);
             action.setText("Make opponent lose 2 Force");

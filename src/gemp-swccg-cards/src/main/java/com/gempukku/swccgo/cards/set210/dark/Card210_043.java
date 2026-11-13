@@ -3,12 +3,10 @@ package com.gempukku.swccgo.cards.set210.dark;
 import com.gempukku.swccgo.cards.AbstractNormalEffect;
 import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.cards.effects.PeekAtTopCardsOfForcePileAndChooseCardsToTakeIntoHandEffect;
-import com.gempukku.swccgo.cards.effects.usage.OncePerPhaseEffect;
 import com.gempukku.swccgo.cards.effects.usage.OncePerTurnEffect;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.GameTextActionId;
 import com.gempukku.swccgo.common.Icon;
-import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.PlayCardZoneOption;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
@@ -47,11 +45,10 @@ public class Card210_043 extends AbstractNormalEffect {
         List<TopLevelGameTextAction> actions = new LinkedList<TopLevelGameTextAction>();;
 
 
-        // During your turn, may:
-        // 1) deploy a device (except Restraining Bolt or Tractor Beam) from Lost Pile or Reserve Deck (reshuffle)
-        // 2) Peek at the top X cards of your Force Pile and take one into hand, where X = number of your devices on table.
-        //
-        // Treat all of these as the same "action id". Also treat this as a "once per turn"
+        // Once during your turn (any phase; current PC card image), may:
+        // 1) peek at the top X cards of your Force Pile and take one into hand, where X = number of your devices on table, or
+        // 2) [download] (or deploy from Lost Pile) a device (except Restraining Bolt or Tractor Beam).
+        // All share one action id and one once-per-turn limit.
         GameTextActionId gameTextActionId = GameTextActionId.REACTOR_TERMINAL__ONCE_PER_TURN_OPTIONS;
 
         Filter limitedDevices = Filters.and(
@@ -62,16 +59,14 @@ public class Card210_043 extends AbstractNormalEffect {
 
         // Deploy device from Lost Pile
         // Check condition(s)
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
+        if (GameConditions.isDuringYourTurn(game, playerId)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canDeployCardFromLostPile(game, playerId, self, gameTextActionId)) {
+                && GameConditions.canDeployCardFromLostPile(game, playerId, self, gameTextActionId, true)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy device from Lost Pile");
             action.setActionMsg("Deploy a device from Lost Pile");
             // Update usage limit(s)
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
             action.appendUsage(
                     new OncePerTurnEffect(action));
             // Perform result(s)
@@ -84,16 +79,14 @@ public class Card210_043 extends AbstractNormalEffect {
 
         // Deploy device from Reserve Deck
         // Check condition(s)
-        if (GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, gameTextActionId, Phase.DEPLOY)
+        if (GameConditions.isDuringYourTurn(game, playerId)
                 && GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
-                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId)) {
+                && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, true, false)) {
 
             final TopLevelGameTextAction action = new TopLevelGameTextAction(self, gameTextSourceCardId, gameTextActionId);
             action.setText("Deploy device from Reserve Deck");
             action.setActionMsg("Deploy a device from Reserve Deck");
             // Update usage limit(s)
-            action.appendUsage(
-                    new OncePerPhaseEffect(action));
             action.appendUsage(
                     new OncePerTurnEffect(action));
             // Perform result(s)

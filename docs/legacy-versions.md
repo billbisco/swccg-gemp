@@ -278,7 +278,7 @@ read from the latest Holotable image (OCR of every image, then each difference l
 lore on 6 (tests `cards/VirtualImageWordingTests.java`). Behaviour: Ambush (V) `210_2` targets three related
 battlegrounds occupied by your clones (system or sites); Steadfast `214_9` equalizes Force icons only at an [Episode VII]
 system; Meditation `213_47` compares characters participating in the battle; Shadow Collective `213_32` downloads only
-[Set 13] Maul; The Falcon, Junkyard Garbage back `204_35_BACK` has no Scomp link icon. Every ALT printing in this pass
+[Set 13] Maul; The Falcon, Junkyard Garbage back `204_35_BACK` has no Scomp link icon. Also Black 3 `210_28` (bottom-of-deck destiny draws during any battle while DS-61-3 pilots it), Death Star Reactor Terminal `210_43` (once during your turn, in any phase) and Lieutenant Venka `209_38` (your Imperial just won a battle at a related site). Every ALT printing in this pass
 prints its base card's wording, so no new `CardNNN_NNNai` class was needed.
 
 ### Printed weapons (o)

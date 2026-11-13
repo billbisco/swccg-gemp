@@ -1,7 +1,7 @@
 package com.gempukku.swccgo.cards.set210.dark;
 
 import com.gempukku.swccgo.cards.AbstractStarfighter;
-import com.gempukku.swccgo.cards.conditions.DuringBattleWithParticipantCondition;
+import com.gempukku.swccgo.cards.conditions.DuringBattleCondition;
 import com.gempukku.swccgo.cards.conditions.HasPilotingCondition;
 import com.gempukku.swccgo.cards.conditions.WithCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -54,7 +54,7 @@ public class Card210_028 extends AbstractStarfighter {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, new HasPilotingCondition(self, Filters.DS_61_3), 4));
         modifiers.add(new ForceDrainModifier(self, Filters.here(self), new WithCondition(self, Filters.Black_Squadron_tie), 1, playerId));
-        modifiers.add(new DrawDestinyFromBottomOfDeckModifier(self, new AndCondition(new HasPilotingCondition(self, Filters.DS_61_3), new DuringBattleWithParticipantCondition(self))));
+        modifiers.add(new DrawDestinyFromBottomOfDeckModifier(self, new AndCondition(new HasPilotingCondition(self, Filters.DS_61_3), new DuringBattleCondition())));
         return modifiers;
     }
 }
