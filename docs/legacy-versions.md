@@ -254,6 +254,11 @@ Done (Virtual Modern, PC card images; tests `cards/set201/dark/Card_201_030_Test
 (PC-E2 image, 12 December 2022: the redraw has no "during battle"); bare `201_30` = the 20 December 2022 image ("Once
 per turn during battle"). Bill (12 Nov 2026): the wording on the PC card image takes precedence over the PC card data;
 other Virtual Modern bare texts fixed to their current image are checked in `cards/VirtualImageWordingTests.java`.
+Second pass (12 Nov 2026): every current version in ai-team-skills `versions/vm-versions.json` (405 families; title,
+uniqueness, stats, icons and game text read from the current Holotable image). Behaviour changed only where the image
+plays differently: Like My Father Before Me `202_5` (Lightsaber download "once during your turn", was once per turn in
+either turn) and Jakku: Rey's Encampment `204_29` (all text on the Light Side, so its weapons immunity is Light Side
+text). No older text state was added: the other changes are wording only.
 
 ### Printed weapons (o)
 

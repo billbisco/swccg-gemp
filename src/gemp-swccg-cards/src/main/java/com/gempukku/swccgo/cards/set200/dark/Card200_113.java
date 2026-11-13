@@ -39,7 +39,7 @@ public class Card200_113 extends AbstractNormalEffect {
     public Card200_113() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Tarkin Doctrine", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setLore("'The regional governors now have direct control over their territories. Fear will keep the local systems in line. Fear of this battle station.'");
-        setGameText("Deploy on Death Star system. During your control phase, for each battleground system controlled by a Star Destroyer within 2 parsecs of Death Star, opponent loses 1 Force. Canceled if opponent controls this system.");
+        setGameText("Deploy on Death Star system. During your control phase, for each battleground system controlled by your Star Destroyer within 2 parsecs of Death Star, opponent loses 1 Force. Canceled if opponent controls this system.");
         addIcons(Icon.VIRTUAL_SET_0);
     }
 

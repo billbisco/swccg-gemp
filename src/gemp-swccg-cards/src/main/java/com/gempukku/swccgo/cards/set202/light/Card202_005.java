@@ -39,7 +39,7 @@ public class Card202_005 extends AbstractNormalEffect {
     public Card202_005() {
         super(Side.LIGHT, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Like_My_Father_Before_Me, Uniqueness.UNIQUE, ExpansionSet.SET_2, Rarity.V);
         setLore("The final act of Luke's ascension to Jedi Knighthood was sending off his father, draped in the garb of Vader.");
-        setGameText("Deploy on table if an Endor site on table. [Death Star II] Luke is deploy = 6 and may not be Disarmed. If Luke at a battleground (even if captive), your battle destiny draws are + 1 there and, during your turn, may [download] Luke's Lightsaber or place a card from hand on Force Pile. Immune to Alter.");
+        setGameText("If an Endor site on table, deploy on table. [Death Star II] Luke is deploy = 6 and may not be Disarmed. If Luke is at a battleground (even as a captive), your battle destiny draws are +1 there and, once during your turn, may [download] Luke's Lightsaber or place a card from hand on Force Pile. Immune to Alter.");
         addIcons(Icon.VIRTUAL_SET_2);
         addImmuneToCardTitle(Title.Alter);
     }
@@ -68,7 +68,7 @@ public class Card202_005 extends AbstractNormalEffect {
         GameTextActionId gameTextActionId = GameTextActionId.LIKE_MY_FATHER_BEFORE_ME__DOWNLOAD_LUKES_LIGHTSABER_OR_PLACE_CARD_ON_FORCE_PILE;
 
         // Check condition(s)
-        if (GameConditions.isOncePerTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
+        if (GameConditions.isOnceDuringYourTurn(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.canDeployCardFromReserveDeck(game, playerId, self, gameTextActionId, Persona.LUKES_LIGHTSABER)
                 && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_CAPTIVE, Filters.and(Filters.Luke, Filters.at(Filters.battleground)))) {
 

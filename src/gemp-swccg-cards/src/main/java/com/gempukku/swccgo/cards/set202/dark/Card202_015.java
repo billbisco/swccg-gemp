@@ -38,7 +38,7 @@ public class Card202_015 extends AbstractCombatVehicle {
         super(Side.DARK, 3, 3, 3, 3, null, 4, 4, Title.Tempest_Scout_3, Uniqueness.UNIQUE, ExpansionSet.SET_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Enclosed. Assigned to the task of searching for potential Rebel traps. Modified to help cover more territory to accomplish this task.");
-        setGameText("May add 1 pilot. May move as a 'react'. Permanent pilot provides ability of 2. Unless this vehicle 'hit', your other vehicles here may not be targeted by artillery weapons, vehicle weapons, or opponent's Interrupts.");
+        setGameText("May add 1 pilot. May move as a 'react.' Permanent pilot provides ability of 2. Unless this vehicle 'hit,' your other vehicles here may not be targeted by artillery weapons, vehicle weapons, or opponent's Interrupts.");
         addModelType(ModelType.AT_ST);
         addIcons(Icon.ENDOR, Icon.PILOT, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_2);
         addKeywords(Keyword.ENCLOSED);

@@ -37,7 +37,7 @@ public class Card203_020 extends AbstractCapitalStarship {
         super(Side.LIGHT, 3, 3, 1, 4, null, 4, 5, "Bright Hope", Uniqueness.UNIQUE, ExpansionSet.SET_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Modified medium transport. Well armored. Has expanded passenger capacity to facilitate evacuation. The last transport to escape Hoth. Nearly destroyed by the Stalker.");
-        setGameText("May add 2 pilots and 6 passengers. Permanent pilot aboard provides ability of 2. If in battle with another Rebel capital starship, may draw destiny. Subtract that amount from opponent's attrition and total power.");
+        setGameText("May add 2 pilots and 6 passengers. Permanent pilot provides ability of 2. If in battle with another Rebel capital starship, may draw destiny. Subtract that amount from opponent's attrition and total power.");
         addIcons(Icon.CLOUD_CITY, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_3);
         addKeywords(Keyword.MEDIUM_TRANSPORT);
         addModelType(ModelType.TRANSPORT);

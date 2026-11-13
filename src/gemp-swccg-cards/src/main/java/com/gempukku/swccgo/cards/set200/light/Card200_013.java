@@ -37,7 +37,7 @@ public class Card200_013 extends AbstractRebel {
         super(Side.LIGHT, 1, 4, 4, 3, 8, "General Solo", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("Scout. Leader of the Rebel strike team on Endor. Needed the cleverness of a Corellian to destroy the Endor control bunker. Discovered the truth about Luke and Leia.");
-        setGameText("[Pilot] 3. During battle, may use 1 Force to play an Interrupt from your Reserve Deck (then place that card out of play). Once per turn, may [upload] a non-Interrupt card with 'door' in game text.");
+        setGameText("[Pilot] 3. During battle, may use 1 Force to [upload] an Interrupt, play it, then place that card out of play. Once per turn, may [upload] a non-Interrupt card with 'door' in game text.");
         addPersona(Persona.HAN);
         addIcons(Icon.ENDOR, Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_0);
         addKeywords(Keyword.SCOUT, Keyword.LEADER, Keyword.GENERAL);

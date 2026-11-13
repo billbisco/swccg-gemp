@@ -44,7 +44,7 @@ public class Card222_030_BACK extends AbstractObjective {
     public Card222_030_BACK() {
         super(Side.DARK, 7, Title.Imperial_Troops_Have_Entered_The_Base, ExpansionSet.SET_22, Rarity.V);
         setAlternateImageSuffix(true);
-        setGameText("While this side up, attrition against opponent is +1 for each Imperial leader in battle. Rebel Leadership and We're Doomed are Lost Interrupts. Once per turn, may deploy a snowtrooper from Reserve Deck; reshuffle. Once during your control phase, may choose: retrieve bottom card of Lost Pile into hand or peek at X cards from the top of opponent's Reserve Deck, where X = number of Hoth locations you control; replace in any order. " +
+        setGameText("While this side up, attrition against opponent is +1 for each Imperial leader in battle. Rebel Leadership and We're Doomed are Lost Interrupts. Once per turn, may [download] a snowtrooper. Once during your control phase, may choose: retrieve bottom card of Lost Pile into hand or peek at the top X cards from opponent's Reserve Deck, where X = number of Hoth locations you control; replace in any order. " +
                 "Place out of play if you do not occupy a Hoth site with an AT-AT, Imperial leader, or snowtrooper.");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_22);
     }

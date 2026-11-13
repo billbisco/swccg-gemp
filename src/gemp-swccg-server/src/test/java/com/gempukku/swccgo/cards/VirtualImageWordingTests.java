@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards;
 
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.SwccgCardBlueprint;
@@ -59,6 +60,65 @@ public class VirtualImageWordingTests {
             {"216_43", null, "While Obi-Wan 'communing,' no Force drains here and, once per turn, may subtract 2 from a just drawn [Permanent Weapon] weapon destiny.", ""},
             {"218_17", null, "Your stormtroopers here may move to an adjacent site as a 'react.'", "If you occupy, opponent's Level 6 Core Shaft Corridor game text is canceled."},
             {"219_19", "Never deploys or moves (even if carried) to a site opponent occupies. Players do not retrieve Force for initiating a battle. While Agents Of Black Sun on table, your total battle destiny is +1 where you have a Black Sun agent. Immune to attrition.", null, null},
+            // Second pass (GEMP-IMG2, 12 Nov 2026): every current Virtual Modern version in vm-versions.json read from its current Holotable image.
+            {"200_4", "Artillery weapons here are powered. Permanent weapon is Blaster Cannon (may target a character, creature, or vehicle at same or adjacent site for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).", null, null},
+            {"200_13", "[Pilot] 3. During battle, may use 1 Force to [upload] an Interrupt, play it, then place that card out of play. Once per turn, may [upload] a non-Interrupt card with 'door' in game text.", null, null},
+            {"200_26", "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Mobilization Points is suspended.", null, null},
+            {"200_32", "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make The First Move may target only Undercover spies. Unless Inner Strength on table, opponent may use only one combat card per turn.", null, null},
+            {"200_35", "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until the end of your first turn.", null, null},
+            {"200_38", "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Dark Jedi or a battle, they lose 1 Force. During your draw phase, use 3 Force or place this Effect in Used Pile. [Immune to Alter]", null, null},
+            {"200_44", "Deploy on table. Star Cruisers (except Profundity) may deploy -2 (to a maximum of -3), ignore deployment restrictions in their game text, draw one battle destiny if unable to otherwise, and are immune to attrition < 4. [Immune to Alter.]", null, null},
+            {"200_46", "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of the same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owner's Used Pile) to retrieve a starship. Immune to Alter.", null, null},
+            {"200_50", "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Light Side Force] and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.", null, null},
+            {"200_62", "May add 1 pilot or passenger. Permanent pilot is •Dutch, who provides ability of 2. Opponent may not 'react' to here and must first use 1 Force to draw a card for battle destiny here.", null, null},
+            {"200_64", "May add Harc as a pilot. During battle, adds one destiny to total power. If a Dark Jedi or Sith was just deployed to a related site, may [download] a related location. Immune to attrition < 4 (< 6 at Bespin).", null, null},
+            {"200_72", "[Pilot] 2. Power +1 while with your leader. If at a Scomp link when opponent draws destiny of: 1-3, you may activate 1 Force; 4-6, you may draw top card of Reserve Deck; 0 or 7, you may retrieve 1 Force.", null, null},
+            {"200_73", "[Pilot] 2. Chiraneau may not modify your Force drains. Kuat Drive Yards is [Immune to Alter]. Unless your Senate on table, unique (•) Star Destroyers are power +2 and immunity to attrition +1. Once per game, may [download] non-[Set 0] Kuat Drive Yards.", null, null},
+            {"200_79", "While opponent's [Reflection II icon] objective on table, adds one battle destiny. Permanent weapon is •Dengar's Blaster Carbine (twice per battle, may target a character or vehicle for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).", null, null},
+            {"200_80", "Permanent weapon is Twin Blaster Cannons (may target a character or vehicle; draw destiny; add 2 if targeting a vehicle; if total destiny > defense value, target hit and you may activate 1 Force). While with another [Presence] droid at a site, adds one battle destiny.", null, null},
+            {"200_86", "While Luke or Emperor on table, power +1 and she moves for free. Permanent weapon is •Mara Jade's Lightsaber (may target a character or creature for free; draw two destiny; target hit, and its forfeit = 0, if total destiny > defense value).", null, null},
+            {"200_91", "Deploys -1 to Coruscant. While present with Xizor, forfeit +2 and opponent's spies may not deploy to same non-battleground site. Once per game, may use 1 Force to [download] a non-war room battleground planet site (or system) not already on table.", null, null},
+            {"200_95", "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl, and Scramble are canceled. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Staging Areas is suspended.", null, null},
+            {"200_100", "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only 5D6-RA-7 and Undercover spies. Unless Deep Hatred on table, opponent may use only one combat card per turn.", null, null},
+            {"200_101", "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Jedi or a battle, they lose 1 Force. During your draw phase, lose 1 Force or place this Effect in Used Pile. [Immune to Alter]", null, null},
+            {"200_110", "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.", null, null},
+            {"200_111", "Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if not able to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. Immune to Alter.", null, null},
+            {"200_112", "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of the same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owner's Used Pile) to retrieve a starship. Immune to Alter.", null, null},
+            {"200_113", "Deploy on Death Star system. During your control phase, for each battleground system controlled by your Star Destroyer within 2 parsecs of Death Star, opponent loses 1 Force. Canceled if opponent controls this system.", null, null},
+            {"200_117", "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Dark Side Force] and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.", null, null},
+            {"200_120", "Once per game, choose: During battle, use 2 Force to target your Dark Jedi present with an opponent's character of equal or lesser ability. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.", null, null},
+            {"200_126", null, "If you control, may use 3 Force to release a captive here. Captive Pursuit is canceled.", "If Any Methods Necessary just played, may [upload] Despair. Aiiii! Aaa! Agggggggggg! is canceled."},
+            {"200_130", "Permanent pilot is •Boba Fett, who provides ability of 3. Draws one battle destiny if not able to otherwise. Slave I's power may not be reduced by opponent. Immune to Eject! Eject! and attrition < 5.", null, null},
+            {"200_139", "May add 1 pilot and 8 passengers. Permanent pilot provides ability of 2. During your control phase, may [upload] one Trample or Walker Barrage. Walker Barrage total is +2. Immune to attrition < 4.", null, null},
+            {"200_147", "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl, and Scramble are canceled. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Staging Areas is suspended.", null, null},
+            {"200_148", "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only 5D6-RA-7 and Undercover spies. Unless Deep Hatred on table, opponent may use only one combat card per turn.", null, null},
+            {"200_149", "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Mobilization Points is suspended.", null, null},
+            {"200_150", "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make The First Move may target only Undercover spies. Unless Inner Strength on table, opponent may use only one combat card per turn.", null, null},
+            {"201_4", "Obi-Wan's deploy cost may not be increased. Power +1 for each Dark Jedi or Skywalker here. Your 'hit' characters here may not be targeted to be lost. Once per game, may exchange two cards in hand with any one card in Lost Pile. Immune to attrition < 5.", null, null},
+            {"201_13", "USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. OR Make a just drawn Overload destiny = ½. LOST: Cancel Cease Fire! or I Have You Now.", null, null},
+            {"201_14", "USED: Play a Defensive Shield from under your Starting Effect. OR Target opponent's just-deployed [Maintenance] card. Target may not battle (or allow opponent to [download] cards) for remainder of turn. [Immune to Sense] LOST: Cancel Trample (unless targeting an Undercover spy).", null, null},
+            {"201_18", "Permanent pilot is •Green Leader, who provides ability of 2. Adds one battle destiny with a Rebel snub fighter. During battle, may cancel immunity to attrition of one starship here; this A-wing is 'hit.'", null, null},
+            {"201_23", "[Pilot] 1. When deployed, may take an ISB agent here into hand. Once per turn, if you just drew an ISB agent for battle destiny anywhere, may take that card into hand to cancel and redraw that destiny.", null, null},
+            {"201_33", "If opponent's starting location was Massassi Throne Room, opponent loses 1 Force when you play this Interrupt. Add or subtract 1 from opponent's just drawn destiny. OR Activate 1 Force. OR Until end of turn, battle destiny draws may not be canceled (unless being redrawn) or modified.", null, null},
+            {"201_41", "May add 6 pilots, 8 passengers, 2 vehicles and 4 TIEs. Permanent pilot provides ability of 1. Once per game, may follow an opponent's starship that just moved from here (if within range).", null, null},
+            {"202_5", "If an Endor site on table, deploy on table. [Death Star II] Luke is deploy = 6 and may not be Disarmed. If Luke is at a battleground (even as a captive), your battle destiny draws are +1 there and, once during your turn, may [download] Luke's Lightsaber or place a card from hand on Force Pile. Immune to Alter.", null, null},
+            {"202_7", "May add 1 pilot and 1 astromech. During battle, if Anakin or R2-D2 aboard, may lose 1 Force to cancel a non-[Immune to Sense] Interrupt. While Anakin or R2-D2 aboard, immune to attrition < 5 (< 6 if both).", null, null},
+            {"202_9", "[Pilot] 2. Information broker. When deployed, may [download] a droid here or a Restraining Bolt. During battle, may retarget an opponent's weapon targeting your droid to another one of your characters present (even Daroe).", null, null},
+            {"202_15", "May add 1 pilot. May move as a 'react.' Permanent pilot provides ability of 2. Unless this vehicle 'hit,' your other vehicles here may not be targeted by artillery weapons, vehicle weapons, or opponent's Interrupts.", null, null},
+            {"203_4", "[Pilot] 3. Adds 2 to hyperspeed of any freighter he pilots. During your move phase, may use 1 Force to 'break cover' of opponent's Undercover spy at same site. Cancels Lateral Damage targeting your starship at same or related system.", null, null},
+            {"203_18", "If your Padawan or Skywalker is in battle with a Dark Jedi, either add one battle destiny or cancel I Have You Now. OR If Luke is in battle with an opponent's character of ability > 3, add one battle destiny.", null, null},
+            {"203_20", "May add 2 pilots and 6 passengers. Permanent pilot provides ability of 2. If in battle with another Rebel capital starship, may draw destiny. Subtract that amount from opponent's attrition and total power.", null, null},
+            {"203_21", "May add 3 pilots and 6 passengers. Permanent pilot provides ability of 2. During battle, your total battle destiny is +1 for each smuggler aboard. Deploys and moves like a starfighter. Immune to attrition < 5.", null, null},
+            {"204_29", null, "Once per game, may [download] Rey here. Rey deploys -2 here. If Rey present, she may not be targeted by weapons.", ""},
+            {"204_47", "Deploy on table. Once per game, may [upload] Finalizer. Once per character, when you deploy Hux, Kylo, Phasma, or Snoke to an [Episode VII] battleground, may take any one card into hand from Used Pile; reshuffle. Immune to Alter.", null, null},
+            {"222_30_BACK", "While this side up, attrition against opponent is +1 for each Imperial leader in battle. Rebel Leadership and We're Doomed are Lost Interrupts. Once per turn, may [download] a snowtrooper. Once during your control phase, may choose: retrieve bottom card of Lost Pile into hand or peek at the top X cards from opponent's Reserve Deck, where X = number of Hoth locations you control; replace in any order. Place out of play if you do not occupy a Hoth site with an AT-AT, Imperial leader, or snowtrooper.", null, null},
+            {"223_15", "[Pilot] 2. Once per game, may [upload] Gideon. While piloting a speeder bike, Grogu is forfeit -2 here and opponent's weapon destinies targeting your speeder bikes are -1 here.", null, null},
+            {"224_5", null, "Your smugglers and [Ind] starships deploy -1 here.", "Your [Ind] starships may move here as a 'react.' Once per game, if you control, may [upload] Death Mark."},
+            {"225_28", null, "Unless your piloted [Resistance] starship at a system, Force drain -1 here.", "While you control, Supremacy is power +3."},
+            {"220_2", "Plays on table. At end of a turn, if opponent has 15 or more cards in hand, may use 3 Force to shuffle all but 9 (random selection) into Used Pile. If Grimtaash or Thrown Back just targeted your hand, may reveal 3 cards from hand; they cannot be removed or checked for duplicates.", null, null},
+            {"220_10", "Plays on table. At end of a turn, if opponent has 15 or more cards in hand, may use 3 Force to shuffle all but 9 (random selection) into Used Pile. If Monnok or Drop! just targeted your hand, may reveal 3 cards from hand; they cannot be removed or checked for duplicates.", null, null},
+            {"219_24", "If an Imperial leader just won a battle, opponent loses 1 Force (and stacks it on Thrawn's Art Collection if possible). OR Suspend Ancient Watering Hole for remainder of turn. OR If you have 4 artwork cards, you retrieve 1 Force and opponent loses 1 Force.", null, null},
+            {"219_11", null, "Opponent may not reduce or cancel your Force drains here.", "Once per turn, may [download] TIE Defender Project, Pryce, or Thrawn here."},
     };
 
     @Test
@@ -112,5 +172,119 @@ public class VirtualImageWordingTests {
         assertTrue(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(), ModifierType.MOVES_FREE_TO_LOCATION, thrawn).isEmpty());
         assertFalse(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(), ModifierType.SHUTTLES_FOR_FREE_TO_LOCATION, thrawn).isEmpty());
         assertTrue(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(), ModifierType.SHUTTLES_FOR_FREE_TO_LOCATION, trooper).isEmpty());
+    }
+
+    /**
+     * Stats printed on the current PC card images where the PC card data differs (VM-A3, 12 Nov 2026): Luke Skywalker,
+     * Rebel Scout (V) forfeit 9 (data 7); Obi-Wan Kenobi (V) deploy 5 (data 6); Darth Maul, Lone Hunter deploy 6 (data 7);
+     * Droideka armor 3 (the 2022 image printed ABILITY 3; the current image prints ARMOR 3).
+     */
+    @Test
+    public void StatsMatchTheCurrentPcCardImage() {
+        SwccgCardBlueprintLibrary library = new SwccgCardBlueprintLibrary();
+        SwccgCardBlueprint luke = library.getSwccgoCardBlueprint("200_21");
+        assertEquals(6, luke.getDeployCost(), 0);
+        assertEquals(6, luke.getPower(), 0);
+        assertEquals(6, luke.getAbility(), 0);
+        assertEquals(9, luke.getForfeit(), 0);
+        SwccgCardBlueprint obiWan = library.getSwccgoCardBlueprint("201_4");
+        assertEquals(5, obiWan.getDeployCost(), 0);
+        assertEquals(5, obiWan.getPower(), 0);
+        assertEquals(6, obiWan.getAbility(), 0);
+        assertEquals(9, obiWan.getForfeit(), 0);
+        SwccgCardBlueprint maul = library.getSwccgoCardBlueprint("203_26");
+        assertEquals(6, maul.getDeployCost(), 0);
+        assertEquals(7, maul.getPower(), 0);
+        assertEquals(6, maul.getAbility(), 0);
+        assertEquals(8, maul.getForfeit(), 0);
+        SwccgCardBlueprint droideka = library.getSwccgoCardBlueprint("200_80");
+        assertTrue(droideka.hasArmorAttribute());
+        assertEquals(3, droideka.getArmor(), 0);
+        assertEquals(3, droideka.getPower(), 0);
+        assertEquals(3, droideka.getDeployCost(), 0);
+        assertEquals(3, droideka.getForfeit(), 0);
+    }
+
+    private static VirtualTableScenario likeMyFatherScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("effect", "202_5");   // Like My Father Before Me (current image)
+                    put("luke", "1_19");      // Luke Skywalker
+                    put("saber", "9_90");     // Luke's Lightsaber
+                    put("site", "1_133");     // Tatooine: Mos Eisley (battleground)
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");  // Stormtrooper
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Like My Father Before Me (current image, 202_5): "...and, once during your turn, may [download] Luke's Lightsaber or
+     * place a card from hand on Force Pile." GEMP used to offer the Lightsaber download once per turn in either turn.
+     */
+    @Test
+    public void LikeMyFatherBeforeMeDownloadsTheLightsaberOnlyDuringYourTurn() {
+        var scn = likeMyFatherScenario();
+        var effect = scn.GetLSCard("effect");
+        var luke = scn.GetLSCard("luke");
+        var saber = scn.GetLSCard("saber");
+        var site = scn.GetLSCard("site");
+        scn.StartGame();
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToLSSideOfTable(effect);
+        scn.MoveCardsToLocation(site, luke);
+        scn.MoveCardsToTopOfLSReserveDeck(saber);
+        assertTrue(Filters.battleground.accepts(scn.game(), site));
+
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.DSPass();
+        assertTrue(scn.LSDecisionAvailable(""));
+        assertFalse(scn.LSCardActionAvailable(effect, "Deploy Luke's Lightsaber"));
+
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertTrue(scn.LSCardActionAvailable(effect, "Deploy Luke's Lightsaber"));
+    }
+
+    /**
+     * Jakku: Rey's Encampment (current image, 204_29) prints all its text on the Light Side ("Once per game, may ▼ Rey
+     * here. Rey deploys -2 here. If Rey present, she may not be targeted by weapons."); the Dark Side is blank. The
+     * weapons immunity now comes from the Light Side text.
+     */
+    @Test
+    public void ReysEncampmentProtectsReyFromItsLightSideText() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("camp", "204_29");
+                    put("rey", "204_009");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var camp = scn.GetLSCard("camp");
+        var rey = scn.GetLSCard("rey");
+        scn.StartGame();
+        scn.MoveLocationToTable(camp);
+        scn.MoveCardsToLocation(camp, rey);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        assertEquals("", camp.getBlueprint().getLocationDarkSideGameText());
+        assertFalse(scn.game().getModifiersQuerying().getModifiersAffectingCard(scn.gameState(), ModifierType.MAY_NOT_BE_TARGETED_BY, rey).isEmpty());
     }
 }

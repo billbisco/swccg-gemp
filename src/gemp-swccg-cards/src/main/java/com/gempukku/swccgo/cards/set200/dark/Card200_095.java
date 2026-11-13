@@ -41,7 +41,7 @@ public class Card200_095 extends AbstractDefensiveShield {
         setVirtualSuffix(true);
         setBasePrintingDisplayTitle("Fanfare (Reflections III)");
         setLore("The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.");
-        setGameText("Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl and Scramble are canceled. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Staging Areas is suspended.");
+        setGameText("Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl, and Scramble are canceled. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Staging Areas is suspended.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
     }
 

@@ -30,7 +30,7 @@ public class Card225_028 extends AbstractUniqueStarshipSite {
     public Card225_028() {
         super(Side.DARK, Title.Supremacy_Bridge, Persona.SUPREMACY, ExpansionSet.SET_25, Rarity.V);
         setLocationDarkSideGameText("While you control, Supremacy is power +3.");
-        setLocationLightSideGameText("Unless your piloted [Resistance] starship at a system, force drain -1.");
+        setLocationLightSideGameText("Unless your piloted [Resistance] starship at a system, Force drain -1 here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.INTERIOR_SITE, Icon.STARSHIP_SITE, Icon.MOBILE, Icon.SCOMP_LINK, Icon.EPISODE_VII, Icon.VIRTUAL_SET_25);
     }

@@ -42,7 +42,7 @@ public class Card200_101 extends AbstractNormalEffect {
         super(Side.DARK, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "A Day Long Remembered", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("'It has seen the end of Kenobi and will soon see the end of the Rebellion.'");
-        setGameText("Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Jedi or a battle, they lose 1 Force. During your draw phase, lose 1 Force or place this Effect in Used Pile.");
+        setGameText("Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Jedi or a battle, they lose 1 Force. During your draw phase, lose 1 Force or place this Effect in Used Pile. [Immune to Alter]");
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_0);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -33,17 +33,10 @@ import java.util.List;
 public class Card204_029 extends AbstractSite {
     public Card204_029() {
         super(Side.LIGHT, Title.Reys_Encampment, Title.Jakku, Uniqueness.UNIQUE, ExpansionSet.SET_4, Rarity.V);
-        setLocationDarkSideGameText("If Rey present, she may not be targeted by weapons.");
-        setLocationLightSideGameText("Once per game, may deploy Rey here from Reserve Deck; reshuffle. Rey deploys -2 here.");
+        setLocationDarkSideGameText("");
+        setLocationLightSideGameText("Once per game, may [download] Rey here. Rey deploys -2 here. If Rey present, she may not be targeted by weapons.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.EPISODE_VII, Icon.INTERIOR_SITE, Icon.PLANET, Icon.VIRTUAL_SET_4);
-    }
-
-    @Override
-    protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
-        List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MayNotBeTargetedByWeaponsModifier(self, Filters.and(Filters.Rey, Filters.present(self))));
-        return modifiers;
     }
 
     @Override
@@ -71,6 +64,7 @@ public class Card204_029 extends AbstractSite {
     protected List<Modifier> getGameTextLightSideWhileActiveModifiers(String playerOnLightSideOfLocation, SwccgGame game, PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new DeployCostToLocationModifier(self, Filters.Rey, -2, self));
+        modifiers.add(new MayNotBeTargetedByWeaponsModifier(self, Filters.and(Filters.Rey, Filters.present(self))));
         return modifiers;
     }
 }

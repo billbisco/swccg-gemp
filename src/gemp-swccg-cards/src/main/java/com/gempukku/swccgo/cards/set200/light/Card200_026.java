@@ -41,7 +41,7 @@ public class Card200_026 extends AbstractDefensiveShield {
         setVirtualSuffix(true);
         setBasePrintingDisplayTitle("Don't Do That Again (Reflections III)");
         setLore("The Jedi won't tolerate silly behavior for very long.");
-        setGameText("Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Mobilization Points is suspended.");
+        setGameText("Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Mobilization Points is suspended.");
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I, Icon.VIRTUAL_DEFENSIVE_SHIELD);
     }
 

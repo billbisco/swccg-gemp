@@ -47,7 +47,7 @@ public class Card202_009 extends AbstractAlien {
         super(Side.DARK, 3, 2, 2, 2, 4, "Daroe", Uniqueness.UNIQUE, ExpansionSet.SET_2, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jawa who has inside connections with the Empire. Frequently speaks with his Imperial contact, whom he reports to regarding Rebel activity in the Outer Rim.");
-        setGameText("[Pilot] 2. Information Broker. When deployed, may [download] a droid here or a Retraining Bolt. During battle, may retarget an opponent's weapon targeting your droid to another one of your characters present (even Daroe).");
+        setGameText("[Pilot] 2. Information broker. When deployed, may [download] a droid here or a Restraining Bolt. During battle, may retarget an opponent's weapon targeting your droid to another one of your characters present (even Daroe).");
         addIcons(Icon.TATOOINE, Icon.PILOT, Icon.VIRTUAL_SET_2);
         setSpecies(Species.JAWA);
         addKeyword(Keyword.INFORMATION_BROKER);

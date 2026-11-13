@@ -40,7 +40,7 @@ import java.util.List;
 public class Card202_007 extends AbstractStarfighter {
     public Card202_007() {
         super(Side.LIGHT, 2, 3, 3, null, 4, 5, 6, Title.Azure_Angel, Uniqueness.UNIQUE, ExpansionSet.SET_2, Rarity.V);
-        setGameText("May add one pilot and one astromech. During battle, if Anakin or R2-D2 aboard, may lose 1 Force to cancel a non-[Immune to Sense] interrupt. While Anakin or R2-D2 aboard, immune to attrition < 5 (6 if both).");
+        setGameText("May add 1 pilot and 1 astromech. During battle, if Anakin or R2-D2 aboard, may lose 1 Force to cancel a non-[Immune to Sense] Interrupt. While Anakin or R2-D2 aboard, immune to attrition < 5 (< 6 if both).");
         addIcons(Icon.EPISODE_I, Icon.REPUBLIC, Icon.CLONE_ARMY, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_2);
         addModelType(ModelType.MODIFIED_DELTA_7_INTERCEPTOR);
         setPilotCapacity(1);

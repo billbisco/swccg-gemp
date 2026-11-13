@@ -40,7 +40,7 @@ public class Card200_110 extends AbstractStartingEffect {
         super(Side.DARK, 4, "Knowledge And Defense", ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("'A Jedi uses the Force for knowledge and defense, never for attack.'");
-        setGameText("Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until end of your first turn.");
+        setGameText("Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.");
         addIcons(Icon.DAGOBAH, Icon.VIRTUAL_SET_0);
     }
 

@@ -33,7 +33,7 @@ public class Card203_018 extends AbstractLostInterrupt {
         super(Side.LIGHT, 5, Title.The_Force_Is_Strong_With_This_One, Uniqueness.UNRESTRICTED, ExpansionSet.SET_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Luke's piloting skills and Force abilities made his X-wing a difficult target for Darth Vader as they raced down the Death Star trench.");
-        setGameText("If your padawan or Skywalker is in battle with a Dark Jedi, either add one battle destiny or cancel I Have You Now. OR If Luke is in battle with opponent's character of ability > 3, add one battle destiny.");
+        setGameText("If your Padawan or Skywalker is in battle with a Dark Jedi, either add one battle destiny or cancel I Have You Now. OR If Luke is in battle with an opponent's character of ability > 3, add one battle destiny.");
         addIcons(Icon.VIRTUAL_SET_3);
     }
 
