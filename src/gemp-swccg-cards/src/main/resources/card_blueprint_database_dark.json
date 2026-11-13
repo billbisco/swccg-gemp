@@ -115357,7 +115357,7 @@
       "DEVICE"
     ],
     "lore": "Truth drugs like Bavo Six decrease resistance to interrogation. The enormous needle adds psychological pressure, facilitating the interrogation process.",
-    "gameText": "Deploy on your IT-O. Once during each of your control phases, if present with a captive: You may ask one yes-or-no question about cards in opponent's hand. Opponent must answer truthfully or lose 1 Force. OR May add 1 to Force drain where present.",
+    "gameText": "Deploy on your IT-O. Once during your control phase, if present with a captive (or with an imprisoned captive): You may ask one yes-or-no question about cards in opponent's hand. Opponent must answer truthfully or lose 1 Force. OR May add 1 to Force drain where present.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
