@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -305,6 +306,9 @@ public class Card_2_112_Tests {
         assertTrue(scn.GetLSIconsOnLocation(secondSite) > 0); //test1
         assertEquals(scn.GetDSCard("escort"), scn.GetLSCard("captive").getEscort()); //test1
         assertEquals(scn.GetDSCard("ito"), hypo.getAttachedTo()); //test1
+        assertTrue(scn.GetLSCard("captive").isCaptive()); //test1
+        assertTrue(Filters.presentWith(hypo).accepts(scn.gameState(),
+                scn.game().getModifiersQuerying(), scn.GetLSCard("captive"))); //test1
         assertTrue(scn.DSForceDrainAvailable(secondSite)); //test1
         scn.DSForceDrainAt(secondSite);
         scn.LSPass();
