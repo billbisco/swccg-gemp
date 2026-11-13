@@ -38,7 +38,7 @@ public class Card301_005 extends AbstractDefensiveShield {
         super(Side.LIGHT, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Your Ship?", ExpansionSet.DEMO_DECK, Rarity.V);
         setVirtualSuffix(true);
         setLore("Han was not sure if Lando had forgiven him for winning the Millennium Falcon. As the old gamblers' saying about sabacc goes: 'Win the game, lose a friend.'");
-        setGameText("Plays on table. Cancels A Dangerous Time, Bad Feeling Have I, Colo Claw Fish, Field Promotion and Imperial Supply. Each player may play only one card with 'sabacc' in title each turn. You may lose 1 Force to cancel a card with 'sabacc' in title.");
+        setGameText("Plays on table. Cancels A Dangerous Time, Bad Feeling Have I, Colo Claw Fish, Field Promotion, and Imperial Supply. Each player may play only one card with 'sabacc' in title each turn. You may lose 1 Force to cancel a card with 'sabacc' in title.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
     }
 

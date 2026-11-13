@@ -272,6 +272,14 @@ from outside your deck if Your Destiny is on table and suspended (the player cho
 is no longer needed), is placed under your Starting Effect if not revealed (was: out of play), flips when Vader is here
 (was: present), and may be placed in Reserve Deck (tests `cards/set205/dark/Card_205_014_Tests.java`). Cad Bane (ALT)
 prints the regular card's text, so `203_24^` plays the regular class.
+Fourth pass (13 Nov 2026): the current versions in `vm-versions.json` recorded by vm-b3, vm-b4, vm-c3, vm-d3 and vm-fix
+(353 families, 362 current images including backs and ALT printings: Virtual Sets 7-10 and 12-20, Virtual Set 0 shields),
+read from the latest Holotable image (OCR of every image, then each difference looked at). Wording fixed on 68 cards and
+lore on 6 (tests `cards/VirtualImageWordingTests.java`). Behaviour: Ambush (V) `210_2` targets three related
+battlegrounds occupied by your clones (system or sites); Steadfast `214_9` equalizes Force icons only at an [Episode VII]
+system; Meditation `213_47` compares characters participating in the battle; Shadow Collective `213_32` downloads only
+[Set 13] Maul; The Falcon, Junkyard Garbage back `204_35_BACK` has no Scomp link icon. Also Black 3 `210_28` (bottom-of-deck destiny draws during any battle while DS-61-3 pilots it), Death Star Reactor Terminal `210_43` (once during your turn, in any phase) and Lieutenant Venka `209_38` (your Imperial just won a battle at a related site). Every ALT printing in this pass
+prints its base card's wording, so no new `CardNNN_NNNai` class was needed.
 
 ### Printed weapons (o)
 

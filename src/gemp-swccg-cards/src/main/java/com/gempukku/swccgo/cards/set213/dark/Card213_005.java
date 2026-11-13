@@ -39,7 +39,7 @@ public class Card213_005 extends AbstractImperial {
     public Card213_005() {
         super(Side.DARK, 3, 4, 3, 5, 5, "Eighth Brother", Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("Terrelian Jango Jumper. Inquisitor");
-        setGameText("Adds 2 to power of anything he pilots. May deploy or move as a 'react' to same site as a 'Hatred' card. During your move phase, unless alone, may return one of your Inquisitors here (and all cards on them) to owner's hand.");
+        setGameText("[Pilot] 2. May deploy or move as a 'react' to same site as a 'Hatred' card. During your move phase, unless alone, may return one of your Inquisitors here (and all cards on them) to owner's hand.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_13);
         addKeyword(Keyword.INQUISITOR);
         setSpecies(Species.TERRELIAN_JANGO_JUMPER);

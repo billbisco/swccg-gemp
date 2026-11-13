@@ -18,6 +18,7 @@ import com.gempukku.swccgo.logic.actions.PlayInterruptAction;
 import com.gempukku.swccgo.logic.effects.AddUntilEndOfTurnModifierEffect;
 import com.gempukku.swccgo.logic.effects.LoseForceEffect;
 import com.gempukku.swccgo.logic.effects.RespondablePlayCardEffect;
+import com.gempukku.swccgo.logic.effects.TargetCardsOnTableEffect;
 import com.gempukku.swccgo.logic.effects.choose.TakeCardsIntoHandFromReserveDeckEffect;
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.timing.Action;
@@ -36,7 +37,7 @@ public class Card210_002 extends AbstractLostInterrupt {
     public Card210_002() {
         super(Side.LIGHT, 3, Title.Ambush, Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
         setLore("'Well done. Hold them in the security tower, and keep it quiet. Move.'");
-        setGameText("Lose 1 Force to [upload] up to three troopers. OR Once per game, if your clones occupy at least three related battlegrounds, your Force drains at same and related battlegrounds this turn are +1.");
+        setGameText("Lose 1 Force to [upload] up to three troopers. OR Once per game, target three related battlegrounds occupied by your clones. Your Force drains at same and related battlegrounds this turn are +1.");
         addIcons(Icon.EPISODE_I, Icon.VIRTUAL_SET_10, Icon.CLOUD_CITY);
         setVirtualSuffix(true);
     }
@@ -46,42 +47,47 @@ public class Card210_002 extends AbstractLostInterrupt {
         List<PlayInterruptAction> actions = new LinkedList<PlayInterruptAction>();
         List<String> listOfPossiblePlanets = new LinkedList<>();
 
-        Collection<PhysicalCard> occupiedBattlegroundSites = Filters.filterTopLocationsOnTable(game,
-                Filters.and(Filters.battleground_site, Filters.occupiesWith(playerId, self, Filters.clone)));
-
-        List<PhysicalCard> validBattlegroundSites = new LinkedList<PhysicalCard>();
-        for (PhysicalCard occupiedBattlegroundSite : occupiedBattlegroundSites) {
-            String planetName = occupiedBattlegroundSite.getPartOfSystem();
-            if (planetName != null) {
-                if (Filters.filterCount(occupiedBattlegroundSites, game, 3, Filters.partOfSystem(planetName)).size() >= 3) {
-                    validBattlegroundSites.add(occupiedBattlegroundSite);
-
-                    if (!listOfPossiblePlanets.contains(planetName))
-                        listOfPossiblePlanets.add(planetName);
-                }
+        // "Once per game, target three related battlegrounds occupied by your clones." (current PC card image): related
+        // battlegrounds are the battleground system and sites of one planet.
+        final Filter occupiedBattlegrounds = Filters.and(Filters.battleground, Filters.occupiesWith(playerId, self, Filters.clone));
+        Collection<PhysicalCard> occupiedBattlegroundLocations = Filters.filterTopLocationsOnTable(game, occupiedBattlegrounds);
+        for (PhysicalCard occupiedBattleground : occupiedBattlegroundLocations) {
+            String planetName = occupiedBattleground.getPartOfSystem();
+            if (planetName != null && !listOfPossiblePlanets.contains(planetName)
+                    && Filters.filterCount(occupiedBattlegroundLocations, game, 3, Filters.partOfSystem(planetName)).size() >= 3) {
+                listOfPossiblePlanets.add(planetName);
             }
         }
 
         GameTextActionId gameTextActionId1 = GameTextActionId.AMBUSH__ADD_TO_FORCE_DRAINS;
-        if (!validBattlegroundSites.isEmpty()
+        if (!listOfPossiblePlanets.isEmpty()
                 && GameConditions.isOncePerGame(game, self, gameTextActionId1)) {
             for (final String possiblePlanet : listOfPossiblePlanets) {
                 final PlayInterruptAction action = new PlayInterruptAction(game, self, gameTextActionId1);
-                final Filter affectedLocations = Filters.and(Filters.battleground, Filters.sameOrRelatedLocationAs(self, Filters.partOfSystem(possiblePlanet)));
                 action.setText("Add to Force drains at " + possiblePlanet);
                 action.appendUsage(
                         new OncePerGameEffect(action));
-                // Allow response(s)
-                action.allowResponses(
-                        new RespondablePlayCardEffect(action) {
+                // Choose target(s)
+                action.appendTargeting(
+                        new TargetCardsOnTableEffect(action, playerId, "Target three related battlegrounds occupied by your clones", 3, 3,
+                                Filters.and(occupiedBattlegrounds, Filters.partOfSystem(possiblePlanet))) {
                             @Override
-                            protected void performActionResults(Action targetingAction) {
-                                // Perform result(s)
-                                action.appendEffect(
-                                        new AddUntilEndOfTurnModifierEffect(action,
-                                                //new ForceDrainModifier(self, affectedLocations, new CardMatchesEvaluator(1, 2, Filters.Hoth_location), playerId),
-                                                new ForceDrainModifier(self, affectedLocations, 1, playerId),
-                                                "Adds to Force drains at " + possiblePlanet));
+                            protected void cardsTargeted(int targetGroupId, final Collection<PhysicalCard> targetedLocations) {
+                                action.addAnimationGroup(targetedLocations);
+                                final Filter affectedLocations = Filters.and(Filters.battleground, Filters.sameOrRelatedLocationAs(self, Filters.in(targetedLocations)));
+                                // Allow response(s)
+                                action.allowResponses("Make your Force drains at same and related battlegrounds +1",
+                                        new RespondablePlayCardEffect(action) {
+                                            @Override
+                                            protected void performActionResults(Action targetingAction) {
+                                                // Perform result(s)
+                                                action.appendEffect(
+                                                        new AddUntilEndOfTurnModifierEffect(action,
+                                                                new ForceDrainModifier(self, affectedLocations, 1, playerId),
+                                                                "Adds to Force drains at " + possiblePlanet));
+                                            }
+                                        }
+                                );
                             }
                         }
                 );

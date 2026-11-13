@@ -37,7 +37,7 @@ import java.util.List;
 public class Card207_011 extends AbstractNormalEffect {
     public Card207_011() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Rebellions Are Built On Hope", Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
-        setGameText("Deploy on table. Your Force generation is +1 at docking bays you occupy. Once per game, may [upload] one Dantooine, Mon Calamari, Yavin 4, or Profundity. Staging Areas is canceled. (Immune to Alter.)");
+        setGameText("Deploy on table. Your Force generation is +1 at docking bays you occupy. Once per game, may [upload] one Dantooine, Mon Calamari, or Yavin 4 system or Profundity. Staging Areas is canceled. [Immune to Alter.]");
         addIcons(Icon.VIRTUAL_SET_7);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -41,7 +41,7 @@ public class Card210_046 extends AbstractImperial {
     public Card210_046() {
         super(Side.DARK, 1, 5, 5, 5, 7, "The Grand Inquisitor", Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
         setLore("Leader.");
-        setGameText("Adds 2 to power of anything he pilots. If a Jedi or Padawan just lost from same site as any Inquisitor, opponent loses 1 Force. If a Jedi or Padawan just moved from here, Inquisitors present may follow that character (using landspeed). Immune to attrition < 4.");
+        setGameText("[Pilot] 2. If a Jedi or Padawan just lost from same site as any Inquisitor, opponent loses 1 Force. If a Jedi or Padawan just moved from here, Inquisitors present may follow that character (using landspeed). Immune to attrition < 4.");
         addPersona(Persona.THE_GRAND_INQUISITOR);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_10);
         addKeywords(Keyword.INQUISITOR, Keyword.LEADER);

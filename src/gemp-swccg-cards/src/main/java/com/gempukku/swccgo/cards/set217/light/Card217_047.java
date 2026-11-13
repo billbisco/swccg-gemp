@@ -34,7 +34,7 @@ public class Card217_047 extends AbstractSite {
     public Card217_047() {
         super(Side.LIGHT, Title.Skywalker_Hut, Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.SET_17, Rarity.V);
         setLocationDarkSideGameText("May not be separated from Slave Quarters.");
-        setLocationLightSideGameText("Once per turn, may deploy Shmi or [Tatooine] C-3PO here from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("Once per turn, may [download] Shmi or [Tatooine] C-3PO here.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.EPISODE_I, Icon.EXTERIOR_SITE, Icon.PLANET, Icon.VIRTUAL_SET_17);
     }

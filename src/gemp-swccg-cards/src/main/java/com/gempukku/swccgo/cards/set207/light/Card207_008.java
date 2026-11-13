@@ -34,7 +34,7 @@ import java.util.List;
 public class Card207_008 extends AbstractResistance {
     public Card207_008() {
         super(Side.LIGHT, 2, 2, 2, 2, 4, "Major Taslin Brance", Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
-        setGameText("If opponent just looked at cards in their deck or pile, after replacing, may peek at the top card of that deck or pile. At the start of your control phase, if the top card of your Lost Pile is a Resistance character or [Resistance] starship, opponent loses 1 Force.");
+        setGameText("If opponent just looked at cards in their deck or pile, after replacing, you may peek at the top card of that deck or pile. At the start of your control phase, if the top card of your Lost Pile is a Resistance character or [Resistance] starship, opponent loses 1 Force.");
         addIcons(Icon.WARRIOR, Icon.EPISODE_VII, Icon.VIRTUAL_SET_7);
     }
 

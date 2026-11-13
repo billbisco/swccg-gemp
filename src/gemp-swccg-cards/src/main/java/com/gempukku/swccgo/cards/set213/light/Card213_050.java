@@ -31,7 +31,7 @@ import java.util.List;
 public class Card213_050 extends AbstractUsedInterrupt {
     public Card213_050() {
         super(Side.LIGHT, 3, Title.Hans_Dice, Uniqueness.UNRESTRICTED, ExpansionSet.SET_13, Rarity.V);
-        setLore("A pair of dice dangling above Millennium Falcon's cockpit, for luck. 'I've never seen anything to make me believe there's one, all-powerful Force controlling everything.'");
+        setLore("A pair of dice dangling above the Millennium Falcon's cockpit, for luck. 'I've never seen anything to make me believe there's one, all-powerful Force controlling everything.'");
         setGameText("If Han or your gambler is in battle (with no Jedi), draw destiny: (0-2) subtract that amount from opponent's total battle destiny; (3-4) cancel the game text of a character participating in battle (if any); (5+) opponent loses all immunity to attrition (if any) this battle.");
         setVirtualSuffix(true);
     }

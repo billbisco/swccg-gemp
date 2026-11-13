@@ -36,7 +36,7 @@ public class Card213_029 extends AbstractSite {
     public Card213_029() {
         super(Side.DARK, "Malachor: Sith Temple Entrance", Title.Malachor, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLocationDarkSideGameText("You initiate battles here for free. Unless you occupy, Inquisitors deploy -1 here.");
-        setLocationLightSideGameText("Once per game, you may deploy a Padawan (except Anakin) here from Reserve Deck; reshuffle.");
+        setLocationLightSideGameText("Once per game, you may [download] a Padawan (except Anakin) here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.INTERIOR_SITE, Icon.EXTERIOR_SITE, Icon.UNDERGROUND, Icon.PLANET, Icon.VIRTUAL_SET_13);

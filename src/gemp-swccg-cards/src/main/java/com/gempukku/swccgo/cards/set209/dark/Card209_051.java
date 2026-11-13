@@ -30,7 +30,7 @@ import java.util.List;
 public class Card209_051 extends AbstractSite {
     public Card209_051() {
         super(Side.DARK, Title.Sewer, Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
-        setLocationDarkSideGameText("Once per game, may exchange an alien in hand with a non-spy Black Sun Agent in Lost Pile.");
+        setLocationDarkSideGameText("Once per game, may exchange an alien in hand with a non-spy Black Sun agent in Lost Pile.");
         setLocationLightSideGameText("Once per game, if you control, may retrieve a Corellian.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);

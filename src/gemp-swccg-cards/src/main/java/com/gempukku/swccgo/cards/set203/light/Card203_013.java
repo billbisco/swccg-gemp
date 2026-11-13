@@ -35,7 +35,7 @@ public class Card203_013 extends AbstractDefensiveShield {
         super(Side.LIGHT, PlayCardZoneOption.ATTACHED, "Planetary Defenses", ExpansionSet.SET_3, Rarity.V);
         setVirtualSuffix(true);
         setLore("Key installations are protected from bombardment by a complex network of early-warning sensors, emergency shields and fast-response fighters.");
-        setGameText("Plays on any site. This location may not be targeted by Proton Bombs. Cancels Program Trap here.  Unless Death Star: Docking Bay 327 on table, Commence Primary Ignition is canceled.");
+        setGameText("Plays on any site. This location may not be targeted by Proton Bombs. Cancels Program Trap here. Unless Death Star: Docking Bay 327 on table, Commence Primary Ignition is canceled.");
         addIcons(Icon.REFLECTIONS_III, Icon.EPISODE_I, Icon.VIRTUAL_SET_3);
     }
 

@@ -38,7 +38,7 @@ public class Card213_041 extends AbstractAlien {
     public Card213_041() {
         super(Side.LIGHT, 4, 3, 3, 2, 4, "Rio Durant", Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("Ardennian smuggler and thief.");
-        setGameText("Adds 2 to power of anything he pilots. Once per turn, if you just deployed a smuggler here, may place a card from hand in Used Pile to activate 2 Force. Once per game, if you just won a battle here, may steal a starfighter from opponent's Lost Pile into hand.");
+        setGameText("[Pilot] 2. Once per turn, if you just deployed a smuggler here, may place a card from hand in Used Pile to activate 2 Force. Once per game, if you just won a battle here, may steal a starfighter from opponent's Lost Pile into hand.");
         addPersona(Persona.RIO);
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.WARRIOR, Icon.VIRTUAL_SET_13);
         addKeywords(Keyword.SMUGGLER, Keyword.THIEF);

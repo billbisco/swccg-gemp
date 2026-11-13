@@ -37,7 +37,7 @@ public class Card214_016 extends AbstractResistance {
     public Card214_016() {
         super(Side.LIGHT, 3, 2, 3, 2, 4, "Beaumont Kin", Uniqueness.UNIQUE, ExpansionSet.SET_14, Rarity.V);
         setLore("");
-        setGameText("Deploy cost of opponent's characters may not be modified at same and related locations. If you have ten cards in your Lost Pile, Force drain +1 here. Once during battle, may add Beaumont's power to another character present; Beaumont is 'hit'.");
+        setGameText("At same and related locations, deploy cost of opponent's characters may not be modified. If you have ten or more cards in Lost Pile, Force drain +1 here. Once during battle, may add Beaumont's power to another character present; Beaumont is 'hit'.");
         addPersona(Persona.BEAUMONT);
         addIcons(Icon.WARRIOR, Icon.VIRTUAL_SET_14, Icon.EPISODE_VII);
     }

@@ -40,7 +40,7 @@ public class Card209_038 extends AbstractImperial {
         super(Side.DARK, 2, 2, 2, 2, 3, "Lieutenant Venka", Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
         setVirtualSuffix(true);
         setLore("Worked hard for a transfer to the Executor. One of the many noncommissioned personnel promoted to replace the vast number of officers lost during the Death Star disaster.");
-        setGameText("Deploys -1 to Executor. While aboard a capital starship, adds 1 to armor and its defense value may not be reduced. While Fear Will Keep Them In Line here, when you win a battle at a related site where you have an Imperial, opponent loses 2 Force.");
+        setGameText("Deploys -1 to Executor. While aboard a capital starship, adds 1 to armor and its defense value may not be reduced. If Fear Will Keep Them In Line here and your Imperial just won a battle at a related site, opponent loses 2 Force.");
         addIcons(Icon.DAGOBAH, Icon.WARRIOR, Icon.PILOT, Icon.VIRTUAL_SET_9);
         setMatchingStarshipFilter(Filters.Executor);
     }
@@ -77,8 +77,8 @@ public class Card209_038 extends AbstractImperial {
 
         // Check condition(s)
         if (GameConditions.canSpot(game, self, Filters.and(Filters.title(Title.Fear_Will_Keep_Them_In_Line), Filters.here(self)))
-                && TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.and(Filters.relatedSite(self),
-                Filters.sameSiteAs(self, Filters.and(Filters.your(self), Filters.Imperial))))) {
+                && TriggerConditions.wonBattle(game, effectResult, Filters.and(Filters.your(self), Filters.Imperial))
+                && TriggerConditions.wonBattleAt(game, effectResult, playerId, Filters.relatedSite(self))) {
 
             final RequiredGameTextTriggerAction action = new RequiredGameTextTriggerAction(self, gameTextSourceCardId, GameTextActionId.OTHER_CARD_ACTION_2);
             action.setText("Make opponent lose 2 Force");

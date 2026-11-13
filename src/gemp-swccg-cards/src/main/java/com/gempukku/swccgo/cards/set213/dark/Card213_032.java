@@ -40,9 +40,7 @@ public class Card213_032 extends AbstractObjective {
     public Card213_032() {
         super(Side.DARK, 0, Title.Shadow_Collective, ExpansionSet.SET_13, Rarity.V);
         setFrontOfDoubleSidedCard(true);
-        setGameText("Deploy Maul's Chambers. If Massassi Throne Room on table, may deploy [Set 13] Maul to Maul's Chambers. " +
-                "For remainder of game, you may not deploy cards with ability (or [Episode I] droids) except characters with 'Black Sun,' 'Crimson Dawn,' or 'Hutt' in lore, assassins, gangsters, [Episode I] bounty hunters, and [Independent] starships. Once per turn, may deploy a non-unique blaster (or a card with 'First Light' in title) from Reserve Deck; reshuffle. " +
-                "Flip this card if you just 'hit' a character (or during your battle phase if your gangsters control two battlegrounds).");
+        setGameText("Deploy Maul's Chambers. If Massassi Throne Room on table, may [download] [Set 13] Maul to Maul's Chambers. For remainder of game, you may not deploy cards with ability (or [Episode I] droids) except characters with 'Black Sun,' 'Crimson Dawn,' or 'Hutt' in lore, assassins, gangsters, [Episode I] bounty hunters, and [Independent] starships. Once per turn, may [download] a non-unique blaster (or a card with 'First Light' in title). Flip this card if you just 'hit' a character (or during your battle phase if your gangsters control two battlegrounds).");
         addIcons(Icon.VIRTUAL_SET_13);
     }
 
@@ -67,7 +65,7 @@ public class Card213_032 extends AbstractObjective {
         // Check condition(s)
         if (GameConditions.canSpot(game, self, Filters.title(Title.Massassi_Throne_Room))) {
             action.appendOptionalEffect(
-                    new DeployCardsToLocationFromReserveDeckEffect(action, Filters.Maul, 0, 1, Filters.title(Title.Dathomir_Mauls_Chambers), true, true) {
+                    new DeployCardsToLocationFromReserveDeckEffect(action, Filters.and(Filters.Maul, Icon.VIRTUAL_SET_13), 0, 1, Filters.title(Title.Dathomir_Mauls_Chambers), true, true) {
                         public String getChoiceText(int numCardsToChoose) {
                             return "Choose Maul to deploy";
                         }

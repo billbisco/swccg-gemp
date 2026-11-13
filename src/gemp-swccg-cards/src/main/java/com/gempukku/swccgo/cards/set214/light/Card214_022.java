@@ -42,7 +42,7 @@ public class Card214_022 extends AbstractResistance {
     public Card214_022() {
         super(Side.LIGHT, 1, 6, 6, 6, 8, "Rey, All Of The Jedi", Uniqueness.UNIQUE, ExpansionSet.SET_14, Rarity.V);
         setLore("Female.");
-        setGameText("During your control phase, may search your Lost Pile and choose two cards; opponent places one out of play; retrieve the other into hand. Once per game, may deploy a lightsaber on Rey from Reserve Deck; reshuffle. Immune to attrition < 5.");
+        setGameText("Once during your control phase, may search your Lost Pile and choose two cards; opponent places one out of play (retrieve the other). Once per game, may [download] a lightsaber on Rey. Immune to attrition < 5.");
         addIcons(Icon.PILOT, Icon.WARRIOR, Icon.EPISODE_VII, Icon.VIRTUAL_SET_14);
         addKeywords(Keyword.FEMALE);
         addPersona(Persona.REY);

@@ -36,7 +36,7 @@ public class Card213_049 extends AbstractLostInterrupt {
         super(Side.LIGHT, 4, Title.Anakin_Skywalker, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setVirtualSuffix(true);
         setLore("'You were right about me. Tell your sister ... you were right.'");
-        setGameText("If I Feel The Conflict on table, during any move phase, take [Endor] Leia or [Dagobah] Luke into hand from Reserve Deck; reshuffle. OR During a battle at a site involving [Death Star II] Luke, choose: Add one destiny to attrition. OR Cancel the game text of a character of ability < 4.");
+        setGameText("During any move phase, if I Feel The Conflict on table, [upload] [Endor] Leia or [Dagobah] Luke. OR During a battle at a site involving [Death Star II] Luke, choose: Add one destiny to attrition. OR Cancel the game text of a character of ability < 4.");
         addIcons(Icon.DEATH_STAR_II, Icon.VIRTUAL_SET_13);
     }
 

@@ -42,7 +42,7 @@ public class Card207_003 extends AbstractJediMaster {
         super(Side.LIGHT, 2, 4, 4, 7, 6, "Depa Billaba", Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
         setVirtualSuffix(true);
         setLore("Chalactan Jedi Master who was rescued by Mace Windu from space pirates when she was six months old. Jedi Council member who is renowned for her insights.");
-        setGameText("If at least two [LS] icons here, once during your control phase may draw top card of Reserve Deck. If at least two [DS] icons here, may forfeit in place of your hit non-Jedi character present with Depa (forfeit = 0), restoring that character to normal.");
+        setGameText("If at least two [LS] icons here, once during your control phase may draw top card of Reserve Deck. If at least two [DS] icons here, may forfeit in place of your hit non-Jedi character present with Depa (forfeit for 0), restoring that character to normal.");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR, Icon.VIRTUAL_SET_7);
         addKeywords(Keyword.FEMALE, Keyword.JEDI_COUNCIL_MEMBER);
     }

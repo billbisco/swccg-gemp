@@ -32,7 +32,7 @@ public class Card208_056 extends AbstractSite {
         super(Side.DARK, Title.Mos_Espa, Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.SET_8, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("Your characters here and at Watto's Junkyard are immune to opponent's Sandwhirl.");
-        setLocationLightSideGameText("For remainder of game, sites may not deploy between this site and Watto's Junkyard.");
+        setLocationLightSideGameText("For remainder of game, may not be separated from Watto's Junkyard.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.TATOOINE, Icon.EPISODE_I, Icon.EXTERIOR_SITE, Icon.PLANET);

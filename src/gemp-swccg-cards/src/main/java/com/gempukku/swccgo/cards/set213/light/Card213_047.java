@@ -43,7 +43,7 @@ public class Card213_047 extends AbstractNormalEffect {
         super(Side.LIGHT, 4, PlayCardZoneOption.ATTACHED, Title.Meditation, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setVirtualSuffix(true);
         setLore("To prepare for the inevitable conflict with Jabba's minions, Luke entered a calm state of mental preparation.");
-        setGameText("Deploy on your character of ability > 3. Opponent's aliens are power -1 here (and forfeit -2 if a leader or [PW] or [M] card). If opponent has more characters at same site, may add one battle destiny (then lose Effect at end of battle).");
+        setGameText("Deploy on your character of ability > 3. Opponent's aliens here are power -1 (and forfeit -2 if a leader, [Maintenance], or [Permanent Weapon] card). During battle at same site, if opponent has more characters participating than you, may add one battle destiny (then lose Effect at end of battle).");
         addKeywords(Keyword.DEPLOYS_ON_CHARACTERS);
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_13);
     }
@@ -75,8 +75,8 @@ public class Card213_047 extends AbstractNormalEffect {
         if (GameConditions.isOncePerBattle(game, self, playerId, gameTextSourceCardId, gameTextActionId)
                 && GameConditions.isDuringBattleWithParticipant(game, Filters.here(self.getAttachedTo()))
                 && GameConditions.isDuringBattleAt(game, Filters.site)
-                && (Filters.countActive(game, self, Filters.and(Filters.opponents(playerId), Filters.character, Filters.at(Filters.sameSite(self))))
-                > Filters.countActive(game, self, Filters.and(Filters.your(playerId), Filters.character, Filters.at(Filters.sameSite(self)))))
+                && (Filters.countActive(game, self, Filters.and(Filters.opponents(playerId), Filters.character, Filters.participatingInBattle))
+                > Filters.countActive(game, self, Filters.and(Filters.your(playerId), Filters.character, Filters.participatingInBattle)))
                 && GameConditions.canAddBattleDestinyDraws(game, self)
                 && !GameConditions.cardHasWhileInPlayDataSet(self)) {
 

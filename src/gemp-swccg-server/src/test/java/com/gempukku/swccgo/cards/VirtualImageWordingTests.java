@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards;
 
+import com.gempukku.swccgo.common.Icon;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
@@ -154,6 +155,86 @@ public class VirtualImageWordingTests {
             {"205_14", "Luke Skywalker, The Emperor's Prize is a Dark Side card and is a persona of Luke only while on table. Plays only during start of game by revealing from outside your deck if Your Destiny is on table and suspended; deploy to Throne Room as a frozen captive. If not revealed, place under your Starting Effect. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader here and not escorting a captive. Place out of play if released or about to leave table.", null, null},
             {"205_14_BACK", "Immediately 'thaw' Luke (Luke is non-frozen, captured, and seized by Vader). While this side up, subtracts 3 from attempts to cross Luke over (even while a captive). Place out of play if released or about to leave table.", null, null},
             {"200_20^", "Adds 3 to power of anything he pilots (and to Attack Run total if piloting lead starfighter). If piloting at a battleground during your control phase, may retrieve 1 Force or take Darklighter Spin into hand from Reserve Deck; reshuffle.", null, null},
+            // Fourth pass (GEMP-IMG4, 13 Nov 2026): current versions in vm-versions.json by vm-b3, vm-b4, vm-c3, vm-d3 and vm-fix
+            // (Virtual Sets 7-10 and 12-20, Virtual Set 0 shields, ALT printings), read from the current Holotable image.
+            {"203_13", "Plays on any site. This location may not be targeted by Proton Bombs. Cancels Program Trap here. Unless Death Star: Docking Bay 327 on table, Commence Primary Ignition is canceled.", null, null},
+            {"207_3", "If at least two [LS] icons here, once during your control phase may draw top card of Reserve Deck. If at least two [DS] icons here, may forfeit in place of your hit non-Jedi character present with Depa (forfeit for 0), restoring that character to normal.", null, null},
+            {"207_6", "[Pilot] 2. Matching pilot for any snub fighter. While piloting a snub fighter, draws one battle destiny if unable to otherwise and opponent may not substitute battle destiny draws here.", null, null},
+            {"207_8", "If opponent just looked at cards in their deck or pile, after replacing, you may peek at the top card of that deck or pile. At the start of your control phase, if the top card of your Lost Pile is a Resistance character or [Resistance] starship, opponent loses 1 Force.", null, null},
+            {"207_9", "Once per turn, when firing a blaster or rifle, may target for free and add 2 to total weapon destiny. While with an Imperial (or two Rebels), whenever you win a battle here, opponent loses 2 Force. Immune to Hidden Weapons.", null, null},
+            {"207_10", "May deploy to Dagobah. Prevents attacks at same Dagobah site. Your training destiny draws are +1. If Great Warrior on table, once per turn may take your just drawn destiny into hand to cancel and redraw that destiny. Immune to attrition.", null, null},
+            {"207_11", "Deploy on table. Your Force generation is +1 at docking bays you occupy. Once per game, may [upload] one Dantooine, Mon Calamari, or Yavin 4 system or Profundity. Staging Areas is canceled. [Immune to Alter.]", null, null},
+            {"207_24", "[Pilot] 2, 3: Meson Martinet. Once per turn, may place opponent's character just lost from here out of play unless opponent loses 1 Force (2 if your Rep is a pirate or you did not deploy an Objective).", null, null},
+            {"207_26", "Deploy on a location. Your Force generation is +1 here. Once per game, you may restore a just 'hit' starship to normal. Unless opponent occupies a battleground site, Corellian Engineering Corporation is suspended. [Immune to Alter.]", null, null},
+            {"207_28", "May add 2 pilots and 3 passengers. Your total battle destiny here is +1 for each pirate aboard. While Quiggold or Sidon piloting, immune to attrition < 5.", null, null},
+            {"207_30", "[Pilot] 3. If a Rebel just moved from here, your Imperials present may follow that character (using landspeed). While at a battleground site, functions as a general and game text of Admiral's Orders is canceled.", null, null},
+            {"208_21", "Once per turn, if drawn for destiny, you may activate 1 Force. During battle at a site, choose: Your total power is +1 for each of your characters present. OR If you have a weapon present, opponent must use or lose 1 Force to draw their first battle destiny.", null, null},
+            {"208_39", "Use 4 Force to deploy on table. While present with a Jedi, destroyer droids are defense value +2. If your destroyer droid was just lost, may stack it here. During your control phase, may use 2 Force to place any destroyer droid here in Used Pile. [Immune to Alter]", null, null},
+            {"208_56", null, "For remainder of game, may not be separated from Watto's Junkyard.", null},
+            {"209_19", "USED: Cancel Broken Concentration, Lateral Damage, or Limited Resources. OR Place a card just stacked on Droid Racks or Strategic Reserves in opponent's Lost Pile. [Immune to Sense.] OR If you just drew a starship for destiny, take that starship into hand to cancel and redraw that destiny. LOST: Use 3 Force to retrieve an Effect of any kind or a non-[Maintenance] starship into hand.", null, null},
+            {"209_20", "USED: If present with a Dark Jedi or [Episode I] Jedi, your Padawan is power +2 for remainder of turn. OR [download] one [Episode I] lightsaber. LOST: Once per game, retrieve a Padawan or [Episode I] lightsaber.", null, null},
+            {"209_30", "Permanent pilot provides ability of 2. When in battle, adds 1 to attrition against opponent for each opponent's starship present. Cancels opponent's immunity to attrition here.", null, null},
+            {"209_38", "Deploys -1 to Executor. While aboard a capital starship, adds 1 to armor and its defense value may not be reduced. If Fear Will Keep Them In Line here and your Imperial just won a battle at a related site, opponent loses 2 Force.", null, null},
+            {"209_41", "Deploy on table. Once per game, may [upload] a [Set 9] Epic Event. During your deploy phase, if Krennic on Death Star, may flip Set Your Course For Alderaan (flip back at end of turn). [Immune to Alter.]", null, null},
+            {"209_42", "Deploy on table. AT-AT Cannons deploy -1, fire for free, and add 1 to armor. During your control phase, may [upload] a non-[Jabba's Palace] vehicle weapon (without 'lost' in game text), [Hoth] device, or [Hoth] Epic Event. [Immune to Alter.]", null, null},
+            {"209_44", "Deploy on table. Once per turn, may [download] Maul's Lightsaber. At start of opponent's control phase, may relocate Maul to same site as a Jedi. May place this Effect out of play to deploy Maul's Lightsaber from Lost Pile. [Immune to Alter.]", null, null},
+            {"209_51", null, null, "Once per game, may exchange an alien in hand with a non-spy Black Sun agent in Lost Pile."},
+            {"210_24", "USED: Cancel Elis Helrot or Stunning Leader. [Immune to Sense.] OR Cancel a smuggler's game text for remainder of turn. OR [upload] Mercenary Armor or [Reflections II] Chewie. LOST: During your move phase, 'break cover' of an Undercover spy.", null, null},
+            {"210_25", "Deploy City Outskirts, Watto's Junkyard, and Credits Will Do Fine. For remainder of game, you may not deploy cards with ability except unique (•) aliens, Republic characters, [Republic] starships, and [Episode I] Jedi. Your Destiny is suspended. You lose no Force from [Reflections II] objectives. While this side up, once per game, may [upload] an [Episode I] system. Unless present with Qui-Gon, Maul is immune to attrition. Flip this card if there are four or more cards beneath Credits Will Do Fine.", null, null},
+            {"210_28", "May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and, during battle, players draw destiny from the bottom of their Reserve Deck.", null, null},
+            {"210_30", "[Pilot] 2, 3: Judicator. Your total battle destiny here is +1 for each TIE subtype here or aboard same starship. During your turn, may [upload] one launch bay or non-unique TIE.", null, null},
+            {"210_41", "USED: Cancel Nabrun Leids. [Immune to Sense.] OR Use 1 Force to [upload] a Rodian (or a non-unique alien of your Rep's species). LOST: During your move phase, \"break cover\" of an Undercover spy.", null, null},
+            {"210_43", "Deploy on table. X = number of your devices on table. Once during your turn, may peek at the top X cards of your Force Pile and take one into hand, or [download] (or deploy from Lost Pile) a device (except Restraining Bolt or Tractor Beam). [Immune to Alter.]", null, null},
+            {"210_46", "[Pilot] 2. If a Jedi or Padawan just lost from same site as any Inquisitor, opponent loses 1 Force. If a Jedi or Padawan just moved from here, Inquisitors present may follow that character (using landspeed). Immune to attrition < 4.", null, null},
+            {"212_5", "[Pilot] 2. Unless alone, may place Trench in Used Pile to make an [Episode I] starship here immune to attrition for remainder of turn. While at opponent's system, their starships deploy +1 here.", null, null},
+            {"213_1", "[Pilot] 2. Matching pilot for any Death Squadron Star Destroyer and, while piloting one, instead of Force draining here, may draw top card of Reserve Deck or raise your same or related converted location to the top.", null, null},
+            {"213_5", "[Pilot] 2. May deploy or move as a 'react' to same site as a 'Hatred' card. During your move phase, unless alone, may return one of your Inquisitors here (and all cards on them) to owner's hand.", null, null},
+            {"213_11", "Defense value -2 while opponent has a weapon present. While at a site, unless opponent's character of ability > 3 here, reset opponent's total battle destiny here to 0.", null, null},
+            {"213_14", "Deploy on a battleground planet system. Adds one [Light Side] icon at your related Big One. If a sector was just drawn for asteroid destiny, cancel and redraw that destiny. Once per turn, may [download] a sector to this system. [Immune to Alter.]", null, null},
+            {"213_19", "USED: [upload] First Light or Vos. OR Place a character from hand in Used Pile to activate 1 Force (2 if Vos on table). LOST: Once per game, exchange two cards in hand with any one card in Lost Pile. [Immune to Sense.]", null, null},
+            {"213_20", "USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquisitor from hand to [upload] up to two Inquisitors.", null, null},
+            {"213_21", "[upload] Krennic or a non-spy captain. OR Peek at the bottom card of any deck or pile. OR During the power segment of a battle, if your captain in battle with your leader, cancel one destiny just drawn (except a battle destiny).", null, null},
+            {"213_23", null, null, "May [download] [Set 13] Maul here."},
+            {"213_24", null, null, "While your Imperial here, [Dagobah] Executor is deploy -7 (except to Fondor)."},
+            {"213_25", null, null, "Once per game, may [download] Margo, Wuher, or a musician here."},
+            {"213_26", null, null, "During your move phase, your Crimson Dawn leader may move between here and a site."},
+            {"213_29", null, "Once per game, you may [download] a Padawan (except Anakin) here.", null},
+            {"213_31_BACK", "While this side up, you lose no Force from Visage Of The Emperor. While Vader armed with a lightsaber, opponent's Force drain bonuses are canceled.\nFlip this card if Vader not on table or if Luke, a Jedi, or a Padawan at a battleground site; once per game, may take Vader and your cards on him into hand from a site you control.", null, null},
+            {"213_32", "Deploy Maul's Chambers. If Massassi Throne Room on table, may [download] [Set 13] Maul to Maul's Chambers. For remainder of game, you may not deploy cards with ability (or [Episode I] droids) except characters with 'Black Sun,' 'Crimson Dawn,' or 'Hutt' in lore, assassins, gangsters, [Episode I] bounty hunters, and [Independent] starships. Once per turn, may [download] a non-unique blaster (or a card with 'First Light' in title). Flip this card if you just 'hit' a character (or during your battle phase if your gangsters control two battlegrounds).", null, null},
+            {"213_32_BACK", "May immediately re-circulate and shuffle your Reserve Deck. While this side up, if your gangster leader in battle at same site as your non-unique blaster, may add one destiny to total power. During your draw phase, if Maul alone, may peek at the cards in your Force Pile. Flip this card at end of turn. If you are about to flip this card and you occupy three battlegrounds, opponent loses 1 Force.", null, null},
+            {"213_36", "[Pilot] 2, 3: Falcon. May deploy -1 as a 'react' (-2 to same location as Han). If you have completed a Kessel Run, opponent's Force retrieval is canceled. During battle here (or at a holosite), your dejariks are destiny +2.", null, null},
+            {"213_38", "While aboard (or stacked on) a freighter, adds 1 to power, maneuver, and hyperspeed, and when forfeiting L3-37, stack her on that freighter. May lose L3-37 to cancel a non-[Immune to Sense] Interrupt targeting a freighter she is aboard or stacked on.", null, null},
+            {"213_40", "Once per game, may deploy Meditation on Qui-Gon from Lost Pile. If alone during battle: your total battle destiny is +1 for each weapon destiny draw that was completed while alone this battle, and opponent may not cancel your destiny draws. Immune to attrition.", null, null},
+            {"213_41", "[Pilot] 2. Once per turn, if you just deployed a smuggler here, may place a card from hand in Used Pile to activate 2 Force. Once per game, if you just won a battle here, may steal a starfighter from opponent's Lost Pile into hand.", null, null},
+            {"213_47", "Deploy on your character of ability > 3. Opponent's aliens here are power -1 (and forfeit -2 if a leader, [Maintenance], or [Permanent Weapon] card). During battle at same site, if opponent has more characters participating than you, may add one battle destiny (then lose Effect at end of battle).", null, null},
+            {"213_49", "During any move phase, if I Feel The Conflict on table, [upload] [Endor] Leia or [Dagobah] Luke. OR During a battle at a site involving [Death Star II] Luke, choose: Add one destiny to attrition. OR Cancel the game text of a character of ability < 4.", null, null},
+            {"213_51", "USED: [upload] Kessel Run, L3-37, or Lando. OR If you just moved a 'coaxium' card to Used Pile, randomly retrieve 1 Force. LOST: Once per game, place a card stacked on [Set D] A Useless Gesture in your Lost Pile.", null, null},
+            {"213_56", null, "While Luke alone here, he is power +2.", null},
+            {"214_1", "This Interrupt is immune to opponent's Objective and does not cause you to lose Force to Do, Or Do Not. USED: Cancel Sense. LOST: Target an Effect, Political Effect, or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost.", null, null},
+            {"214_4", null, null, "Once per game, may [download] [Episode VII] Emperor here."},
+            {"214_9", "May add 6 pilots, 8 passengers, and 2 starfighters. Permanent pilot provides ability of 2. While alone at an [Episode VII] system, adds Force icons to equalize them for both sides here. Immune to attrition < 4.", null, null},
+            {"214_11", "If I Will Finish What You Started on table, deploy on table. While [Episode VII] Emperor on Exegol, attrition against opponent is +2 at same location as Kylo, Rey, or Snoke and, once per game, may [download] an [Episode VII] battleground system. [Immune to Alter.]", null, null},
+            {"214_13", "This Interrupt is immune to opponent's Objective and does does not cause you to lose Force to There Is No Try. USED: Cancel Sense. LOST: Target an Effect, Political Effect, or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost.", null, null},
+            {"214_15", "Deploy on a Jedi or Padawan. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value. If hit by Ahsoka or a Padawan, opponent loses 1 Force.", null, null},
+            {"214_16", "At same and related locations, deploy cost of opponent's characters may not be modified. If you have ten or more cards in Lost Pile, Force drain +1 here. Once during battle, may add Beaumont's power to another character present; Beaumont is 'hit'.", null, null},
+            {"214_18", "[Pilot] 2. While with an alien, adds one battle destiny. Once per turn, may target opponent's non-'hit' character here. If Din on table when target lost this turn, choose: Retrieve 1 Force or place target in Used Pile to retrieve 2 Force.", null, null},
+            {"214_21", "May add 1 Jedi pilot. * Maneuver = pilot's ability. While Plo piloting, power +2, immune to attrition < 3, and once per turn, may cancel and redraw your weapon or battle destiny just drawn here.", null, null},
+            {"214_22", "Once during your control phase, may search your Lost Pile and choose two cards; opponent places one out of play (retrieve the other). Once per game, may [download] a lightsaber on Rey. Immune to attrition < 5.", null, null},
+            {"215_1", "May add 1 clone pilot. Odd Ball deploys -1 aboard. While Odd Ball piloting, power and hyperspeed +1, and adds one destiny to total power. Immune to attrition < 3 (< 5 while Odd Ball piloting).", null, null},
+            {"215_2", "Deploy on Central Core. Once per game, opponent may stack up to two cards from hand face-down here. All This Sneaking Around: Path Of Least Resistance is canceled. While no cards stacked here, Leia moves using landspeed for free. Allow The Ship To Leave: If you just won a battle at a Death Star site (or initiated a Force drain here), place a card stacked here in owner's Lost Pile. That Old Man Did It!: If you occupy this site and another Death Star site while no cards stacked here, for remainder of game, power 'shut down.'", null, null},
+            {"215_4", "Once per game, if you are about to draw a card for battle destiny here, may instead use Cal Kestis' ability number. During opponent's draw phase, may place one card from your hand under Reserve Deck; reshuffle and draw top card of Reserve Deck.", null, null},
+            {"217_47", null, "Once per turn, may [download] Shmi or [Tatooine] C-3PO here.", null},
+            {"301_5", "Plays on table. Cancels A Dangerous Time, Bad Feeling Have I, Colo Claw Fish, Field Promotion, and Imperial Supply. Each player may play only one card with 'sabacc' in title each turn. You may lose 1 Force to cancel a card with 'sabacc' in title.", null, null},
+    };
+
+    /** Lore read from the current PC card image (fourth pass). */
+    private static final String[][] LORE = {
+            {"204_35_BACK", "The Millennium Falcon's well-known reputation is favorable not only for its captain and first mate, but for the Alliance as well. Enclosed."},
+            {"208_16", "Female dancer from Askajia. Very protective mother. Makes sure that all those she cares about are well protected."},
+            {"208_32", "Fiercely devoted Royal Guard. Feels deeply indebted to those that risk their life for him. Unaware of the extent of Palpatine's atrocities and cruelty."},
+            {"208_38", "For important Imperial dignitaries, an individual Star Destroyer is placed at their personal disposal."},
+            {"210_40", "Commanding Viceroy of the Trade Federation forces assigned to the blockade of Naboo. Takes responsibility for his own actions. Neimoidian leader."},
+            {"213_50", "A pair of dice dangling above the Millennium Falcon's cockpit, for luck. 'I've never seen anything to make me believe there's one, all-powerful Force controlling everything.'"},
     };
 
     @Test
@@ -366,5 +447,398 @@ public class VirtualImageWordingTests {
         assertTrue(luke.getBlueprint().getGameText().startsWith("Adds 3 to power of anything he pilots (and to Attack Run total"));
         assertTrue(Filters.Luke.accepts(scn.game(), luke));
         assertEquals(4, luke.getBlueprint().getAbility(), 0);
+    }
+
+    @Test
+    public void LoreMatchesTheCurrentPcCardImage() {
+        SwccgCardBlueprintLibrary library = new SwccgCardBlueprintLibrary();
+        for (String[] row : LORE)
+            assertEquals(row[0], row[1], library.getSwccgoCardBlueprint(row[0]).getLore());
+    }
+
+    /**
+     * The Falcon, Junkyard Garbage (current images, regular and ALT): the combat vehicle side prints no Scomp link icon.
+     */
+    @Test
+    public void FalconJunkyardGarbageBackPrintsNoScompLink() {
+        SwccgCardBlueprintLibrary library = new SwccgCardBlueprintLibrary();
+        assertFalse(library.getSwccgoCardBlueprint("204_35_BACK").hasIcon(Icon.SCOMP_LINK));
+        assertTrue(library.getSwccgoCardBlueprint("204_35").hasIcon(Icon.SCOMP_LINK));
+    }
+
+    private static VirtualTableScenario ambushScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("ambush", "210_2");     // Ambush (V), current image
+                    put("cantina", "1_128");    // Tatooine: Cantina (battleground)
+                    put("eisley", "1_133");     // Tatooine: Mos Eisley (battleground)
+                    put("farm", "1_132");       // Tatooine: Lars' Moisture Farm (battleground)
+                    put("clone1", "210_9");
+                    put("clone2", "210_9");
+                    put("clone3", "210_9");
+                }},
+                new HashMap<>() {{
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Ambush (V) (current image, 210_2): "Once per game, target three related battlegrounds occupied by your clones. Your
+     * Force drains at same and related battlegrounds this turn are +1." The player now targets the three battlegrounds.
+     */
+    @Test
+    public void AmbushTargetsThreeRelatedBattlegroundsOccupiedByClones() {
+        var scn = ambushScenario();
+        var ambush = scn.GetLSCard("ambush");
+        var cantina = scn.GetLSCard("cantina");
+        var eisley = scn.GetLSCard("eisley");
+        var farm = scn.GetLSCard("farm");
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveLocationToTable(farm);
+        scn.MoveCardsToLocation(cantina, scn.GetLSCard("clone1"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("clone2"));
+        scn.MoveCardsToLocation(farm, scn.GetLSCard("clone3"));
+        scn.MoveCardsToLSHand(ambush);
+        assertTrue(Filters.battleground.accepts(scn.game(), cantina));
+        assertTrue(Filters.battleground.accepts(scn.game(), eisley));
+        assertTrue(Filters.battleground.accepts(scn.game(), farm));
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        float before = scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), cantina, scn.LS);
+        assertTrue(scn.LSCardActionAvailable(ambush, "Add to Force drains"));
+        scn.LSPlayCard(ambush, "Add to Force drains");
+        assertTrue(scn.LSHasCardChoicesAvailable(cantina, eisley, farm));
+        scn.LSChooseCards(cantina, eisley, farm);
+        scn.PassAllResponses();
+        assertEquals(before + 1, scn.game().getModifiersQuerying().getForceDrainAmount(scn.gameState(), cantina, scn.LS), scn.epsilon);
+    }
+
+    @Test
+    public void AmbushNeedsThreeBattlegroundsOccupiedByClones() {
+        var scn = ambushScenario();
+        var ambush = scn.GetLSCard("ambush");
+        var cantina = scn.GetLSCard("cantina");
+        var eisley = scn.GetLSCard("eisley");
+        var farm = scn.GetLSCard("farm");
+        scn.StartGame();
+        scn.MoveLocationToTable(cantina);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveLocationToTable(farm);
+        scn.MoveCardsToLocation(cantina, scn.GetLSCard("clone1"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("clone2"));
+        scn.MoveCardsToLSHand(ambush);
+
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(scn.LSCardActionAvailable(ambush, "Add to Force drains"));
+    }
+
+    /**
+     * Steadfast (current image, 214_9): "While alone at an [Episode VII] system, adds Force icons to equalize them for both
+     * sides here." Starkiller Base (an [Episode VII] system) gains Light Side icons; Tatooine (not [Episode VII]) does not.
+     */
+    @Test
+    public void SteadfastEqualizesForceIconsOnlyAtAnEpisodeVIISystem() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>(),
+                new HashMap<>() {{
+                    put("steadfast", "214_9");
+                    put("starkiller", "208_51");
+                    put("tatooine", "1_289");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+        var steadfast = scn.GetDSCard("steadfast");
+        var starkiller = scn.GetDSCard("starkiller");
+        var tatooine = scn.GetDSCard("tatooine");
+        scn.StartGame();
+        scn.MoveLocationToTable(starkiller);
+        scn.MoveLocationToTable(tatooine);
+        assertEquals(0, scn.GetIconCount(starkiller, Icon.LIGHT_FORCE));
+        assertEquals(1, scn.GetIconCount(tatooine, Icon.LIGHT_FORCE));
+
+        scn.MoveCardsToLocation(tatooine, steadfast);
+        assertEquals(1, scn.GetIconCount(tatooine, Icon.LIGHT_FORCE));
+
+        scn.MoveCardsToLocation(starkiller, steadfast);
+        assertEquals(2, scn.GetIconCount(starkiller, Icon.LIGHT_FORCE));
+        assertEquals(2, scn.GetIconCount(starkiller, Icon.DARK_FORCE));
+    }
+
+    private static VirtualTableScenario meditationScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("meditation", "213_47"); // Meditation, current image
+                    put("luke", "1_19");         // Luke Skywalker (ability 4)
+                    put("site", "1_133");        // Tatooine: Mos Eisley
+                }},
+                new HashMap<>() {{
+                    put("trooper1", "1_194");
+                    put("trooper2", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Meditation (current image, 213_47): "During battle at same site, if opponent has more characters participating than
+     * you, may add one battle destiny." Two opponent's characters battling one: the destiny may be added.
+     */
+    @Test
+    public void MeditationAddsBattleDestinyWhenOpponentHasMoreCharactersParticipating() {
+        var scn = meditationScenario();
+        var meditation = scn.GetLSCard("meditation");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetLSCard("site");
+        scn.StartGame();
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, luke);
+        scn.AttachCardsTo(luke, meditation);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("trooper1"), scn.GetDSCard("trooper2"));
+
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        assertTrue(scn.LSCardActionAvailable(meditation, "Add one battle destiny"));
+    }
+
+    /** One opponent's character participating against one of yours: no battle destiny is added. */
+    @Test
+    public void MeditationAddsNoBattleDestinyWhenParticipantsAreEven() {
+        var scn = meditationScenario();
+        var meditation = scn.GetLSCard("meditation");
+        var luke = scn.GetLSCard("luke");
+        var site = scn.GetLSCard("site");
+        scn.StartGame();
+        scn.MoveLocationToTable(site);
+        scn.MoveCardsToLocation(site, luke);
+        scn.AttachCardsTo(luke, meditation);
+        scn.MoveCardsToLocation(site, scn.GetDSCard("trooper1"));
+
+        scn.SkipToLSTurn(Phase.BATTLE);
+        scn.LSStartBattleAndSkipToWeaponsSegment(site);
+        assertTrue(scn.IsParticipatingInBattle(luke, scn.GetDSCard("trooper1")));
+        assertFalse(scn.LSCardActionAvailable(meditation, "Add one battle destiny"));
+    }
+
+    private static VirtualTableScenario venkaScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("jawa", "1_12");           // Jawa (power 1)
+                }},
+                new HashMap<>() {{
+                    put("venka", "209_38");        // Lieutenant Venka (V), current image
+                    put("isd", "1_302");           // Imperial-Class Star Destroyer
+                    put("fear", "1_216");          // Fear Will Keep Them In Line
+                    put("tatooine", "1_289");      // Tatooine (system)
+                    put("eisley", "1_293");        // Tatooine: Jundland Wastes (related site)
+                    put("trooper1", "1_194");      // Stormtrooper (Imperial)
+                    put("trooper2", "1_194");
+                    put("raider1", "1_196");       // Tusken Raider (not an Imperial)
+                    put("raider2", "1_196");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /** Sets up Venka aboard a Star Destroyer at Tatooine with Fear Will Keep Them In Line, battles at Mos Eisley and
+     * returns the Light Side Force lost to Venka (Force loss paid from Reserve Deck before battle damage). */
+    private static int venkaForceLossAfterWinningWith(VirtualTableScenario scn, String winner1, String winner2) {
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        var isd = scn.GetDSCard("isd");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, isd);
+        scn.BoardAsPassenger(isd, scn.GetDSCard("venka"));
+        scn.AttachCardsTo(isd, scn.GetDSCard("fear"));
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard(winner1), scn.GetDSCard(winner2));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        scn.SkipToDamageSegment(false);
+        assertTrue(scn.DSWonBattle());
+        // Venka's Force loss comes before battle damage; battle damage asks "…or a card from battle to forfeit".
+        scn.PassResponses("FORCE_LOSS_INITIATED");
+        scn.PassResponses("ABOUT_TO_LOSE_FORCE_NOT_FROM_BATTLE_DAMAGE");
+        int lost = 0;
+        for (int i = 0; i < 10 && scn.AwaitingLSForceLossPayment()
+                && !scn.LSDecisionAvailable("forfeit"); i++) {
+            scn.PlayerDecided(scn.LS, scn.LSGetCardChoices().getFirst());
+            scn.PassCardLeavingTable();
+            lost++;
+        }
+        return lost;
+    }
+
+    /**
+     * Lieutenant Venka (V) (current image, 209_38): "If Fear Will Keep Them In Line here and your Imperial just won a
+     * battle at a related site, opponent loses 2 Force."
+     */
+    @Test
+    public void VenkaMakesOpponentLoseTwoForceWhenYourImperialWinsAtARelatedSite() {
+        assertEquals(2, venkaForceLossAfterWinningWith(venkaScenario(), "trooper1", "trooper2"));
+    }
+
+    /** Boundary: the battle was won by your non-Imperials only, so no Force loss. */
+    @Test
+    public void VenkaNeedsAnImperialToWinTheBattle() {
+        assertEquals(0, venkaForceLossAfterWinningWith(venkaScenario(), "raider1", "raider2"));
+    }
+
+    private static VirtualTableScenario black3Scenario() {
+        return new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("jawa", "1_12");
+                }},
+                new HashMap<>() {{
+                    put("black3", "210_28");       // Black 3 (V), current image
+                    put("ds613", "1_174");         // DS-61-3
+                    put("tatooine", "1_289");
+                    put("eisley", "1_293");        // Tatooine: Jundland Wastes
+                    put("trooper", "1_194");
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Black 3 (V) (current image, 210_28): "While DS-61-3 piloting, immune to attrition < 4 and, during battle, players
+     * draw destiny from the bottom of their Reserve Deck." Applies to a battle Black 3 is not in.
+     */
+    @Test
+    public void Black3MakesPlayersDrawFromTheBottomDuringAnyBattle() {
+        var scn = black3Scenario();
+        var black3 = scn.GetDSCard("black3");
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, black3);
+        scn.BoardAsPilot(black3, scn.GetDSCard("ds613"));
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        assertFalse(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        assertFalse(scn.IsParticipatingInBattle(black3));
+        assertTrue(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+    }
+
+    /** Boundary: without DS-61-3 piloting, no bottom-of-deck draws. */
+    @Test
+    public void Black3NeedsDS613Piloting() {
+        var scn = black3Scenario();
+        var black3 = scn.GetDSCard("black3");
+        var tatooine = scn.GetDSCard("tatooine");
+        var eisley = scn.GetDSCard("eisley");
+        scn.StartGame();
+        scn.MoveLocationToTable(tatooine);
+        scn.MoveLocationToTable(eisley);
+        scn.MoveCardsToLocation(tatooine, black3);
+        scn.MoveCardsToLocation(eisley, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(eisley, scn.GetLSCard("jawa"));
+
+        scn.SkipToDSTurn(Phase.BATTLE);
+        scn.DSStartBattleAndSkipToWeaponsSegment(eisley);
+        assertFalse(scn.game().getModifiersQuerying().shouldDrawDestinyFromBottomOfDeck(scn.gameState(), scn.LS));
+    }
+
+    private static VirtualTableScenario reactorTerminalScenario() {
+        return new VirtualTableScenario(
+                new HashMap<>(),
+                new HashMap<>() {{
+                    put("terminal", "210_43");     // Death Star Reactor Terminal, current image
+                }},
+                10, 10,
+                StartingSetup.DefaultLSGroundLocation,
+                StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open
+        );
+    }
+
+    /**
+     * Death Star Reactor Terminal (current image, 210_43): "Once during your turn, may peek … or [download] (or deploy
+     * from Lost Pile) a device". The device deploy is offered outside the deploy phase (here the control phase).
+     */
+    @Test
+    public void ReactorTerminalDeploysADeviceInAnyPhaseOfYourTurn() {
+        var scn = reactorTerminalScenario();
+        var terminal = scn.GetDSCard("terminal");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(terminal);
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+        scn.SkipToPhase(Phase.MOVE);
+        assertTrue(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+    }
+
+    /** Boundary: only once per turn (the peek and the device deploy share the limit). */
+    @Test
+    public void ReactorTerminalOnlyOnceDuringYourTurn() {
+        var scn = reactorTerminalScenario();
+        var terminal = scn.GetDSCard("terminal");
+        scn.StartGame();
+        scn.MoveCardsToDSSideOfTable(terminal);
+
+        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.DSUseCardAction(terminal, "Deploy device from Reserve Deck");
+        // no device in Reserve Deck: both players may verify it after the unsuccessful search
+        scn.DSPass();
+        scn.LSPass();
+        for (int i = 0; i < 5 && !scn.AwaitingDSControlPhaseActions(); i++) {
+            if (scn.AwaitingLSControlPhaseActions()) scn.LSPass();
+            else scn.PassResponses();
+        }
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
+        scn.SkipToPhase(Phase.MOVE);
+        assertFalse(scn.DSCardActionAvailable(terminal, "Deploy device from Reserve Deck"));
     }
 }

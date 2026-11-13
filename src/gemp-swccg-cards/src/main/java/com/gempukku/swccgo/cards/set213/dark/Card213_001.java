@@ -41,7 +41,7 @@ public class Card213_001 extends AbstractImperial {
     public Card213_001() {
         super(Side.DARK, 0, 2, 2, 2, 4, Title.Ozzel, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("Leader of the Emperor's Death Squadron assigned to hunt down and crush the Rebellion. As clumsy as he is stupid. Has just failed Darth Vader for the next-to-last time.");
-        setGameText("Adds 2 to power of anything he pilots. Matching pilot for any Death Squadron Star Destroyer and, while piloting one, instead of Force draining here, may draw top card of Reserve Deck or raise your same or related converted location to the top.");
+        setGameText("[Pilot] 2. Matching pilot for any Death Squadron Star Destroyer and, while piloting one, instead of Force draining here, may draw top card of Reserve Deck or raise your same or related converted location to the top.");
         addIcons(Icon.HOTH, Icon.PILOT, Icon.VIRTUAL_SET_13);
         addPersona(Persona.OZZEL);
         addKeywords(Keyword.ADMIRAL, Keyword.LEADER, Keyword.DEATH_SQUADRON);

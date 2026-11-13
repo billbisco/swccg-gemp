@@ -34,7 +34,7 @@ import java.util.List;
 public class Card214_011 extends AbstractNormalEffect {
     public Card214_011() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "The Dead Speak!", Uniqueness.UNIQUE, ExpansionSet.SET_14, Rarity.V);
-        setGameText("If I Will Finish What You Started on table, deploy on table. While [Episode VII] Emperor on Exegol, attrition against opponent is +2 at same location as Kylo, Rey, or Snoke and, once per game, may [download] an [Episode VII] battleground system. (Immune to Alter.)");
+        setGameText("If I Will Finish What You Started on table, deploy on table. While [Episode VII] Emperor on Exegol, attrition against opponent is +2 at same location as Kylo, Rey, or Snoke and, once per game, may [download] an [Episode VII] battleground system. [Immune to Alter.]");
         addIcons(Icon.EPISODE_VII, Icon.VIRTUAL_SET_14);
         addImmuneToCardTitle(Title.Alter);
     }

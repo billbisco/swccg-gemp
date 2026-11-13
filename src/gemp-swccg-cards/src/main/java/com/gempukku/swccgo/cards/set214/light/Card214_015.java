@@ -30,10 +30,7 @@ public class Card214_015 extends AbstractCharacterWeapon {
     public Card214_015() {
         super(Side.LIGHT, 5, "Ahsoka's Shoto Lightsaber", Uniqueness.UNIQUE, ExpansionSet.SET_14, Rarity.V);
         setLore("");
-        setGameText("Deploy on a Jedi or Padawan. " +
-                "May target a character or creature for free. " +
-                "Draw two destiny. " +
-                "Target hit, and may not be used to satisfy attrition, if total destiny > defense value (if hit by Ahsoka or a Padawan, opponent also loses 1 Force).");
+        setGameText("Deploy on a Jedi or Padawan. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value. If hit by Ahsoka or a Padawan, opponent loses 1 Force.");
         addIcon(Icon.VIRTUAL_SET_14);
         addKeyword(Keyword.LIGHTSABER);
         addPersona(Persona.AHSOKAS_SHOTO_LIGHTSABER);

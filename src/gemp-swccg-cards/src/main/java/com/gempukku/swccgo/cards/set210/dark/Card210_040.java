@@ -40,7 +40,7 @@ import java.util.List;
 public class Card210_040 extends AbstractRepublic {
     public Card210_040() {
         super(Side.DARK, 3, 3, 3, 4, 6, Title.Nute_Gunray, Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
-        setLore("Commanding Viceroy of the Trade Federation forces assigned to the blockade of Naboo. Takes for his own actions. Neimoidian leader.");
+        setLore("Commanding Viceroy of the Trade Federation forces assigned to the blockade of Naboo. Takes responsibility for his own actions. Neimoidian leader.");
         setGameText("During battle, may cancel game text of a Republic character with ability < 4 present. If with your Republic character (or character with 'Trade Federation' in lore), may add one battle destiny. Immune to attrition < 3.");
         addPersona(Persona.GUNRAY);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.WARRIOR);

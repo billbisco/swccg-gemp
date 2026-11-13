@@ -1,7 +1,7 @@
 package com.gempukku.swccgo.cards.set210.dark;
 
 import com.gempukku.swccgo.cards.AbstractStarfighter;
-import com.gempukku.swccgo.cards.conditions.DuringBattleWithParticipantCondition;
+import com.gempukku.swccgo.cards.conditions.DuringBattleCondition;
 import com.gempukku.swccgo.cards.conditions.HasPilotingCondition;
 import com.gempukku.swccgo.cards.conditions.WithCondition;
 import com.gempukku.swccgo.common.ExpansionSet;
@@ -36,7 +36,7 @@ public class Card210_028 extends AbstractStarfighter {
         super(Side.DARK, 3, 1, 1, null, 3, null, 3, "Black 3", Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
         setVirtualSuffix(true);
         setLore("TIE/ln fighter of pilot DS-61-3. Stylized image of Corellian slice-hound painted on inner hatch.");
-        setGameText("May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and during battle here, players draw destiny from the bottom of their Reserve Deck.");
+        setGameText("May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and, during battle, players draw destiny from the bottom of their Reserve Deck.");
         addPersona(Persona.BLACK_3);
         addModelType(ModelType.TIE_LN);
         addIcons(Icon.VIRTUAL_SET_10);
@@ -54,7 +54,7 @@ public class Card210_028 extends AbstractStarfighter {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ImmuneToAttritionLessThanModifier(self, new HasPilotingCondition(self, Filters.DS_61_3), 4));
         modifiers.add(new ForceDrainModifier(self, Filters.here(self), new WithCondition(self, Filters.Black_Squadron_tie), 1, playerId));
-        modifiers.add(new DrawDestinyFromBottomOfDeckModifier(self, new AndCondition(new HasPilotingCondition(self, Filters.DS_61_3), new DuringBattleWithParticipantCondition(self))));
+        modifiers.add(new DrawDestinyFromBottomOfDeckModifier(self, new AndCondition(new HasPilotingCondition(self, Filters.DS_61_3), new DuringBattleCondition())));
         return modifiers;
     }
 }
