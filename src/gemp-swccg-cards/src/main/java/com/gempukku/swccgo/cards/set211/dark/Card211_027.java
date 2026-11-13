@@ -28,7 +28,7 @@ import java.util.List;
 public class Card211_027 extends AbstractUniqueStarshipSite {
     public Card211_027() {
         super(Side.DARK, "Invisible Hand: Observatory Entrance", Persona.INVISIBLE_HAND, ExpansionSet.SET_11, Rarity.V);
-        setLocationDarkSideGameText("While Insidious Prisoner here, your characters are +1 power here.");
+        setLocationDarkSideGameText("While Insidious Prisoner here, your characters are power +1 here.");
         setLocationLightSideGameText("While your [Clone Army] character here, your characters are defense value +1 here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);

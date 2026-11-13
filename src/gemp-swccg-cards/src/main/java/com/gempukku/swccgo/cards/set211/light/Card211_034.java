@@ -46,7 +46,7 @@ public class Card211_034 extends AbstractStarfighter {
     public Card211_034() {
         super(Side.LIGHT, 2, 2, 2, null, 4, 5, 5, "Libertine", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLore("");
-        setGameText("May add 2 pilots and 2 passengers. During your deploy phase, may relocate your character of ability < 4 at a related exterior site aboard. While BB-8, DJ, or Rose aboard, immune to attrition < 5.");
+        setGameText("May add 2 pilots and 2 passengers. During your deploy phase, may relocate your character of ability < 4 aboard from a related exterior site. While BB-8, DJ, or Rose aboard, immune to attrition < 5.");
         addPersona(Persona.LIBERTINE);
         addIcons(Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.EPISODE_VII, Icon.VIRTUAL_SET_11);
         addModelType(ModelType.DLANSEAUX_STAR_YACHT);

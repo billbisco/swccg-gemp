@@ -33,7 +33,7 @@ public class Card211_015 extends AbstractUsedInterrupt {
     public Card211_015() {
         super(Side.DARK, 5, "Twi'lek Advisor", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLore("'He's no Jedi.'");
-        setGameText("If Audience Chamber on table, deploy Passenger Deck or a pit from Reserve Deck; reshuffle. OR Deploy an alien leader or Twi'lek to Audience Chamber from Reserve Deck; reshuffle.");
+        setGameText("If Audience Chamber on table, [download] Passenger Deck or a pit. OR [download] an alien leader or a Twi'lek to Audience Chamber.");
         addIcons(Icon.JABBAS_PALACE, Icon.VIRTUAL_SET_11);
         setVirtualSuffix(true);
     }

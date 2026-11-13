@@ -38,7 +38,7 @@ public class Card206_010 extends AbstractImperial {
         super(Side.DARK, 2, 3, 3, 2, 4, "Death Trooper", Uniqueness.RESTRICTED_3, ExpansionSet.SET_6, Rarity.V);
         setArmor(3);
         setLore("Stormtrooper.");
-        setGameText("While you have no other troopers here (except death troopers), adds one battle destiny at same site as Krennic, Tarkin, or Thrawn. May place character in Used Pile to cancel a just drawn weapon destiny targeting your leader here.");
+        setGameText("While you have no other trooper here (except death troopers), adds one battle destiny at same site as Krennic, Tarkin, or Thrawn. May place this character in Used Pile to cancel a just drawn weapon destiny targeting your leader here.");
         addIcons(Icon.WARRIOR, Icon.VIRTUAL_SET_6);
         addKeywords(Keyword.DEATH_TROOPER);
     }

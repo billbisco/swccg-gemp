@@ -36,7 +36,7 @@ public class Card205_006 extends AbstractSite {
         super(Side.LIGHT, Title.Lars_Moisture_Farm, Title.Tatooine, Uniqueness.UNIQUE, ExpansionSet.SET_5, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("Unless Vader or your trooper here, Force drain -1 here (if both here, Force drain +1 instead).");
-        setLocationLightSideGameText("Anakin, Beru, and Owen may move to and from here for free when using landspeed.");
+        setLocationLightSideGameText("Anakin, Beru, and Owen may move to or from here for free when using landspeed.");
         addIcon(Icon.DARK_FORCE, 1);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.EXTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK, Icon.EPISODE_I, Icon.VIRTUAL_SET_5);

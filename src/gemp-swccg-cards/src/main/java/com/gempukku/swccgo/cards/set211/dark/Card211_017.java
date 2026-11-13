@@ -26,7 +26,7 @@ public class Card211_017 extends AbstractSite {
     public Card211_017() {
         super(Side.DARK, Title._500_Republica, Title.Coruscant, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLocationDarkSideGameText("Grievous moves from here for free.");
-        setLocationLightSideGameText("May not be separated from Private Platform.");
+        setLocationLightSideGameText("May not be separated from Coruscant: Private Platform.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.EPISODE_I, Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_11);

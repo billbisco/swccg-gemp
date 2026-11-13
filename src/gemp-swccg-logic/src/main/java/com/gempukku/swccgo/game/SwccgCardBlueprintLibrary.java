@@ -102,11 +102,24 @@ public class SwccgCardBlueprintLibrary {
     public SwccgCardBlueprint getSwccgoCardBlueprint(String blueprintId) {
         try {
             int previousLength = blueprintId.length();
+            boolean alternateImage = isAlternateImage(blueprintId);
             blueprintId = stripBlueprintModifiers(blueprintId);
 
             // fail if there are multiple suffixes
             if (blueprintId.length()<previousLength-1)
                 return null;
+
+            // An alternate-image (ALT, "^") printing whose current card image prints game text of its own has a class
+            // of its own (CardSSS_NNNai, docs/legacy-versions.md "AI printings"); every other ALT printing plays as the
+            // base card.
+            if (alternateImage) {
+                String alternateImageId = alternateImageClassId(blueprintId);
+                if (alternateImageId != null && !_blueprintMapping.containsKey(alternateImageId)) {
+                    SwccgCardBlueprint alternateImageBlueprint = getOrLoadBlueprint(alternateImageId);
+                    if (alternateImageBlueprint != null)
+                        return alternateImageBlueprint;
+                }
+            }
 
             return getOrLoadBlueprint(blueprintId);
         }
@@ -114,6 +127,18 @@ public class SwccgCardBlueprintLibrary {
             e.printStackTrace();
         }
         return null;
+    }
+
+    /**
+     * Gets the id of the class an alternate-image printing has of its own: 203_24 -> 203_24ai, 204_35_BACK -> 204_35ai_BACK.
+     * @param blueprintId the blueprint id without modifiers
+     * @return the id, or null if the id is not a plain card number
+     */
+    public static String alternateImageClassId(String blueprintId) {
+        String[] parts = blueprintId.split("_");
+        if (parts.length < 2 || parts.length > 3 || !parts[1].matches("\\d+"))
+            return null;
+        return parts[0] + "_" + parts[1] + ALTERNATE_IMAGE_SUFFIX + (parts.length == 3 ? "_" + parts[2] : "");
     }
 
     public SwccgCardBlueprint getSwccgoCardBlueprintBack(String blueprintId) {

@@ -36,7 +36,7 @@ public class Card211_037 extends AbstractSystem {
     public Card211_037() {
         super(Side.LIGHT, Title.Takodana, 5, ExpansionSet.SET_11, Rarity.V);
         setLocationLightSideGameText("During your deploy phase, if you just deployed a Maz's Castle location, may draw top card of Reserve Deck.");
-        setLocationDarkSideGameText("If you just deployed a starship here, may shuffle any Deck or Pile.");
+        setLocationDarkSideGameText("If you just deployed a starship here, may shuffle any deck or pile.");
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcon(Icon.DARK_FORCE, 1);
         addIcons(Icon.PLANET, Icon.VIRTUAL_SET_11, Icon.EPISODE_VII);

@@ -36,7 +36,7 @@ public class Card211_054 extends AbstractCharacterDevice {
     public Card211_054() {
         super(Side.LIGHT, 4, Title.Cyborg_Construct, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
         setLore("Biotech's latest model, the Aj ^ g, boasts greater storage capacity than all other models combined. Advertised as, \"Artificial Intelligence worth shaving your head for.\"");
-        setGameText("Deploy on an alien of ability < 3. While at a Scomp link, Computer Interface is a Used Interrupt, and once per turn may use 1 Force to [upload] Computer Interface. Once per turn, if on Lobot, may [download] a trooper here.");
+        setGameText("Deploy on an alien of ability < 3. While present with a Scomp link, Computer Interface is a Used Interrupt and, once per turn, may use 1 Force to [upload] Computer Interface. Once per turn, if on Lobot, may [download] a trooper here.");
         addIcons(Icon.CLOUD_CITY, Icon.VIRTUAL_SET_11);
         setVirtualSuffix(true);
     }

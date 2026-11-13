@@ -35,7 +35,7 @@ public class Card211_035 extends AbstractStarfighter {
 
     public Card211_035() {
         super(Side.LIGHT, 3, 3, 4, null, 5, 4, 5, "Tallie Lintra In Blue 1", Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
-        setGameText("Permanent pilot is •Tallie, who provides ability of 2. May move as a 'react' to same location as your [Episode VII] character. Characters here may not have their forfeit increased beyond their printed value.");
+        setGameText("Permanent pilot is •Tallie, who provides ability of 2. May move as a 'react' to same location as your [Episode VII] character. Characters here may not have their forfeit increased above their printed value.");
         addIcons(Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_11, Icon.RESISTANCE, Icon.EPISODE_VII);
         addKeywords(Keyword.BLUE_SQUADRON);
         addModelType(ModelType.A_WING);

@@ -53,7 +53,7 @@ public class Card204_035_BACK extends AbstractCombatVehicle {
     public Card204_035_BACK() {
         super(Side.LIGHT, 7, 0, 3, null, 5, 2, 7, Title.The_Falcon_Junkyard_Garbage, Uniqueness.UNIQUE, ExpansionSet.SET_4, Rarity.V);
         setLore("Han's 'special modifications' for the Millennium Falcon included security mechanisms, deflector shields, hull plating, faster hyperdrive and enhanced weapons. Enclosed.");
-        setGameText("May not be placed in Reserve Deck. If Falcon about to leave table, place it out of play. May add 2 pilots and 2 passengers. Immune to Trample and Unsalvageable. While Finn or Rey aboard, immune to attrition < 4 (< 6 if both). Once during your move phase, if piloted, may flip this card.");
+        setGameText("May not be placed in Reserve Deck. If Falcon about to leave table, place it out of play. May add 2 pilots and 2 passengers. Immune to Trample and Unsalvageable, even if unpiloted. While Finn or Rey aboard, immune to attrition < 4 (< 6 if both). Once during your move phase, if piloted, may flip this card.");
         addPersona(Persona.FALCON);
         addIcons(Icon.EPISODE_VII, Icon.RESISTANCE, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_4);
         addKeywords(Keyword.ENCLOSED);

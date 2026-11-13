@@ -29,7 +29,7 @@ import java.util.List;
 public class Card211_045 extends AbstractSite {
     public Card211_045() {
         super(Side.LIGHT, Title.AhchTo_Jedi_Village, Title.Ahch_To, Uniqueness.UNIQUE, ExpansionSet.SET_11, Rarity.V);
-        setLocationDarkSideGameText("While Luke here, destiny draws for Alter and Sense are +2.");
+        setLocationDarkSideGameText("While Luke here, destiny draws for Sense and Alter are +2.");
         setLocationLightSideGameText("While Luke here, opponent must first use 1 Force to fire a weapon anywhere.");
         addIcon(Icon.LIGHT_FORCE, 1);
         addIcons(Icon.PLANET, Icon.EXTERIOR_SITE, Icon.EPISODE_VII, Icon.VIRTUAL_SET_11);
