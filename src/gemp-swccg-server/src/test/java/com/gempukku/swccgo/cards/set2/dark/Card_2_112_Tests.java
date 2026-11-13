@@ -1,6 +1,9 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.cards.GameConditions;
+import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
+import com.gempukku.swccgo.logic.effects.PurchaseEffect;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -307,4 +310,68 @@ public class Card_2_112_Tests {
         scn.LSPass();
         assertTrue(scn.DSCardActionAvailable(hypo, "Add 1 to Force drain")); //test1
     }
+
+    private VirtualTableScenario GetPurchasedHypoScenario() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("captive", "1_19");
+                    put("purchaser", "1_30");
+                }},
+                new HashMap<>() {{
+                    put("ito", "2_93");
+                    put("hypo", "2_112");
+                    put("hand", "1_194");
+                    put("prison", "6_164");
+                }});
+        scn.StartGame();
+        var prison = scn.GetDSCard("prison");
+        var ito = scn.GetDSCard("ito");
+        var hypo = scn.GetDSCard("hypo");
+        var purchaser = scn.GetLSCard("purchaser");
+        scn.MoveLocationToTable(prison);
+        scn.MoveCardsToLocation(prison, ito, purchaser);
+        scn.AttachCardsTo(ito, hypo);
+        scn.MoveCardsToDSHand(scn.GetDSCard("hand"));
+        scn.gameState().imprisonCharacter(scn.game(), scn.GetLSCard("captive"), prison);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        var purchase = new TopLevelGameTextAction(purchaser, scn.gameState().getLightPlayer(), purchaser.getCardId());
+        purchase.appendEffect(new PurchaseEffect(purchase, ito));
+        scn.carryOutEffectInPhaseActionByPlayer(scn.gameState().getLightPlayer(), purchase);
+        scn.PassAllResponses();
+        if (scn.AwaitingDSControlPhaseActions()) {
+            scn.DSPass();
+        }
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertEquals(scn.gameState().getLightPlayer(), ito.getOwner());
+        assertEquals(scn.gameState().getLightPlayer(), hypo.getOwner());
+        assertEquals(ito, hypo.getAttachedTo());
+        assertTrue(scn.GetLSCard("captive").isImprisoned());
+        assertEquals(prison, scn.GetLSCard("captive").getAttachedTo());
+        assertTrue(GameConditions.hasHand(scn.game(), scn.gameState().getDarkPlayer()));
+        assertTrue(GameConditions.canUseDevice(scn.game(), hypo));
+        return scn;
+    }
+
+    @Test
+    public void PurchasedLightHypoCannotAskAboutOwnSidesImprisonedCaptive() {
+        //test1: the official stolen/purchased IT-O ruling forbids the question even with a captive here.
+        var scn = GetPurchasedHypoScenario();
+        assertFalse(scn.LSCardActionAvailable(scn.GetDSCard("hypo"), "Ask yes-or-no question")); //test1
+    }
+
+    @Test
+    public void PurchasedLightHypoCannotIncreaseLegalForceDrain() {
+        //test1: Light may make its native drain, but purchased Hypo cannot add a captive bonus.
+        var scn = GetPurchasedHypoScenario();
+        var prison = scn.GetDSCard("prison");
+        assertTrue(scn.LSForceDrainAvailable(prison)); //test1
+        scn.LSForceDrainAt(prison);
+        scn.DSPass();
+        assertTrue(scn.IsActiveForceDrain()); //test1
+        assertFalse(scn.LSCardActionAvailable(scn.GetDSCard("hypo"), "Add 1 to Force drain")); //test1
+        scn.PassAllResponses();
+        scn.PassForceDrainStartResponses();
+        assertEquals(1, scn.GetForceDrainTotal()); //test1
+    }
+
 }

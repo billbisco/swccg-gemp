@@ -139,7 +139,8 @@ public class Card2_112 extends AbstractCharacterDevice {
     }
 
     private boolean canUseHypo(SwccgGame game, PhysicalCard self, String playerId, int gameTextSourceCardId) {
-        return GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
+        return playerId.equals(game.getDarkPlayer())
+                && GameConditions.isOnceDuringYourPhase(game, self, playerId, gameTextSourceCardId, Phase.CONTROL)
                 && GameConditions.canUseDevice(game, self)
                 && GameConditions.canSpot(game, self, SpotOverride.INCLUDE_CAPTIVE,
                 Filters.and(Filters.or(Filters.and(Filters.captive, Filters.presentWith(self)),
