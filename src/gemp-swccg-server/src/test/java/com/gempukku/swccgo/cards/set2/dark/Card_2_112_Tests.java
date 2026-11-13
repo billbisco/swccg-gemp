@@ -287,7 +287,7 @@ public class Card_2_112_Tests {
         //test1: one chosen drain bonus spends the shared use even after moving to another site.
         var scn = GetScenario();
         var farm = scn.GetDSCard("farm");
-        var prison = scn.GetDSCard("prison");
+        var secondSite = scn.GetDSStartingLocation();
         var hypo = scn.GetDSCard("hypo");
         scn.CaptureCardWith(scn.GetDSCard("escort"), scn.GetLSCard("captive"));
         scn.SkipToDSTurn(Phase.CONTROL);
@@ -301,9 +301,12 @@ public class Card_2_112_Tests {
         scn.PassForceDrainEndResponses();
         scn.PassAllResponses();
         ReturnControlToDark(scn);
-        scn.MoveCardsToLocation(prison, scn.GetDSCard("ito"), scn.GetDSCard("guard"), scn.GetDSCard("escort"));
-        assertTrue(scn.DSForceDrainAvailable(prison)); //test1
-        scn.DSForceDrainAt(prison);
+        scn.MoveCardsToLocation(secondSite, scn.GetDSCard("ito"), scn.GetDSCard("guard"), scn.GetDSCard("escort"));
+        assertTrue(scn.GetLSIconsOnLocation(secondSite) > 0); //test1
+        assertEquals(scn.GetDSCard("escort"), scn.GetLSCard("captive").getEscort()); //test1
+        assertEquals(scn.GetDSCard("ito"), hypo.getAttachedTo()); //test1
+        assertTrue(scn.DSForceDrainAvailable(secondSite)); //test1
+        scn.DSForceDrainAt(secondSite);
         scn.LSPass();
         assertTrue(scn.IsActiveForceDrain()); //test1
         assertFalse(scn.DSCardActionAvailable(hypo, "Add 1 to Force drain")); //test1
