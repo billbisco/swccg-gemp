@@ -1786,7 +1786,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Imperial City (With Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun Agents. You may not deploy cards with ability except Black Sun Agents, Emperor, or Independent starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.",
+    "gameText": "Deploy Imperial City (with Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun agents. You may not deploy cards with ability except Black Sun agents, Emperor or [Independent] starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -1819,7 +1819,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun Agent in battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor not on table.",
+    "gameText": "While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun agent in a battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor is not on table.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -2630,7 +2630,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "LOST",
-    "gameText": "If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile",
+    "gameText": "If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -4531,8 +4531,8 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
-    "gameText": "Deploy on table. Whever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -21890,7 +21890,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -50059,7 +50059,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Naboo system with Blockade Flagship there, swamp, and Droid Racks. For remainder of game, you may not deploy cards with ability except [Trade Federation] starships and characters with 'Trade Federation' in lore. Civil Disorder is canceled. {While} this side up, once during your deploy phase may deploy a Naboo site from Reserve Deck; reshuffle. Opponent's Force icons at Naboo system are canceled. Flip this card if you control Theed Palace Throne Room (with a Neimoidian there) and Naboo system.",
+    "gameText": "Deploy Naboo system with Blockade Flagship there, Naboo: Swamp, and Droid Racks. For remainder of game, you may not deploy cards with ability except [Trade Federation] starships and characters with 'Trade Federation' in lore. Civil Disorder is canceled. {While} this side up, once during your deploy phase may deploy a Naboo site from Reserve Deck; reshuffle. Opponent's Force icons at Naboo system are canceled. Flip this card if you control Theed Palace Throne Room (with a Neimoidian there) and Naboo system.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -60457,7 +60457,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Once per game, during your deploy phase, 'insert' (face down) into opponent's Reserve Deck; reshuffle. When effect reaches top it is immediately lost, but opponent may not activate any more Force that turn. (Immune to Alter.)",
     "destiny": 3.0,
     "credits": 0,
@@ -61075,7 +61075,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "A location is affected by the history of the events which occur there. The Force '...binds the galaxy together' and has an ebb and flow.",
+    "lore": "A location is affected by the history of the events which occur there. The Force '. . . binds the galaxy together' and has an ebb and flow.",
     "gameText": "Deploy on any location to add one [Dark Side Force] and one [Light Side Force].",
     "destiny": 2.0,
     "credits": 0,
@@ -84670,7 +84670,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -85474,7 +85474,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -85957,7 +85957,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -116198,7 +116198,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "lore": "Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters, considered 'good luck' by superstitious smugglers.",
+    "lore": "Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters; considered 'good luck' by superstitious smugglers.",
     "gameText": "USED: If opponent has 13 or more cards in hand, place all but 8 (random selection) in Used Pile. LOST: Use 4 Force to reveal opponent's hand. All cards opponent has two or more of in hand are lost.",
     "destiny": 2.0,
     "credits": 0,
@@ -118548,7 +118548,7 @@
       "EFFECT"
     ],
     "cardSubtype": "MOBILE",
-    "lore": "Among the gravest dangers in the harsh environment of Hoth are frequent quick-moving ice storms.",
+    "lore": "Among the gravest dangers in the harsh environment of Hoth are frequent, quick-moving ice storms.",
     "gameText": "Deploy at outermost marker. All characters present at same exterior site are missing. Each turn, during your control phase, storm moves to next marker, reversing direction if at innermost marker. Mobile Effect lost when moved beyond outermost marker.",
     "destiny": 3.0,
     "credits": 0,
@@ -119324,7 +119324,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "'Princess Leia is wondering about Master Luke...She doesn't know where he is.' 'I don't know where he is.' 'Nobody knows where he is.'",
-    "gameText": "During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny + 3 > ability.",
+    "gameText": "During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny +3 > ability.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -119708,7 +119708,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "'That is the system and I'm sure Skywalker is with them.'",
+    "lore": "'That is the system, and I'm sure Skywalker is with them.'",
     "gameText": "If you have a probe droid at a site during your control phase, move one of your starships to the related system. That starship cannot move again this turn.",
     "destiny": 4.0,
     "credits": 0,
@@ -144824,7 +144824,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, your aliens and starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).",
+    "gameText": "While this side up, your aliens and [Independent] starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).",
     "destiny": 7.0,
     "credits": 0,
     "icons": [

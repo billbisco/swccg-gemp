@@ -3599,7 +3599,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Target your highest-ability character and one Effect. Draw destiny. If destiny < ability of target character, cancel target Effect. LOST: If a battle was just initiated at a site where opponent has at least two characters and one weapon, draw destiny. If destiny is < number of opponent's characters at that site, opponent chooses one to be lost.",
+    "gameText": "USED: Target your highest-ability character and one Effect. Draw destiny. If destiny < ability of target character, cancel target Effect. LOST: If a battle was just initiated at a site where opponent has at least two characters and one weapon, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -3875,7 +3875,7 @@
   },
   {
     "cardId": "10_16",
-    "title": "Out Of Commission & Transmission Terminated",
+    "title": "Out of Commission & Transmission Terminated",
     "slug": "out-of-commission-transmission-terminated",
     "slugWithSetName": "out-of-commission-transmission-terminated-reflections-ii",
     "side": "LIGHT",
@@ -3897,7 +3897,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Use 1 Force to randomly place one card in opponents Lost Pile out of play. LOST: Cancel one hologram. OR Use 4 Force. Draw destiny. Add 1 to destiny for each asteroid sector on table. If total destiny > 3, Imperial Holotable site is 'blown away' (opponent loses 4 Force).",
+    "gameText": "USED: Use 1 Force to randomly place one card in opponent's Lost Pile out of play. LOST: Cancel one hologram. OR Use 4 Force. Draw destiny. Add 1 to destiny for each asteroid sector on table. If total destiny > 3, Imperial Holotable site is 'blown away' (opponent loses 4 Force).",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -3993,7 +3993,7 @@
       "REBEL"
     ],
     "lore": "Watchful guardians of Luke Skywalker. When the Lars' moisture farm was attacked by stormtroopers, Luke's life changed forever.",
-    "gameText": "Deploy free to Lars' Moisture Farm. Draws one battle destiny if not able to otherwise. If opponent has a Stormtrooper at a Tatooine site, you may not play Harvest. If lost during opponent's turn, Luke is power +6 until end of your next turn.",
+    "gameText": "Deploys free to Lars' Moisture Farm. Draws one battle destiny if not able to otherwise. If opponent has a Stormtrooper at a Tatooine site, you may not play Harvest. If lost during opponent's turn, Luke is power +6 until end of your next turn.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -4084,7 +4084,7 @@
       "DROID"
     ],
     "lore": "Threepio's extensive experience 'talking' to the Falcon's computer allowed him to pilot the freighter while on Coruscant. Artoo, an R-unit droid, provided moral support.",
-    "gameText": "May pilot only Falcon. All droids may be battled. Any player that has no ability in a battle takes no battle damage. Once per turn, may take on card with 'Bad Feeling' in title into hand from Reserve Deck; reshuffle. Bad Feeling Have I is suspended.",
+    "gameText": "May pilot only Falcon. All droids may be battled. Any player that has no ability in a battle takes no battle damage. Once per turn, may take one card with 'Bad Feeling' in title into hand from Reserve Deck; reshuffle. Bad Feeling Have I is suspended.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -4546,7 +4546,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Imperial City (With Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun Agents. You may not deploy cards with ability except Black Sun Agents, Emperor, or Independent starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.",
+    "gameText": "Deploy Imperial City (with Xizor there) and Coruscant system. For remainder of game, your aliens with 'Black Sun' in lore, bounty hunters, and information brokers are Black Sun agents. You may not deploy cards with ability except Black Sun agents, Emperor or [Independent] starships. During your control phase, each of your bounty hunters may make a regular move to an adjacent site where there is a bounty. Scanning Crew may not be played. Flip this card if Xizor is at a battleground site and Luke is not at a battleground site.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -4579,7 +4579,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun Agent in battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor not on table.",
+    "gameText": "While this side up, once per turn, may place a card from hand in Used Pile to peek at cards in your Force Pile. Once during each of your battle phases, may peek at top X cards of any Reserve Deck, where X = number of locations you occupy. For each Black Sun agent in a battle, attrition against opponent is +1. During your control phase, opponent loses 1 Force for each battleground location occupied by Xizor or Emperor. Flip this card if Luke is at a battleground site or if Xizor is not on table.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -5485,7 +5485,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "LOST",
-    "gameText": "If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile",
+    "gameText": "If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -9015,7 +9015,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "'Stand By...'",
+    "lore": "'Stand by . . .'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -9744,8 +9744,8 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
-    "gameText": "Deploy on table. Whever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -37755,7 +37755,7 @@
       "JEDI_MASTER"
     ],
     "lore": "Accepted Obi-Wan Kenobi as his Padawan learner. Was given orders to protect Queen Amidala at all costs.",
-    "gameText": "Deploys -2 to Tatooine. Power +1 at same site as Maul. Once during a duel Qui-Gon is in, may cancel a duel destiny just drawn and cause a redraw. Opponent's aliens are power -1 at same site. Immune to attrition.",
+    "gameText": "Deploys -2 to Tatooine. Power +1 at same site as Maul. Once during a duel Qui-Gon is in, may cancel a duel destiny just drawn and cause a re-draw. Opponent's aliens are power -1 at same site. Immune to attrition.",
     "deployCost": 8.0,
     "destiny": 1.0,
     "credits": 0,
@@ -37806,7 +37806,7 @@
       "JEDI_MASTER"
     ],
     "lore": "Accepted Obi-Wan Kenobi as his Padawan learner. Was given orders to protect Queen Amidala at all costs.",
-    "gameText": "Deploys -2 to Tatooine. Power +1 at same site as Maul. Once during a duel Qui-Gon is in, may cancel a duel destiny just drawn and cause a redraw. Opponent's aliens are power -1 at same site. Immune to attrition.",
+    "gameText": "Deploys -2 to Tatooine. Power +1 at same site as Maul. Once during a duel Qui-Gon is in, may cancel a duel destiny just drawn and cause a re-draw. Opponent's aliens are power -1 at same site. Immune to attrition.",
     "deployCost": 8.0,
     "destiny": 1.0,
     "credits": 0,
@@ -43232,7 +43232,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "'Stand By...'",
+    "lore": "'Stand by . . .'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -45983,7 +45983,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -92059,8 +92059,8 @@
     "cardTypes": [
       "REPUBLIC"
     ],
-    "lore": "Leader of Bravo Squadron. Piloted Amidala's Royal Starship from Naboo so that she could plead her case to the Senate. Was able to break the blockade with a little help.",
-    "gameText": "Adds 3 to power of anything he pilots (or adds 4 if Queen's Royal Starship). While piloting Queen's Royal Starship, once during a battle Ric is in, may use X Force to reduce attrition against you by X.",
+    "lore": "Leader of Bravo Squadron. Piloted Amidala's Royal Starship from Naboo so that she could plead her case to the Senate. Was able to break the blockade - with a little help.",
+    "gameText": "Adds 3 to power of anything he pilots (or adds 4 if Queen's Royal Starship). While piloting Queen's Royal Starship, once during a battle Ric is in, you may use X Force to reduce attrition against you by X.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -100758,7 +100758,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Naboo system with Blockade Flagship there, swamp, and Droid Racks. For remainder of game, you may not deploy cards with ability except [Trade Federation] starships and characters with 'Trade Federation' in lore. Civil Disorder is canceled. {While} this side up, once during your deploy phase may deploy a Naboo site from Reserve Deck; reshuffle. Opponent's Force icons at Naboo system are canceled. Flip this card if you control Theed Palace Throne Room (with a Neimoidian there) and Naboo system.",
+    "gameText": "Deploy Naboo system with Blockade Flagship there, Naboo: Swamp, and Droid Racks. For remainder of game, you may not deploy cards with ability except [Trade Federation] starships and characters with 'Trade Federation' in lore. Civil Disorder is canceled. {While} this side up, once during your deploy phase may deploy a Naboo site from Reserve Deck; reshuffle. Opponent's Force icons at Naboo system are canceled. Flip this card if you control Theed Palace Throne Room (with a Neimoidian there) and Naboo system.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -123290,7 +123290,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Once per game, during your deploy phase, 'insert' (face down) into opponent's Reserve Deck; reshuffle. When effect reaches top it is immediately lost, but opponent may not activate any more Force that turn. (Immune to Alter.)",
     "destiny": 3.0,
     "credits": 0,
@@ -123993,7 +123993,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "A location is affected by the history of the events which occur there. The Force '...binds the galaxy together' and has an ebb and flow.",
+    "lore": "A location is affected by the history of the events which occur there. The Force '. . . binds the galaxy together' and has an ebb and flow.",
     "gameText": "Deploy on any location to add one [Dark Side Force] and one [Light Side Force].",
     "destiny": 2.0,
     "credits": 0,
@@ -128318,7 +128318,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "'Stand By...'",
+    "lore": "'Stand by . . .'",
     "gameText": "Once per game, during your deploy phase, 'insert' (face down) into opponent's Reserve Deck; reshuffle. When effect reaches top it is immediately lost, but opponent may not activate any more Force that turn. (Immune to Alter.)",
     "destiny": 3.0,
     "credits": 0,
@@ -173928,7 +173928,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -176307,7 +176307,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -177819,7 +177819,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "The destruction of Alderaan caused a great disturbance in the Force '...as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
+    "lore": "The destruction of Alderaan caused a great disturbance in the Force, '. . . as if millions of voices suddenly cried out in terror and were suddenly silenced.'",
     "gameText": "Deploy on table. Whenever you verify opponent's Reserve Deck, may place a card there with 'podracer' in game text out of play or retrieve 1 Force.",
     "destiny": 3.0,
     "credits": 0,
@@ -234789,7 +234789,7 @@
       "ALIEN"
     ],
     "lore": "Male Bith musician. Though he enjoys playing his Bandfill in Figrin D'an's band, he misses the bubbling pink swamps of his homeworld, Clak'dor VII.",
-    "gameText": "After using Bith Shuffle, peek at top X cards of pile or deck just shuffled, where X = number of other musicians at same site. May reshuffle without peeking.",
+    "gameText": "After using Bith Shuffle, peek at top X cards of pile or deck just shuffled, where X = number of other musicians at same site. May re-shuffle without peeking.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -235012,7 +235012,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "lore": "Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters, considered 'good luck' by superstitious smugglers.",
+    "lore": "Dejarik creature. Savage predator from remote deserts of Soccorro. Respected and honored by Soccorran hunters; considered 'good luck' by superstitious smugglers.",
     "gameText": "USED: If opponent has 13 or more cards in hand, place all but 8 (random selection) in Used Pile. LOST: Use 4 Force to reveal opponent's hand. All cards opponent has two or more of in hand are lost.",
     "destiny": 2.0,
     "credits": 0,
@@ -237933,7 +237933,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "'I hope that old man got the tractor beam out of commission or this is gonna be a real short trip.'",
+    "lore": "'I hope that old man got that tractor beam out of commission or this is gonna be a real short trip.'",
     "gameText": "During your control phase, use 2 Force to release a starship held by any Tractor Beam. (Not effective on Death Star Tractor Beam if Central Core in play.) OR Randomly select one card from opponent's Lost Pile or Blaster Rack and place out of play.",
     "destiny": 5.0,
     "credits": 0,
@@ -240907,7 +240907,7 @@
       "EFFECT"
     ],
     "cardSubtype": "MOBILE",
-    "lore": "Among the gravest dangers in the harsh environment of Hoth are frequent quick-moving ice storms.",
+    "lore": "Among the gravest dangers in the harsh environment of Hoth are frequent, quick-moving ice storms.",
     "gameText": "Deploy at outermost marker. All characters present at same exterior site are missing. Each turn, during your control phase, storm moves to next marker, reversing direction if at innermost marker. Mobile Effect lost when moved beyond outermost marker.",
     "destiny": 3.0,
     "credits": 0,
@@ -241773,7 +241773,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "'Princess Leia is wondering about Master Luke...She doesn't know where he is.' 'I don't know where he is.' 'Nobody knows where he is.'",
-    "gameText": "During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny + 3 > ability.",
+    "gameText": "During your control phase, target any character alone at one of your exterior planet sites (except a docking bay). Draw destiny. Target is missing if destiny +3 > ability.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -242201,7 +242201,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED",
-    "lore": "'That is the system and I'm sure Skywalker is with them.'",
+    "lore": "'That is the system, and I'm sure Skywalker is with them.'",
     "gameText": "If you have a probe droid at a site during your control phase, move one of your starships to the related system. That starship cannot move again this turn.",
     "destiny": 4.0,
     "credits": 0,
@@ -245184,7 +245184,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "'There you will learn from Yoda, the Jedi Master who instructed me.'",
-    "gameText": "During your control phase, use 1 Force to move any one of your [Hoth] characters of ability > 1 to any [Dagobah] location where you have presence. If moving to a Dagobah site, this movement is free and you do not need presence.",
+    "gameText": "During your control phase, use 1 Force to move any one of your [Hoth] icon characters of ability > 1 to any [Dagobah] icon location where you have presence. If moving to a Dagobah site, this movement is free and you do not need presence.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -253500,7 +253500,7 @@
     "cardTypes": [
       "JEDI_TEST"
     ],
-    "gameText": "Deploy on Dagobah: Jungle or Dagobah: Cave. Target a mentor on Dagobah and an apprentice who has completed Jedi Test #2. Attempt when apprentice is present at the end of your turn and none of your cards participated in battles, Force drains or Jedi Tests during that turn. Draw training destiny. If destiny + apprentice's ability > 14, test completed. Place on apprentice. You may subtract 1 from each of opponent's destiny draws.",
+    "gameText": "Deploy on Dagobah: Jungle or Dagobah: Cave. Target a mentor on Dagobah and an apprentice who has completed Jedi Test #2. Attempt when apprentice is present at the end of your turn and none of your cards participated in battles, Force drains or Jedi Tests during that turn. Draw training destiny. If destiny + apprentice's ability > 14, test completed: Place on apprentice. You may subtract 1 from each of opponent's destiny draws.",
     "deployCost": 0.0,
     "destiny": 3.0,
     "credits": 0,
@@ -260142,7 +260142,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "'When we find Jabba the Hutt and that bounty hunter, we'll contact you.'",
-    "gameText": "During your control phase, use 1 Force to move one of your [Cloud City] characters of ability > 1 to any [Jabba's Palace] location where you have presence. If moving to any Jabba's Palace site, this movement is free and you do not need presence.",
+    "gameText": "During your control phase, use 1 Force to move one of your [Cloud City] icon characters of ability > 1 to any [Jabba's Palace] icon location where you have presence. If moving to any Jabba's Palace site, this movement is free and you do not need presence.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -290206,7 +290206,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, your aliens and starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).",
+    "gameText": "While this side up, your aliens and [Independent] starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -293632,7 +293632,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "To prepare for the inevitable conflict with Jabba's minions, Luke entered a calm state of mental preparation.",
-    "gameText": "Deploy on your character of ability > 3 (Effect lost if that character battles this turn). On a subsequent turn, if in a battle at a site, character's total weapon destiny is +3 and character adds one battle destiny. Effect lost at the end of that battle.",
+    "gameText": "Deploy on your character of ability > 3 (Effect lost if that character battles this turn). On a subsequent turn, if in a battle at a site, character's total weapon destiny is +3 and character adds one battle destiny. Effect lost at end of that battle.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -294143,7 +294143,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "Alliance starfighter pilots cross-train with other starship types to maximize combat efficiency.",
-    "gameText": "If you have more than one class of 'snub fighter' (Z-95, A-wing, Bwing, X-wing or Y-wing) in a battle, for each different class, add 1 to attrition against opponent (add 2 more if Falcon present). OR Take one admiral or general into hand from Reserve Deck; reshuffle.",
+    "gameText": "If you have more than one class of 'snub fighter' (Z-95, A-wing, B-wing, X-wing or Y-wing) in a battle, for each different class, add 1 to attrition against opponent (add 2 more if Falcon present). OR Take one admiral or general into hand from Reserve Deck; reshuffle.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -307296,7 +307296,7 @@
     "cardTypes": [
       "ADMIRALS_ORDER"
     ],
-    "gameText": "Each starfighter that fires a weapon in battle is power +3 for the remainder of battle. Once per turn you may cancel and redraw your starship weapon destiny just drawn. At sites related to systems you occupy, your characters who have immunity to attrition each add 2 to immunity and 1 to each of that character's weapon destiny draws.",
+    "gameText": "Each starfighter that fires a weapon in battle is power +3 for remainder of battle. Once per turn, you may cancel and redraw your starship weapon destiny just drawn. At sites related to systems you occupy, your characters who have immunity to attrition each add 2 to immunity and 1 to each of that character's weapon destiny draws.",
     "deployCost": 0.0,
     "destiny": 6.0,
     "credits": 0,
