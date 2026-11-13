@@ -2,8 +2,6 @@ package com.gempukku.swccgo.cards.set2.dark;
 
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.cards.GameConditions;
-import com.gempukku.swccgo.logic.actions.TopLevelGameTextAction;
-import com.gempukku.swccgo.logic.effects.PurchaseEffect;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
@@ -315,7 +313,7 @@ public class Card_2_112_Tests {
         var scn = new VirtualTableScenario(
                 new HashMap<>() {{
                     put("captive", "1_19");
-                    put("purchaser", "1_30");
+                    put("purchaser", "1_33");
                 }},
                 new HashMap<>() {{
                     put("ito", "2_93");
@@ -334,14 +332,17 @@ public class Card_2_112_Tests {
         scn.MoveCardsToDSHand(scn.GetDSCard("hand"));
         scn.gameState().imprisonCharacter(scn.game(), scn.GetLSCard("captive"), prison);
         scn.SkipToLSTurn(Phase.CONTROL);
-        var purchase = new TopLevelGameTextAction(purchaser, scn.gameState().getLightPlayer(), purchaser.getCardId());
-        purchase.appendEffect(new PurchaseEffect(purchase, ito));
-        scn.carryOutEffectInPhaseActionByPlayer(scn.gameState().getLightPlayer(), purchase);
+        scn.EnsureLSForcePile(8);
+        scn.PrepareLSDestiny(5);
+        assertTrue(scn.LSCardActionAvailable(purchaser, "'Purchase' transport vehicle or droid"));
+        scn.LSUseCardAction(purchaser, "'Purchase' transport vehicle or droid");
+        scn.LSChooseCard(ito);
         scn.PassAllResponses();
         if (scn.AwaitingDSControlPhaseActions()) {
             scn.DSPass();
         }
         assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertEquals(4, scn.GetLSForcePileCount());
         assertEquals(scn.gameState().getLightPlayer(), ito.getOwner());
         assertEquals(scn.gameState().getLightPlayer(), hypo.getOwner());
         assertEquals(ito, hypo.getAttachedTo());
@@ -353,14 +354,14 @@ public class Card_2_112_Tests {
     }
 
     @Test
-    public void PurchasedLightHypoCannotAskAboutOwnSidesImprisonedCaptive() {
+    public void HypoPurchasedByLightCannotAskAboutImprisonedCaptive() {
         //test1: the official stolen/purchased IT-O ruling forbids the question even with a captive here.
         var scn = GetPurchasedHypoScenario();
         assertFalse(scn.LSCardActionAvailable(scn.GetDSCard("hypo"), "Ask yes-or-no question")); //test1
     }
 
     @Test
-    public void PurchasedLightHypoCannotIncreaseLegalForceDrain() {
+    public void HypoPurchasedByLightCannotIncreaseLegalForceDrain() {
         //test1: Light may make its native drain, but purchased Hypo cannot add a captive bonus.
         var scn = GetPurchasedHypoScenario();
         var prison = scn.GetDSCard("prison");
