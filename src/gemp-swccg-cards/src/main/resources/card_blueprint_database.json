@@ -130507,7 +130507,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "'Give yourself to the dark side. It is the only way you can save your friends.'",
-    "gameText": "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only Undercover spies and 5D6-RA-7. Unless Deep Hatred on table, opponent may use only one combat card per turn.",
+    "gameText": "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only 5D6-RA-7 and Undercover spies. Unless Deep Hatred on table, opponent may use only one combat card per turn.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -130548,7 +130548,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'It has seen the end of Kenobi and will soon see the end of the Rebellion.'",
-    "gameText": "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Jedi or a battle, they lose 1 Force. During your draw phase, lose 1 Force or place this Effect in Used Pile.",
+    "gameText": "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Jedi or a battle, they lose 1 Force. During your draw phase, lose 1 Force or place this Effect in Used Pile. [Immune to Alter]",
     "destiny": 6.0,
     "credits": 0,
     "icons": [
@@ -130919,7 +130919,7 @@
     ],
     "cardSubtype": "STARTING",
     "lore": "'A Jedi uses the Force for knowledge and defense, never for attack.'",
-    "gameText": "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until end of your first turn.",
+    "gameText": "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Recoil In Fear until the end of your first turn.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -130959,7 +130959,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Company that produces current generation of Star Destroyers, as well as Nebulon-B Frigates. Ship yards are extremely well defended.",
-    "gameText": "Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if unable to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. Immune to Alter.",
+    "gameText": "Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if not able to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. Immune to Alter.",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -130999,7 +130999,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The high command of the Emperor's fleet is selected as much for loyalty and obedience as for martial skills. A wise admiral knows better than to question Palpatine.",
-    "gameText": "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owners' Used Pile) to retrieve a starship. Immune to Alter.",
+    "gameText": "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of the same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owner's Used Pile) to retrieve a starship. Immune to Alter.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -131043,7 +131043,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'The regional governors now have direct control over their territories. Fear will keep the local systems in line. Fear of this battle station.'",
-    "gameText": "Deploy on Death Star system. During your control phase, for each battleground system controlled by a Star Destroyer within 2 parsecs of Death Star, opponent loses 1 Force. Canceled if opponent controls this system.",
+    "gameText": "Deploy on Death Star system. During your control phase, for each battleground system controlled by your Star Destroyer within 2 parsecs of Death Star, opponent loses 1 Force. Canceled if opponent controls this system.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -131188,7 +131188,7 @@
     ],
     "cardSubtype": "STARTING",
     "lore": "Imperial troops prepared for quick deployment to seize valuable terrain.",
-    "gameText": "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Dark Side Force] icons and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.",
+    "gameText": "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Dark Side Force] and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -131365,7 +131365,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "A fully-trained Sith warrior has more weapons at his disposal than just a lightsaber.",
-    "gameText": "Once per game, choose: During battle, use 2 Force to target your Dark Jedi and opponent's character of equal or lesser ability present. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.",
+    "gameText": "Once per game, choose: During battle, use 2 Force to target your Dark Jedi present with an opponent's character of equal or lesser ability. Both targets are excluded from battle. OR Exchange two cards from hand with any one card from Force Pile; reshuffle.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -131612,7 +131612,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "If Any Methods Necessary just played, may [upload] Despair. Aiiii! Aaa! Agggggggggg! is canceled.",
-    "locationLightSideGameText": "If you control, may use 3 Force to release one captive here. Captive Pursuit is canceled.",
+    "locationLightSideGameText": "If you control, may use 3 Force to release a captive here. Captive Pursuit is canceled.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -131836,7 +131836,7 @@
       "REBEL"
     ],
     "lore": "Scout. Leader of the Rebel strike team on Endor. Needed the cleverness of a Corellian to destroy the Endor control bunker. Discovered the truth about Luke and Leia.",
-    "gameText": "[Pilot] 3. During battle, may use 1 Force to play an Interrupt from your Reserve Deck (then place that card out of play). Once per turn, may [upload] a non-Interrupt card with 'door' in game text.",
+    "gameText": "[Pilot] 3. During battle, may use 1 Force to [upload] an Interrupt, play it, then place that card out of play. Once per turn, may [upload] a non-Interrupt card with 'door' in game text.",
     "deployCost": 4.0,
     "destiny": 1.0,
     "credits": 0,
@@ -131899,7 +131899,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "Dangerous and deadly starfighter piloted by its notorious owner. Uses combat-grade shields and sensors. Hidden weapons provide lethal surprises for Fett's victims.",
-    "gameText": "Permanent pilot is •Boba Fett, who provides ability of 3. Draws one battle destiny if unable to otherwise. Slave I's power may not be reduced by opponent. Immune to Eject! Eject! and attrition < 5.",
+    "gameText": "Permanent pilot is •Boba Fett, who provides ability of 3. Draws one battle destiny if not able to otherwise. Slave I's power may not be reduced by opponent. Immune to Eject! Eject! and attrition < 5.",
     "deployCost": 6.0,
     "destiny": 1.0,
     "credits": 0,
@@ -132483,7 +132483,7 @@
     ],
     "cardSubtype": "COMBAT",
     "lore": "AT-AT commanded by the treacherous General Nevar before he was assassinated. Fortified with an extra layer of armor by the paranoid general. Enclosed.",
-    "gameText": "May add 1 pilot and 8 passengers. Permanent pilot aboard provides ability of 2. During your control phase, may [upload] one Trample or Walker Barrage. Walker Barrage total is +2. Immune to attrition < 4.",
+    "gameText": "May add 1 pilot and 8 passengers. Permanent pilot provides ability of 2. During your control phase, may [upload] one Trample or Walker Barrage. Walker Barrage total is +2. Immune to attrition < 4.",
     "deployCost": 6.0,
     "destiny": 2.0,
     "credits": 0,
@@ -132950,7 +132950,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.",
-    "gameText": "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl and Scramble are canceled. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Staging Areas is suspended.",
+    "gameText": "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl, and Scramble are canceled. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Staging Areas is suspended.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -132990,7 +132990,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "'Give yourself to the dark side. It is the only way you can save your friends.'",
-    "gameText": "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only Undercover spies and 5D6-RA-7. Unless Deep Hatred on table, opponent may use only one combat card per turn.",
+    "gameText": "Plays on table. Cancels 'insert' cards just revealed. We'll Handle This may target only 5D6-RA-7 and Undercover spies. Unless Deep Hatred on table, opponent may use only one combat card per turn.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -133030,7 +133030,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "The Jedi won't tolerate silly behavior for very long.",
-    "gameText": "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Mobilization Points is suspended.",
+    "gameText": "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Mobilization Points is suspended.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -133128,7 +133128,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "Luke knew that while the dark side was quicker and more seductive, eventually evil would turn on itself.",
-    "gameText": "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make the First Move may target only Undercover Spies. Unless Inner Strength on table, opponent may only use one combat card per turn.",
+    "gameText": "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make The First Move may target only Undercover spies. Unless Inner Strength on table, opponent may use only one combat card per turn.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -133744,7 +133744,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "The Jedi won't tolerate silly behavior for very long.",
-    "gameText": "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Mobilization Points is suspended.",
+    "gameText": "Plays on table. Cancels Always Thinking With Your Stomach, He Hasn't Come Back Yet, Ice Storm, and Sandwhirl. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Mobilization Points is suspended.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -133927,7 +133927,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "Luke knew that while the dark side was quicker and more seductive, eventually evil would turn on itself.",
-    "gameText": "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make the First Move may target only Undercover Spies. Unless Inner Strength on table, opponent may only use one combat card per turn.",
+    "gameText": "Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make The First Move may target only Undercover spies. Unless Inner Strength on table, opponent may use only one combat card per turn.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -134048,7 +134048,7 @@
     ],
     "cardSubtype": "STARTING",
     "lore": "'The dark side of the Force are they. Easily they flow, quick to join you in a fight.'",
-    "gameText": "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until end of your first turn.",
+    "gameText": "Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until the end of your first turn.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -134128,7 +134128,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "News of Imperial defeat inspires the citizens of the galaxy. A major loss seriously undermines the Empire's ability to function.",
-    "gameText": "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Dark Jedi or a battle, they lose 1 Force. During your draw phase, use 3 Force or place this Effect in Used Pile.",
+    "gameText": "Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Dark Jedi or a battle, they lose 1 Force. During your draw phase, use 3 Force or place this Effect in Used Pile. [Immune to Alter]",
     "destiny": 6.0,
     "credits": 0,
     "icons": [
@@ -134206,7 +134206,7 @@
       "REBEL"
     ],
     "lore": "Scout.",
-    "gameText": "Artillery weapons here are 'powered'. Permanent weapon is Blaster Cannon (may target a character, creature, or vehicle at same or adjacent site for free; draw destiny; target 'hit' and forfeit = 0 if destiny +1 > defense value).",
+    "gameText": "Artillery weapons here are powered. Permanent weapon is Blaster Cannon (may target a character, creature, or vehicle at same or adjacent site for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -134425,7 +134425,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Admiral Ackbar's hit-and-fade tactics force the Imperial Navy to spread throughout the galaxy in a futile attempt to engage the Rebels.",
-    "gameText": "Deploy on table. Star Cruisers (except Profundity) may deploy -2 (to a maximum of -3), ignore deployment restrictions in their game text, draw one battle destiny if not able to otherwise, and are immune to attrition < 4. [Immune to Alter.]",
+    "gameText": "Deploy on table. Star Cruisers (except Profundity) may deploy -2 (to a maximum of -3), ignore deployment restrictions in their game text, draw one battle destiny if unable to otherwise, and are immune to attrition < 4. [Immune to Alter.]",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -134500,7 +134500,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Admiral Ackbar's hit-and-fade tactics force the Imperial Navy to spread throughout the galaxy in a futile attempt to engage the Rebels.",
-    "gameText": "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owners' Used Pile) to retrieve a starship. Immune to Alter.",
+    "gameText": "Deploy on table. Once per game, if opponent just played an Interrupt, may stack it here. To play any new Interrupt of the same name, players must first stack it here. May place this Effect in Lost Pile (place cards here in owner's Used Pile) to retrieve a starship. Immune to Alter.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -134717,7 +134717,7 @@
     ],
     "cardSubtype": "STARTING",
     "lore": "Alliance troops on planet must plan ahead to achieve success in military operations.",
-    "gameText": "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Light Side Force] icons and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.",
+    "gameText": "If your starting location was a system, [download] a related site (must be a battleground if the system is a non-battleground or Endor) with < 3 [Light Side Force] and up to three Effects that are always immune to Alter. Place this Interrupt in Lost Pile.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -135361,7 +135361,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "At the Battle of Yavin, Dutch led his squadron of outdated but reliable Y-wings in the first wave of the assault against the Death Star.",
-    "gameText": "May add 1 pilot or passenger. Permanent pilot aboard is •Dutch, who provides ability of 2. Opponent may not 'react' to here and must first use 1 Force to draw a card for battle destiny here.",
+    "gameText": "May add 1 pilot or passenger. Permanent pilot is •Dutch, who provides ability of 2. Opponent may not 'react' to here and must first use 1 Force to draw a card for battle destiny here.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -135490,7 +135490,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "May add Harc as a pilot. During battle, adds one destiny to total power. If a Dark Jedi or Sith was just deployed to a related site, may [download] a related location. Immune to attrition < 4 (or < 6 at Bespin).",
+    "gameText": "May add Harc as a pilot. During battle, adds one destiny to total power. If a Dark Jedi or Sith was just deployed to a related site, may [download] a related location. Immune to attrition < 4 (< 6 at Bespin).",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -135947,7 +135947,7 @@
       "DROID"
     ],
     "lore": "Aide to Admiral Motti's staff. Foul-tempered and vindictive. Feared by other droids. A spy for the ISB. Secretly investigates Imperial officers whose loyalties are in question.",
-    "gameText": "[Pilot] 2. Power +1 while with your leader. If at a Scomp link when opponent draws destiny of: 1-3, you may activate 1 Force; 4-6, you may draw top card of your Reserve Deck; 0 or 7, you may retrieve 1 Force.",
+    "gameText": "[Pilot] 2. Power +1 while with your leader. If at a Scomp link when opponent draws destiny of: 1-3, you may activate 1 Force; 4-6, you may draw top card of Reserve Deck; 0 or 7, you may retrieve 1 Force.",
     "deployCost": 4.0,
     "destiny": 2.0,
     "credits": 0,
@@ -135998,7 +135998,7 @@
       "IMPERIAL"
     ],
     "lore": "Senior Navy Commander of Death Star. Believes in technology. Ridiculed the Force. Ambitious leader. Promoted due to support of New Order, not military skills. Hates Vader.",
-    "gameText": "[Pilot] 2. Chiraneau may not modify your Force drains. Kuat Drive Yards is immune to Alter. Unless your Senate on table, unique (•) Star Destroyers are power +2 and immunity to attrition +1. Once per game, may [download] non-[Set 0] Kuat Drive Yards.",
+    "gameText": "[Pilot] 2. Chiraneau may not modify your Force drains. Kuat Drive Yards is [Immune to Alter]. Unless your Senate on table, unique (•) Star Destroyers are power +2 and immunity to attrition +1. Once per game, may [download] non-[Set 0] Kuat Drive Yards.",
     "deployCost": 3.0,
     "destiny": 1.0,
     "credits": 0,
@@ -136345,7 +136345,7 @@
       "ALIEN"
     ],
     "lore": "Corellian bounty hunter. Skilled athlete. Expert shot. Has worked many times for Jabba the Hutt. Carries a long-standing grudge against Han Solo.",
-    "gameText": "While opponent's [Reflection II icon] objective on table, adds one battle destiny. Permanent weapon is •Dengar's Blaster Carbine (may target a character, creature or vehicle for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value; may be fired twice per battle).",
+    "gameText": "While opponent's [Reflection II icon] objective on table, adds one battle destiny. Permanent weapon is •Dengar's Blaster Carbine (twice per battle, may target a character or vehicle for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).",
     "deployCost": 4.0,
     "destiny": 2.0,
     "credits": 0,
@@ -136464,7 +136464,7 @@
     "cardTypes": [
       "DROID"
     ],
-    "gameText": "Permanent weapon is Twin Blaster Cannons (may target a character or vehicle; draw destiny; add 2 if targeting a vehicle; if destiny > defense value, target hit and you may activate 1 Force). While with another destroyer droid at a site, adds one battle destiny.",
+    "gameText": "Permanent weapon is Twin Blaster Cannons (may target a character or vehicle; draw destiny; add 2 if targeting a vehicle; if total destiny > defense value, target hit and you may activate 1 Force). While with another [Presence] droid at a site, adds one battle destiny.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -136819,7 +136819,7 @@
       "IMPERIAL"
     ],
     "lore": "Ordered to kill Luke Skywalker. Assumed the identity of a dancer named 'Arica' in order to sneak into Jabba's Palace.",
-    "gameText": "With Luke or Emperor on table, power +1 and she moves for free. Permanent weapon is •Mara Jade's Lightsaber (may target a character or creature for free; draw two destiny; target hit, and its forfeit = 0, if total destiny > defense value).",
+    "gameText": "While Luke or Emperor on table, power +1 and she moves for free. Permanent weapon is •Mara Jade's Lightsaber (may target a character or creature for free; draw two destiny; target hit, and its forfeit = 0, if total destiny > defense value).",
     "deployCost": 5.0,
     "destiny": 1.0,
     "credits": 0,
@@ -137135,7 +137135,7 @@
       "ALIEN"
     ],
     "lore": "One of Xizor's hand-picked lieutenants. Ascended as Black Sun agent from gangster to manager. Earned title of Vigo from old Tionese for 'nephew'.",
-    "gameText": "Deploys -1 to Coruscant. While present with Xizor, forfeit +2 and opponents spies may not deploy to same non-battleground site. Once per game, may use 1 Force to [download] a non-war room battleground planet site (or system) not already on table.",
+    "gameText": "Deploys -1 to Coruscant. While present with Xizor, forfeit +2 and opponent's spies may not deploy to same non-battleground site. Once per game, may use 1 Force to [download] a non-war room battleground planet site (or system) not already on table.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -137240,7 +137240,7 @@
       "DEFENSIVE_SHIELD"
     ],
     "lore": "The Boonta Eve crowds are always looking for new and exciting developments at every Podrace.",
-    "gameText": "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl and Scramble are canceled. Once per game, may take an Immediate Effect into hand from Reserve Deck; reshuffle. While opponent occupies no battleground systems, Staging Areas is suspended.",
+    "gameText": "Plays on table. Ice Storm, Lost In The Wilderness, Order To Engage, Sandwhirl, and Scramble are canceled. Once per game, may [upload] an Immediate Effect. Unless opponent occupies a battleground system, Staging Areas is suspended.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -137498,7 +137498,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "Smuggler and Rebel starships use black market armor plating and deflector shields to withstand enemy fire. Expensive but life-saving modifications.",
-    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. Or Make a just drawn Overload destiny = 1/2. LOST: Cancel Cease Fire! or I Have You Now.",
+    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. [Immune to Sense] OR Cancel Counter Assault, [Set 0] Defensive Fire, or Hidden Weapons. OR Make a just drawn Overload destiny = ½. LOST: Cancel Cease Fire! or I Have You Now.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -137534,7 +137534,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "'It's a good bet the Empire knows we're here.'",
-    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. OR Target opponent's just-deployed [Maintenance] card, it may not battle (or allow opponent to [download] cards) for remainder of turn. [Immune to Sense] LOST: Cancel Trample (unless targeting an Undercover spy).",
+    "gameText": "USED: Play a Defensive Shield from under your Starting Effect. OR Target opponent's just-deployed [Maintenance] card. Target may not battle (or allow opponent to [download] cards) for remainder of turn. [Immune to Sense] LOST: Cancel Trample (unless targeting an Undercover spy).",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -137720,7 +137720,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "Permanent pilot is •Green Leader, who provides ability of 2. Adds one battle destiny with a Rebel snub fighter. During battle, may cancel immunity to attrition of any starship here; this A-wing is 'hit'.",
+    "gameText": "Permanent pilot is •Green Leader, who provides ability of 2. Adds one battle destiny with a Rebel snub fighter. During battle, may cancel immunity to attrition of one starship here; this A-wing is 'hit.'",
     "deployCost": 4.0,
     "destiny": 2.0,
     "credits": 0,
@@ -138058,7 +138058,7 @@
       "IMPERIAL"
     ],
     "lore": "ISB attache to the Executor. Detention Officer. Political Liaison for COMPNOR. Responsible for all prisoner transfers. Fiercely loyal to the Emperor's New Order.",
-    "gameText": "[Pilot] 1. When deployed, may take an ISB agent here into hand. Once per turn, if you just drew an ISB agent for battle destiny anywhere, may take that card into hand to cancel and re-draw that destiny.",
+    "gameText": "[Pilot] 1. When deployed, may take an ISB agent here into hand. Once per turn, if you just drew an ISB agent for battle destiny anywhere, may take that card into hand to cancel and redraw that destiny.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -138564,7 +138564,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "Absolute control wielded by the Emperor enables the Imperial forces to dominate planetary systems before the Rebel Alliance can gain a foothold.",
-    "gameText": "If opponent's starting location was Massassi Throne Room, opponent loses 1 Force when you play this Interrupt. Add or subtract 1 from opponent's just drawn destiny. OR Activate 1 Force. OR Until end of turn, battle destiny draws may not be modified or canceled (unless being redrawn).",
+    "gameText": "If opponent's starting location was Massassi Throne Room, opponent loses 1 Force when you play this Interrupt. Add or subtract 1 from opponent's just drawn destiny. OR Activate 1 Force. OR Until end of turn, battle destiny draws may not be canceled (unless being redrawn) or modified.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -138883,7 +138883,7 @@
       "REBEL"
     ],
     "lore": "Jedi Knight. Trained by Yoda. Friend of Bail Organa. General Kenobi became a hero of the Old Republic during the Clone Wars. Mentor of Anakin and Luke Skywalker.",
-    "gameText": "Obi-Wan's deploy cost may not be increased. Power +1 for each Dark Jedi or Skywalker here. Once per game, may exchange two cards in hand with any one card in Lost Pile. Your hit characters here may not be targeted to be lost. Immune to attrition < 5.",
+    "gameText": "Obi-Wan's deploy cost may not be increased. Power +1 for each Dark Jedi or Skywalker here. Your 'hit' characters here may not be targeted to be lost. Once per game, may exchange two cards in hand with any one card in Lost Pile. Immune to attrition < 5.",
     "deployCost": 5.0,
     "destiny": 1.0,
     "credits": 0,
@@ -138999,7 +138999,7 @@
     ],
     "cardSubtype": "CAPITAL",
     "lore": "Originally assigned to search the Outer Rim for new worlds to subjugate. Launched the probe droid that found Echo Base. Later reassigned to Death Squadron.",
-    "gameText": "May add 6 pilots, 8 passengers, 2 vehicles and 4 TIEs. Permanent pilot provides ability of 1. Once per game, if opponent's starship just moved from here, Stalker may follow it as a regular move (if within range).",
+    "gameText": "May add 6 pilots, 8 passengers, 2 vehicles and 4 TIEs. Permanent pilot provides ability of 1. Once per game, may follow an opponent's starship that just moved from here (if within range).",
     "deployCost": 8.0,
     "destiny": 1.0,
     "credits": 0,
@@ -139677,7 +139677,7 @@
     ],
     "cardSubtype": "COMBAT",
     "lore": "Enclosed. Assigned to the task of searching for potential Rebel traps. Modified to help cover more territory to accomplish this task.",
-    "gameText": "May add 1 pilot. May move as a 'react'. Permanent pilot provides ability of 2. Unless this vehicle 'hit', your other vehicles here may not be targeted by artillery weapons, vehicle weapons, or opponent's Interrupts.",
+    "gameText": "May add 1 pilot. May move as a 'react.' Permanent pilot provides ability of 2. Unless this vehicle 'hit,' your other vehicles here may not be targeted by artillery weapons, vehicle weapons, or opponent's Interrupts.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -139903,7 +139903,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The final act of Luke's ascension to Jedi Knighthood was sending off his father, draped in the garb of Vader.",
-    "gameText": "Deploy on table if an Endor site on table. [Death Star II] Luke is deploy = 6 and may not be Disarmed. If Luke at a battleground (even if captive), your battle destiny draws are + 1 there and, during your turn, may [download] Luke's Lightsaber or place a card from hand on Force Pile. Immune to Alter.",
+    "gameText": "If an Endor site on table, deploy on table. [Death Star II] Luke is deploy = 6 and may not be Disarmed. If Luke is at a battleground (even as a captive), your battle destiny draws are +1 there and, once during your turn, may [download] Luke's Lightsaber or place a card from hand on Force Pile. Immune to Alter.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -139972,7 +139972,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "May add one pilot and one astromech. During battle, if Anakin or R2-D2 aboard, may lose 1 Force to cancel a non-[Immune to Sense] interrupt. While Anakin or R2-D2 aboard, immune to attrition < 5 (6 if both).",
+    "gameText": "May add 1 pilot and 1 astromech. During battle, if Anakin or R2-D2 aboard, may lose 1 Force to cancel a non-[Immune to Sense] Interrupt. While Anakin or R2-D2 aboard, immune to attrition < 5 (< 6 if both).",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -140093,7 +140093,7 @@
       "ALIEN"
     ],
     "lore": "Jawa who has inside connections with the Empire. Frequently speaks with his Imperial contact, whom he reports to regarding Rebel activity in the Outer Rim.",
-    "gameText": "[Pilot] 2. Information Broker. When deployed, may [download] a droid here or a Retraining Bolt. During battle, may retarget an opponent's weapon targeting your droid to another one of your characters present (even Daroe).",
+    "gameText": "[Pilot] 2. Information broker. When deployed, may [download] a droid here or a Restraining Bolt. During battle, may retarget an opponent's weapon targeting your droid to another one of your characters present (even Daroe).",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -140534,7 +140534,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Luke's piloting skills and Force abilities made his X-wing a difficult target for Darth Vader as they raced down the Death Star trench.",
-    "gameText": "If your padawan or Skywalker is in battle with a Dark Jedi, either add one battle destiny or cancel I Have You Now. OR If Luke is in battle with opponent's character of ability > 3, add one battle destiny.",
+    "gameText": "If your Padawan or Skywalker is in battle with a Dark Jedi, either add one battle destiny or cancel I Have You Now. OR If Luke is in battle with an opponent's character of ability > 3, add one battle destiny.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -140700,7 +140700,7 @@
     ],
     "cardSubtype": "CAPITAL",
     "lore": "Modified medium transport. Well armored. Has expanded passenger capacity to facilitate evacuation. The last transport to escape Hoth. Nearly destroyed by the Stalker.",
-    "gameText": "May add 2 pilots and 6 passengers. Permanent pilot aboard provides ability of 2. If in battle with another Rebel capital starship, may draw destiny. Subtract that amount from opponent's attrition and total power.",
+    "gameText": "May add 2 pilots and 6 passengers. Permanent pilot provides ability of 2. If in battle with another Rebel capital starship, may draw destiny. Subtract that amount from opponent's attrition and total power.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -140765,7 +140765,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "CAPITAL",
-    "gameText": "May add 3 pilots and 6 passengers. Permanent pilot aboard provides ability of 2. During battle, your total battle destiny is +1 for each smuggler aboard. Deploys and moves like a starfighter. Immune to attrition < 5.",
+    "gameText": "May add 3 pilots and 6 passengers. Permanent pilot provides ability of 2. During battle, your total battle destiny is +1 for each smuggler aboard. Deploys and moves like a starfighter. Immune to attrition < 5.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -141623,7 +141623,7 @@
       "ALIEN"
     ],
     "lore": "Duros scout and smuggler.",
-    "gameText": "[Pilot] 3. Adds to 2 hyperspeed of any freighter he pilots. During your move phase, may use 1 Force to 'break cover' of opponent's Undercover spy at same site. Cancels Lateral Damage targeting your starship at same or related system.",
+    "gameText": "[Pilot] 3. Adds 2 to hyperspeed of any freighter he pilots. During your move phase, may use 1 Force to 'break cover' of opponent's Undercover spy at same site. Cancels Lateral Damage targeting your starship at same or related system.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -142914,8 +142914,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If Rey present, she may not be targeted by weapons.",
-    "locationLightSideGameText": "Once per game, may deploy Rey here from Reserve Deck; reshuffle. Rey deploys -2 here.",
+    "locationDarkSideGameText": "",
+    "locationLightSideGameText": "Once per game, may [download] Rey here. Rey deploys -2 here. If Rey present, she may not be targeted by weapons.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -144104,7 +144104,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "gameText": "Deploy on table. Once per game, may [upload] Finalizer. Once per character, when you deploy Hux, Kylo, Phasma, or Snoke to an [Episode VII] battleground, may take any one card from Used Pile into hand, reshuffle. Immune to Alter.",
+    "gameText": "Deploy on table. Once per game, may [upload] Finalizer. Once per character, when you deploy Hux, Kylo, Phasma, or Snoke to an [Episode VII] battleground, may take any one card into hand from Used Pile; reshuffle. Immune to Alter.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -188843,7 +188843,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, attrition against opponent is +1 for each Imperial leader in battle. Rebel Leadership and We're Doomed are Lost Interrupts. Once per turn, may deploy a snowtrooper from Reserve Deck; reshuffle. Once during your control phase, may choose: retrieve bottom card of Lost Pile into hand or peek at X cards from the top of opponent's Reserve Deck, where X = number of Hoth locations you control; replace in any order. Place out of play if you do not occupy a Hoth site with an AT-AT, Imperial leader, or snowtrooper.",
+    "gameText": "While this side up, attrition against opponent is +1 for each Imperial leader in battle. Rebel Leadership and We're Doomed are Lost Interrupts. Once per turn, may [download] a snowtrooper. Once during your control phase, may choose: retrieve bottom card of Lost Pile into hand or peek at the top X cards from opponent's Reserve Deck, where X = number of Hoth locations you control; replace in any order. Place out of play if you do not occupy a Hoth site with an AT-AT, Imperial leader, or snowtrooper.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -193945,7 +193945,7 @@
       "IMPERIAL"
     ],
     "lore": "Biker Scout Trooper. Imperial Remnant",
-    "gameText": "Adds 2 to power of anything he pilots. Once per game, may take Gideon into hand from Reserve Deck; reshuffle. While piloting a speeder bike, Grogu is forfeit -2 here and opponent's weapon destinies targeting your speeder bikes are -1 here.",
+    "gameText": "[Pilot] 2. Once per game, may [upload] Gideon. While piloting a speeder bike, Grogu is forfeit -2 here and opponent's weapon destinies targeting your speeder bikes are -1 here.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -201101,7 +201101,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SYSTEM",
-    "locationDarkSideGameText": "Your [Ind] starships may move to here as a 'react.' Once per game, if you control, may [upload] Death Mark.",
+    "locationDarkSideGameText": "Your [Ind] starships may move here as a 'react.' Once per game, if you control, may [upload] Death Mark.",
     "locationLightSideGameText": "Your smugglers and [Ind] starships deploy -1 here.",
     "destiny": 0.0,
     "credits": 0,
@@ -207189,7 +207189,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "While you control, Supremacy is power +3.",
-    "locationLightSideGameText": "Unless your piloted [Resistance] starship at a system, force drain -1.",
+    "locationLightSideGameText": "Unless your piloted [Resistance] starship at a system, Force drain -1 here.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
