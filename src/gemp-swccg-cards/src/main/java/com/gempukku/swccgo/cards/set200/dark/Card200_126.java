@@ -46,7 +46,7 @@ public class Card200_126 extends AbstractSite {
         super(Side.DARK, Title.Security_Tower, Title.Bespin, Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLocationDarkSideGameText("If Any Methods Necessary just played, may [upload] Despair. Aiiii! Aaa! Agggggggggg! is canceled.");
-        setLocationLightSideGameText("If you control, may use 3 Force to release one captive here. Captive Pursuit is canceled.");
+        setLocationLightSideGameText("If you control, may use 3 Force to release a captive here. Captive Pursuit is canceled.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.CLOUD_CITY, Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_0);
         addKeywords(Keyword.CLOUD_CITY_LOCATION, Keyword.PRISON);

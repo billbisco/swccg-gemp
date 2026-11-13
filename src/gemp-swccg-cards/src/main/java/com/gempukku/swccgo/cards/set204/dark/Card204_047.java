@@ -38,7 +38,7 @@ import java.util.Set;
 public class Card204_047 extends AbstractNormalEffect {
     public Card204_047() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Bow_To_The_First_Order, Uniqueness.UNIQUE, ExpansionSet.SET_4, Rarity.V);
-        setGameText("Deploy on table. Once per game, may [upload] Finalizer. Once per character, when you deploy Hux, Kylo, Phasma, or Snoke to an [Episode VII] battleground, may take any one card from Used Pile into hand, reshuffle. Immune to Alter.");
+        setGameText("Deploy on table. Once per game, may [upload] Finalizer. Once per character, when you deploy Hux, Kylo, Phasma, or Snoke to an [Episode VII] battleground, may take any one card into hand from Used Pile; reshuffle. Immune to Alter.");
         addIcons(Icon.EPISODE_VII, Icon.VIRTUAL_SET_4);
         addImmuneToCardTitle(Title.Alter);
     }

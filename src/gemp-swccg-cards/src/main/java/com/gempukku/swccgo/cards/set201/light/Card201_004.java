@@ -40,7 +40,7 @@ public class Card201_004 extends AbstractRebel {
         super(Side.LIGHT, 1, 5, 5, 6, 9, "Obi-Wan Kenobi", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("Jedi Knight. Trained by Yoda. Friend of Bail Organa. General Kenobi became a hero of the Old Republic during the Clone Wars. Mentor of Anakin and Luke Skywalker.");
-        setGameText("Obi-Wan's deploy cost may not be increased. Power +1 for each Dark Jedi or Skywalker here. Once per game, may exchange two cards in hand with any one card in Lost Pile. Your hit characters here may not be targeted to be lost. Immune to attrition < 5.");
+        setGameText("Obi-Wan's deploy cost may not be increased. Power +1 for each Dark Jedi or Skywalker here. Your 'hit' characters here may not be targeted to be lost. Once per game, may exchange two cards in hand with any one card in Lost Pile. Immune to attrition < 5.");
         addPersona(Persona.OBIWAN);
         addKeywords(Keyword.GENERAL);
         addIcons(Icon.WARRIOR, Icon.VIRTUAL_SET_1);

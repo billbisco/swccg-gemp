@@ -42,7 +42,7 @@ public class Card201_023 extends AbstractImperial {
         super(Side.DARK, 2, 2, 2, 2, 4, "Corporal Vandolay", Uniqueness.UNIQUE, ExpansionSet.SET_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("ISB attache to the Executor. Detention Officer. Political Liaison for COMPNOR. Responsible for all prisoner transfers. Fiercely loyal to the Emperor's New Order.");
-        setGameText("[Pilot] 1. When deployed, may take an ISB agent here into hand. Once per turn, if you just drew an ISB agent for battle destiny anywhere, may take that card into hand to cancel and re-draw that destiny.");
+        setGameText("[Pilot] 1. When deployed, may take an ISB agent here into hand. Once per turn, if you just drew an ISB agent for battle destiny anywhere, may take that card into hand to cancel and redraw that destiny.");
         addIcons(Icon.DAGOBAH, Icon.PILOT, Icon.WARRIOR);
     }
 

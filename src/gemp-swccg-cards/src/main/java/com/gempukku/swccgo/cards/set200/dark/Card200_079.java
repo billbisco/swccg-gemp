@@ -40,7 +40,7 @@ public class Card200_079 extends AbstractAlien {
         super(Side.DARK, 2, 4, 3, 2, 4, "Dengar With Blaster Carbine", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("Corellian bounty hunter. Skilled athlete. Expert shot. Has worked many times for Jabba the Hutt. Carries a long-standing grudge against Han Solo.");
-        setGameText("While opponent's [Reflection II icon] objective on table, adds one battle destiny. Permanent weapon is •Dengar's Blaster Carbine (may target a character, creature or vehicle for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value; may be fired twice per battle).");
+        setGameText("While opponent's [Reflection II icon] objective on table, adds one battle destiny. Permanent weapon is •Dengar's Blaster Carbine (twice per battle, may target a character or vehicle for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).");
         addPersona(Persona.DENGAR);
         addIcons(Icon.PREMIUM, Icon.PILOT, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.VIRTUAL_SET_0);
         addKeywords(Keyword.BOUNTY_HUNTER);

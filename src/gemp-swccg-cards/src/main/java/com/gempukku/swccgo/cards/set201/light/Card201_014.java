@@ -43,7 +43,7 @@ public class Card201_014 extends AbstractUsedOrLostInterrupt {
         super(Side.LIGHT, 4, "Perimeter Scan", Uniqueness.UNRESTRICTED, ExpansionSet.SET_1, Rarity.V);
         setVirtualSuffix(true);
         setLore("'It's a good bet the Empire knows we're here.'");
-        setGameText("USED: Play a Defensive Shield from under your Starting Effect. OR Target opponent's just-deployed [Maintenance] card, it may not battle (or allow opponent to [download] cards) for remainder of turn. [Immune to Sense] LOST: Cancel Trample (unless targeting an Undercover spy).");
+        setGameText("USED: Play a Defensive Shield from under your Starting Effect. OR Target opponent's just-deployed [Maintenance] card. Target may not battle (or allow opponent to [download] cards) for remainder of turn. [Immune to Sense] LOST: Cancel Trample (unless targeting an Undercover spy).");
         addIcons(Icon.HOTH, Icon.VIRTUAL_SET_1);
     }
 

@@ -42,7 +42,7 @@ public class Card200_111 extends AbstractNormalEffect {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Kuat_Drive_Yards, Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("Company that produces current generation of Star Destroyers, as well as Nebulon-B Frigates. Ship yards are extremely well defended.");
-        setGameText("Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if unable to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. Immune to Alter.");
+        setGameText("Deploy on table. Unique (•) Imperial-class Star Destroyers draw one battle destiny if not able to otherwise and are immune to attrition < 4. During your deploy phase, may use 2 Force to [download] a battleground system. We're In Attack Position Now is canceled. Immune to Alter.");
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_0);
         addImmuneToCardTitle(Title.Alter);
     }

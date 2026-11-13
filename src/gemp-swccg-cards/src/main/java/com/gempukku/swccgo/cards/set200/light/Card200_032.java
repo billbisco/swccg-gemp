@@ -41,7 +41,7 @@ public class Card200_032 extends AbstractDefensiveShield {
         setVirtualSuffix(true);
         setBasePrintingDisplayTitle("Your Insight Serves You Well (Reflections III)");
         setLore("Luke knew that while the dark side was quicker and more seductive, eventually evil would turn on itself.");
-        setGameText("Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make the First Move may target only Undercover Spies. Unless Inner Strength on table, opponent may only use one combat card per turn.");
+        setGameText("Plays on table. Cancels Scanning Crew and 'insert' cards just revealed. Sidious may not place Skywalkers out of play. Let Them Make The First Move may target only Undercover spies. Unless Inner Strength on table, opponent may use only one combat card per turn.");
         addIcons(Icon.REFLECTIONS_III, Icon.VIRTUAL_DEFENSIVE_SHIELD);
     }
 

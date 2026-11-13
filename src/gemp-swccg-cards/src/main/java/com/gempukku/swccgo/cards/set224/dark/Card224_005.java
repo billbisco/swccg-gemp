@@ -31,7 +31,7 @@ import java.util.List;
 public class Card224_005 extends AbstractSystem {
     public Card224_005() {
         super(Side.DARK, Title.Ord_Mantell, 7, ExpansionSet.SET_24, Rarity.V);
-        setLocationDarkSideGameText("Your [Ind] starships may move to here as a 'react.' Once per game, if you control, may [upload] Death Mark.");
+        setLocationDarkSideGameText("Your [Ind] starships may move here as a 'react.' Once per game, if you control, may [upload] Death Mark.");
         setLocationLightSideGameText("Your smugglers and [Ind] starships deploy -1 here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);

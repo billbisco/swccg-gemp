@@ -38,7 +38,7 @@ public class Card200_086 extends AbstractAlienImperial {
     public Card200_086() {
         super(Side.DARK, 1, 5, 4, 5, 7, "Mara Jade With Lightsaber", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setLore("Ordered to kill Luke Skywalker. Assumed the identity of a dancer named 'Arica' in order to sneak into Jabba's Palace.");
-        setGameText("With Luke or Emperor on table, power +1 and she moves for free. Permanent weapon is •Mara Jade's Lightsaber (may target a character or creature for free; draw two destiny; target hit, and its forfeit = 0, if total destiny > defense value).");
+        setGameText("While Luke or Emperor on table, power +1 and she moves for free. Permanent weapon is •Mara Jade's Lightsaber (may target a character or creature for free; draw two destiny; target hit, and its forfeit = 0, if total destiny > defense value).");
         addPersona(Persona.MARA_JADE);
         addIcons(Icon.PREMIUM, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.VIRTUAL_SET_0);
         addKeywords(Keyword.FEMALE);

@@ -48,7 +48,7 @@ public class Card203_004 extends AbstractAlien {
     public Card203_004() {
         super(Side.LIGHT, 3, 3, 3, 2, 4, "Ellorrs Madak, Pilot Instructor", Uniqueness.UNIQUE, ExpansionSet.SET_3, Rarity.V);
         setLore("Duros scout and smuggler.");
-        setGameText("[Pilot] 3. Adds to 2 hyperspeed of any freighter he pilots. During your move phase, may use 1 Force to 'break cover' of opponent's Undercover spy at same site. Cancels Lateral Damage targeting your starship at same or related system.");
+        setGameText("[Pilot] 3. Adds 2 to hyperspeed of any freighter he pilots. During your move phase, may use 1 Force to 'break cover' of opponent's Undercover spy at same site. Cancels Lateral Damage targeting your starship at same or related system.");
         addIcons(Icon.PILOT, Icon.VIRTUAL_SET_3);
         addKeywords(Keyword.SCOUT, Keyword.SMUGGLER);
         setSpecies(Species.DUROS);

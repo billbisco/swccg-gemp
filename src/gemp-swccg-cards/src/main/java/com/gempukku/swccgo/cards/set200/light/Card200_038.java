@@ -43,7 +43,7 @@ public class Card200_038 extends AbstractNormalEffect {
         super(Side.LIGHT, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Down With The Emperor!", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("News of Imperial defeat inspires the citizens of the galaxy. A major loss seriously undermines the Empire's ability to function.");
-        setGameText("Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Dark Jedi or a battle, they lose 1 Force. During your draw phase, use 3 Force or place this Effect in Used Pile.");
+        setGameText("Deploy on table. All immunity to attrition is -3. You may not fire [Permanent Weapon] weapons. If opponent just lost a Dark Jedi or a battle, they lose 1 Force. During your draw phase, use 3 Force or place this Effect in Used Pile. [Immune to Alter]");
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_0);
         addImmuneToCardTitle(Title.Alter);
     }

@@ -34,7 +34,7 @@ public class Card200_004 extends AbstractRebel {
     public Card200_004() {
         super(Side.LIGHT, 3, 3, 3, 1, 4, "Captain Yutani With Blaster Cannon", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setLore("Scout.");
-        setGameText("Artillery weapons here are 'powered'. Permanent weapon is Blaster Cannon (may target a character, creature, or vehicle at same or adjacent site for free; draw destiny; target 'hit' and forfeit = 0 if destiny +1 > defense value).");
+        setGameText("Artillery weapons here are powered. Permanent weapon is Blaster Cannon (may target a character, creature, or vehicle at same or adjacent site for free; draw destiny; target hit, and its forfeit = 0, if destiny +1 > defense value).");
         addIcons(Icon.HOTH, Icon.WARRIOR, Icon.PERMANENT_WEAPON, Icon.VIRTUAL_SET_0);
         addKeywords(Keyword.SCOUT, Keyword.CAPTAIN);
         addPersona(Persona.YUTANI);

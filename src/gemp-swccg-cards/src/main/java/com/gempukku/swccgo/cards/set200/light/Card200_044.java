@@ -30,7 +30,7 @@ public class Card200_044 extends AbstractNormalEffect {
     public Card200_044() {
         super(Side.LIGHT, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Mon Calamari Dockyards", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setLore("Admiral Ackbar's hit-and-fade tactics force the Imperial Navy to spread throughout the galaxy in a futile attempt to engage the Rebels.");
-        setGameText("Deploy on table. Star Cruisers (except Profundity) may deploy -2 (to a maximum of -3), ignore deployment restrictions in their game text, draw one battle destiny if not able to otherwise, and are immune to attrition < 4. [Immune to Alter.]");
+        setGameText("Deploy on table. Star Cruisers (except Profundity) may deploy -2 (to a maximum of -3), ignore deployment restrictions in their game text, draw one battle destiny if unable to otherwise, and are immune to attrition < 4. [Immune to Alter.]");
         addIcons(Icon.DEATH_STAR_II, Icon.VIRTUAL_SET_0);
         addImmuneToCardTitle(Title.Alter);
     }

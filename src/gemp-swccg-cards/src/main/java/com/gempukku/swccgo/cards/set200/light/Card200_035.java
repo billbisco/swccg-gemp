@@ -41,7 +41,7 @@ public class Card200_035 extends AbstractStartingEffect {
         super(Side.LIGHT, 4, Title.Anger_Fear_Aggression, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("'The dark side of the Force are they. Easily they flow, quick to join you in a fight.'");
-        setGameText("Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until end of your first turn.");
+        setGameText("Deploy on table with any number of Defensive Shields from outside your deck face-down under here. Four times per game, may play a card from here (as if from hand). Unless canceling your Interrupt, opponent may not play Uncertain Is The Future until the end of your first turn.");
         addIcons(Icon.DAGOBAH, Icon.VIRTUAL_SET_0);
     }
 

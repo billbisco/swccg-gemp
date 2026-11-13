@@ -35,7 +35,7 @@ public class Card200_130 extends AbstractStarfighter {
         super(Side.DARK, 1, 6, 7, null, 6, 4, 7, "Boba Fett In Slave I", Uniqueness.UNIQUE, ExpansionSet.SET_0, Rarity.V);
         setVirtualSuffix(true);
         setLore("Dangerous and deadly starfighter piloted by its notorious owner. Uses combat-grade shields and sensors. Hidden weapons provide lethal surprises for Fett's victims.");
-        setGameText("Permanent pilot is •Boba Fett, who provides ability of 3. Draws one battle destiny if unable to otherwise. Slave I's power may not be reduced by opponent. Immune to Eject! Eject! and attrition < 5.");
+        setGameText("Permanent pilot is •Boba Fett, who provides ability of 3. Draws one battle destiny if not able to otherwise. Slave I's power may not be reduced by opponent. Immune to Eject! Eject! and attrition < 5.");
         addPersonas(Persona.SLAVE_I);
         addIcons(Icon.PREMIUM, Icon.INDEPENDENT, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_0);
         addModelType(ModelType.FIRESPRAY_CLASS_ATTACK_SHIP);
