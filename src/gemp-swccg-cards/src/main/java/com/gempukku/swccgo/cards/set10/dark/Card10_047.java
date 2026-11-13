@@ -42,7 +42,7 @@ public class Card10_047 extends AbstractLostInterrupt {
     public Card10_047() {
         super(Side.DARK, 2, "Sniper & Dark Strike", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles(Title.Sniper, Title.Dark_Strike);
-        setGameText("If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile");
+        setGameText("If you just targeted with a lightsaber, add 3 to your total weapon destiny. OR During your control phase, fire one of your weapons. Any 'hit' targets are immediately lost. OR Lose 1 Force to place opponent's just 'hit' character in Lost Pile.");
         addIcons(Icon.REFLECTIONS_II);
     }
 

@@ -40,7 +40,7 @@ import java.util.List;
 public class Card7_296_BACK extends AbstractObjective {
     public Card7_296_BACK() {
         super(Side.DARK, 7, Title.My_Favorite_Decoration, ExpansionSet.SPECIAL_EDITION, Rarity.R);
-        setGameText("While this side up, your aliens and starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).");
+        setGameText("While this side up, your aliens and [Independent] starships are immune to attrition < 4 and, once during each of your control phases, you may retrieve 1 Force. While you have a frozen captive at Audience Chamber, Scum And Villainy is immune to Alter and during your deploy phase, you may deploy Scum And Villainy from Reserve Deck; reshuffle. Place out of play if there are no frozen captives on table (unless no Rebel was in opponent's Reserve Deck at start of game).");
         addIcons(Icon.SPECIAL_EDITION);
     }
 

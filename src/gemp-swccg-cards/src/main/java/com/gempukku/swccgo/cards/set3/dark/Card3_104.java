@@ -42,7 +42,7 @@ import java.util.List;
 public class Card3_104 extends AbstractMobileEffect {
     public Card3_104() {
         super(Side.DARK, 3, Title.Ice_Storm, Uniqueness.UNIQUE, ExpansionSet.HOTH, Rarity.U1);
-        setLore("Among the gravest dangers in the harsh environment of Hoth are frequent quick-moving ice storms.");
+        setLore("Among the gravest dangers in the harsh environment of Hoth are frequent, quick-moving ice storms.");
         setGameText("Deploy at outermost marker. All characters present at same exterior site are missing. Each turn, during your control phase, storm moves to next marker, reversing direction if at innermost marker. Mobile Effect lost when moved beyond outermost marker.");
         addIcons(Icon.HOTH);
     }

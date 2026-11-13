@@ -45,7 +45,7 @@ public class Card10_001 extends AbstractUsedOrLostInterrupt {
     public Card10_001() {
         super(Side.LIGHT, 4, "Alter & Friendly Fire", Uniqueness.UNRESTRICTED, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles(Title.Alter, Title.Friendly_Fire);
-        setGameText("USED: Target your highest-ability character and one Effect. Draw destiny. If destiny < ability of target character, cancel target Effect. LOST: If a battle was just initiated at a site where opponent has at least two characters and one weapon, draw destiny. If destiny is < number of opponent's characters at that site, opponent chooses one to be lost.");
+        setGameText("USED: Target your highest-ability character and one Effect. Draw destiny. If destiny < ability of target character, cancel target Effect. LOST: If a battle was just initiated at a site where opponent has at least two characters and one weapon, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost.");
         addIcons(Icon.REFLECTIONS_II);
     }
 

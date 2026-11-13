@@ -39,7 +39,7 @@ public class Card10_002 extends AbstractDroid {
         super(Side.LIGHT, 3, 3, 2, 6, "Artoo & Threepio", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         addComboCardTitles("Artoo", "Threepio");
         setLore("Threepio's extensive experience 'talking' to the Falcon's computer allowed him to pilot the freighter while on Coruscant. Artoo, an R-unit droid, provided moral support.");
-        setGameText("May pilot only Falcon. All droids may be battled. Any player that has no ability in a battle takes no battle damage. Once per turn, may take on card with 'Bad Feeling' in title into hand from Reserve Deck; reshuffle. Bad Feeling Have I is suspended.");
+        setGameText("May pilot only Falcon. All droids may be battled. Any player that has no ability in a battle takes no battle damage. Once per turn, may take one card with 'Bad Feeling' in title into hand from Reserve Deck; reshuffle. Bad Feeling Have I is suspended.");
         addPersonas(Persona.R2D2, Persona.C3PO);
         addIcons(Icon.REFLECTIONS_II, Icon.PILOT, Icon.NAV_COMPUTER);
         addModelTypes(ModelType.ASTROMECH, ModelType.PROTOCOL);

@@ -39,8 +39,8 @@ public class Card12_024 extends AbstractRepublic {
     public Card12_024() {
         super(Side.LIGHT, 2, 3, 3, 3, 6, "Ric Olie", Uniqueness.UNIQUE, ExpansionSet.CORUSCANT, Rarity.R);
         setDisplayTitle("Ric Olié"); // printed spelling (Bill 2026-11-12); rules use the title above
-        setLore("Leader of Bravo Squadron. Piloted Amidala's Royal Starship from Naboo so that she could plead her case to the Senate. Was able to break the blockade with a little help.");
-        setGameText("Adds 3 to power of anything he pilots (or adds 4 if Queen's Royal Starship). While piloting Queen's Royal Starship, once during a battle Ric is in, may use X Force to reduce attrition against you by X.");
+        setLore("Leader of Bravo Squadron. Piloted Amidala's Royal Starship from Naboo so that she could plead her case to the Senate. Was able to break the blockade - with a little help.");
+        setGameText("Adds 3 to power of anything he pilots (or adds 4 if Queen's Royal Starship). While piloting Queen's Royal Starship, once during a battle Ric is in, you may use X Force to reduce attrition against you by X.");
         addPersona(Persona.RIC);
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.PILOT, Icon.WARRIOR);
         addKeywords(Keyword.LEADER, Keyword.BRAVO_SQUADRON);

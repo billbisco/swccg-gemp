@@ -41,7 +41,7 @@ import java.util.List;
 public class Card3_137 extends AbstractUsedInterrupt {
     public Card3_137() {
         super(Side.DARK, 4, "That's It, The Rebels Are There!", Uniqueness.UNRESTRICTED, ExpansionSet.HOTH, Rarity.U2);
-        setLore("'That is the system and I'm sure Skywalker is with them.'");
+        setLore("'That is the system, and I'm sure Skywalker is with them.'");
         setGameText("If you have a probe droid at a site during your control phase, move one of your starships to the related system. That starship cannot move again this turn.");
         addIcons(Icon.HOTH);
     }
