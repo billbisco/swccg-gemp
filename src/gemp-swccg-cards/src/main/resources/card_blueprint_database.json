@@ -142961,7 +142961,7 @@
       "REBEL"
     ],
     "lore": "Female Twi'lek leader.",
-    "gameText": "[Pilot] 3. If with an Imperial (or two Rebels), adds one battle destiny. During battle, if you just drew a destiny < number of Rebels here, may cancel destiny and redraw that destiny.",
+    "gameText": "[Pilot] 3. If with an Imperial (or two Rebels), adds one battle destiny. During battle, if you just drew a destiny < number of Rebels here, may cancel and redraw that destiny.",
     "deployCost": 4.0,
     "destiny": 3.0,
     "credits": 0,
@@ -143255,7 +143255,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "May add Poe (or a spy) as a pilot and 1 passenger. Deploys free to opponent's system. While Poe piloting, maneuver +2. If Finn aboard, apply his ability towards drawing battle destiny.",
+    "gameText": "May add Poe (or a spy) as a pilot and 1 passenger. Deploys free to opponent's system. While Poe piloting, maneuver +2. If Finn aboard, apply his ability toward drawing battle destiny.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -143381,7 +143381,7 @@
     ],
     "cardSubtype": "COMBAT",
     "lore": "Han's 'special modifications' for the Millennium Falcon included security mechanisms, deflector shields, hull plating, faster hyperdrive and enhanced weapons. Enclosed.",
-    "gameText": "May not be placed in Reserve Deck. If Falcon about to leave table, place it out of play. May add 2 pilots and 2 passengers. Immune to Trample and Unsalvageable. While Finn or Rey aboard, immune to attrition < 4 (< 6 if both). Once during your move phase, if piloted, may flip this card.",
+    "gameText": "May not be placed in Reserve Deck. If Falcon about to leave table, place it out of play. May add 2 pilots and 2 passengers. Immune to Trample and Unsalvageable, even if unpiloted. While Finn or Rey aboard, immune to attrition < 4 (< 6 if both). Once during your move phase, if piloted, may flip this card.",
     "deployCost": 0.0,
     "destiny": 7.0,
     "credits": 0,
@@ -143725,7 +143725,7 @@
     "cardTypes": [
       "FIRST_ORDER"
     ],
-    "gameText": "Deploys free to same site as a First Order leader. Opponent's characters here are cumulatively defense value -1 (limit -3).",
+    "gameText": "Deploys -1 to same site as a First Order leader. Opponent's characters here are cumulatively defense value -1 (limit -3).",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
@@ -144600,7 +144600,7 @@
       "WEAPON"
     ],
     "cardSubtype": "CHARACTER",
-    "gameText": "Deploy on your First Order warrior. May target a character or vehicle for free. Draw destiny. Target hit, and may not be used to satisfy attrition, if destiny (+1 if fired by a stormtrooper) > defense value.",
+    "gameText": "Deploy on your First Order warrior. May target a character or vehicle for free. Draw destiny. Add 1 if fired by a stormtrooper. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -145185,7 +145185,7 @@
     "cardTypes": [
       "REBEL"
     ],
-    "gameText": "Luke Skywalker, The Emperor's Prize is a Dark Side card and does not count toward your deck limit. Reveal to opponent when deploying your Starting Effect. Deploys to Death Star II: Throne Room only at start of game as a frozen captive if Bring Him Before Me on table and Your Destiny is suspended; otherwise place out of play. For remainder of game, may not be placed in Reserve Deck. Luke Skywalker, The Emperor's Prize is a persona of Luke only while on table. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader present and not escorting a captive. Place out of play if released or about to leave table.",
+    "gameText": "Luke Skywalker, The Emperor's Prize is a Dark Side card and is a persona of Luke only while on table. Plays only during start of game by revealing from outside your deck if Your Destiny is on table and suspended; deploy to Throne Room as a frozen captive. If not revealed, place under your Starting Effect. While this side up, Bring Him Before Me may not flip. May not be escorted. Flip this card if Vader here and not escorting a captive. Place out of play if released or about to leave table.",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -145208,8 +145208,7 @@
       "LUKE"
     ],
     "isFrontOfDoubleSidedCard": true,
-    "doesNotCountTowardDeckLimit": true,
-    "mayNotBePlacedInReserveDeck": true
+    "doesNotCountTowardDeckLimit": true
   },
   {
     "cardId": "205_14_BACK",
@@ -145260,8 +145259,7 @@
     "personas": [
       "LUKE"
     ],
-    "doesNotCountTowardDeckLimit": true,
-    "mayNotBePlacedInReserveDeck": true
+    "doesNotCountTowardDeckLimit": true
   },
   {
     "cardId": "205_15",
@@ -145901,7 +145899,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "Unless Vader or your trooper here, Force drain -1 here (if both here, Force drain +1 instead).",
-    "locationLightSideGameText": "Anakin, Beru, and Owen may move to and from here for free when using landspeed.",
+    "locationLightSideGameText": "Anakin, Beru, and Owen may move to or from here for free when using landspeed.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -146205,7 +146203,7 @@
       "IMPERIAL"
     ],
     "lore": "Stormtrooper.",
-    "gameText": "While you have no other troopers here (except death troopers), adds one battle destiny at same site as Krennic, Tarkin, or Thrawn. May place character in Used Pile to cancel a just drawn weapon destiny targeting your leader here.",
+    "gameText": "While you have no other trooper here (except death troopers), adds one battle destiny at same site as Krennic, Tarkin, or Thrawn. May place this character in Used Pile to cancel a just drawn weapon destiny targeting your leader here.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -155656,7 +155654,7 @@
       "IMPERIAL"
     ],
     "lore": "Thrawn. Chiss commander. Leader.",
-    "gameText": "[Pilot] 3. Once per turn, may target a related location; opponent loses 1 Force the next time they move to that location this turn. May lose 1 Force to cancel a just-drawn weapon destiny targeting a starship he is piloting. Thrawn's game text may not be canceled.",
+    "gameText": "[Pilot] 3. Once per turn, may target a related location; opponent loses 1 Force the next time they move to that location this turn. May lose 1 Force to cancel a just drawn weapon destiny targeting a starship he is piloting. Thrawn's game text may not be canceled.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -155763,7 +155761,7 @@
     "cardTypes": [
       "EPIC_EVENT"
     ],
-    "gameText": "If A Stunning Move on table, deploy on 500 Republica. While at a site (even while on a captive), adds one [Dark Side] icon here. While on Coruscant, opponent loses no more than 1 Force from your Force drains here. Opponent's Force generation is -1 here. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed (or docking bay transit) to a battleground site. If about to leave table, relocate to 500 Republica (if possible).",
+    "gameText": "If A Stunning Move on table, deploy on 500 Republica. Opponent's Force generation is -1 here. While at a site (even while on a captive), adds one [Dark Side] icon here. While on Coruscant, opponent loses no more than 1 Force from your Force drains here. Once per turn, if a player controls this site, they may have this card (unless on Palpatine) follow their first character to move from here using landspeed (or docking bay transit) to a battleground site. If about to leave table, relocate to 500 Republica (if possible).",
     "deployCost": 0.0,
     "destiny": 0.0,
     "credits": 0,
@@ -155803,7 +155801,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "At last we will reveal ourselves to the Jedi.",
-    "gameText": "If you just lost a Dark Jedi and have exactly one Dark Jedi on table, take a Dark Jedi into hand from Reserve Deck; reshuffle. OR Once per game, if you have exactly two Dark Jedi on table, choose: Opponent loses 2 Force OR make a just drawn destiny = 2.",
+    "gameText": "If you just lost a Dark Jedi and have exactly one Dark Jedi on table, [upload] a Dark Jedi. OR Once per game, if you have exactly two Dark Jedi on table, choose: Opponent loses 2 Force. OR Make a just drawn destiny = 2.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -155926,7 +155924,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "'He's no Jedi.'",
-    "gameText": "If Audience Chamber on table, deploy Passenger Deck or a pit from Reserve Deck; reshuffle. OR Deploy an alien leader or Twi'lek to Audience Chamber from Reserve Deck; reshuffle.",
+    "gameText": "If Audience Chamber on table, [download] Passenger Deck or a pit. OR [download] an alien leader or a Twi'lek to Audience Chamber.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -156006,7 +156004,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "Grievous moves from here for free.",
-    "locationLightSideGameText": "May not be separated from Private Platform.",
+    "locationLightSideGameText": "May not be separated from Coruscant: Private Platform.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -156204,7 +156202,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Once per game, if you control, may take Invisible Hand into hand from Reserve Deck; reshuffle.",
+    "locationDarkSideGameText": "Once per game, if you control, may [upload] Invisible Hand.",
     "locationLightSideGameText": "Unless your [Clone Army] character here, Force drain -1 here.",
     "destiny": 0.0,
     "credits": 0,
@@ -156526,7 +156524,7 @@
     ],
     "cardSubtype": "CHARACTER",
     "lore": "Multifaceted jewels focus light into a deadly blade. Projects a meter-long beam of pure energy. A lightsaber is constructed personally by a Jedi as a part of training.",
-    "gameText": "Deploy on Aurra Sing, Grievous, or your warrior of ability > 4. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.",
+    "gameText": "Deploy on Aurra, Grievous, or your warrior of ability > 4. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -156566,7 +156564,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy 500 Republica (with Insidious Prisoner there) and Private Platform.\nFor remainder of game, you may not deploy Sidious, First Order characters, or Imperials. Grievous is immunity to attrition +2. Once per turn, may \\/ an Invisible Hand site or a non-unique [Separatist] droid. \nFlip this card if Insidious Prisoner is at an Invisible Hand site.",
+    "gameText": "Deploy 500 Republica (with Insidious Prisoner there) and Coruscant: Private Platform.\nFor remainder of game, you may not deploy Sidious, First Order characters, or Imperials. Grievous is immunity to attrition +2. Once per turn, may [download] an Invisible Hand site or a non-unique [Separatist] droid. \nFlip this card if Insidious Prisoner is at an Invisible Hand site.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -156649,7 +156647,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "While Insidious Prisoner here, your characters are +1 power here.",
+    "locationDarkSideGameText": "While Insidious Prisoner here, your characters are power +1 here.",
     "locationLightSideGameText": "While your [Clone Army] character here, your characters are defense value +1 here.",
     "destiny": 0.0,
     "credits": 0,
@@ -156855,7 +156853,7 @@
     ],
     "cardSubtype": "LOST_OR_STARTING",
     "lore": "'When we find Jabba the Hutt and that bounty hunter, we'll contact you.'",
-    "gameText": "LOST: [download] a Tatooine battleground. STARTING: If your Jabba's Palace site on table, deploy Seeking An Audience and up to 2 Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.",
+    "gameText": "LOST: [download] a Tatooine battleground. STARTING: If you have deployed a Jabba's Palace site, deploy Seeking An Audience and up to two Effects that deploy on table and are always immune to Alter. Place Interrupt in hand.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -156978,7 +156976,7 @@
     ],
     "cardSubtype": "CHARACTER",
     "lore": "Multifaceted jewels focus light into a deadly blade. Projects a meter-long beam of pure energy. A lightsaber is constructed personally by a Jedi as a part of training.",
-    "gameText": "Deploy on a character of ability > 4 or a Padawan. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.",
+    "gameText": "Deploy on your character of ability > 4 or Padawan. May add 1 to Force drain where present. May target a character or creature for free. Draw two destiny. Target hit, and may not be used to satisfy attrition, if total destiny > defense value.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -157021,7 +157019,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "",
-    "gameText": "May add 2 pilots and 2 passengers. During your deploy phase, may relocate your character of ability < 4 at a related exterior site aboard. While BB-8, DJ, or Rose aboard, immune to attrition < 5.",
+    "gameText": "May add 2 pilots and 2 passengers. During your deploy phase, may relocate your character of ability < 4 aboard from a related exterior site. While BB-8, DJ, or Rose aboard, immune to attrition < 5.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -157084,7 +157082,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "Permanent pilot is •Tallie, who provides ability of 2. May move as a 'react' to same location as your [Episode VII] character. Characters here may not have their forfeit increased beyond their printed value.",
+    "gameText": "Permanent pilot is •Tallie, who provides ability of 2. May move as a 'react' to same location as your [Episode VII] character. Characters here may not have their forfeit increased above their printed value.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -157222,7 +157220,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SYSTEM",
-    "locationDarkSideGameText": "If you just deployed a starship here, may shuffle any Deck or Pile.",
+    "locationDarkSideGameText": "If you just deployed a starship here, may shuffle any deck or pile.",
     "locationLightSideGameText": "During your deploy phase, if you just deployed a Maz's Castle location, may draw top card of Reserve Deck.",
     "destiny": 0.0,
     "credits": 0,
@@ -157480,7 +157478,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "Fetts deploy -1 here.",
-    "locationLightSideGameText": "If you control, your non-unique clone troopers are power and forfeit + 1.",
+    "locationLightSideGameText": "While you control, your non-unique clone troopers are power and forfeit +1.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -157534,8 +157532,8 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "If you initiate battle here, add one battle destiny.  Fetts may move to and from here for free",
-    "locationLightSideGameText": "During your deploy phase, your clone here may move to a battleground you occupy for free.",
+    "locationDarkSideGameText": "If you initiate battle here, add one battle destiny. Fetts may move to and from here for free.",
+    "locationLightSideGameText": "During your deploy phase, your clone here may move to a site you occupy for free.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -157586,7 +157584,7 @@
     ],
     "cardSubtype": "SYSTEM",
     "locationDarkSideGameText": "If opponent has two clones on table, Force drain -1 here.",
-    "locationLightSideGameText": "Once per turn, may use 1 Force to [download] a Kamino site",
+    "locationLightSideGameText": "Once per turn, may use 1 Force to [download] a Kamino site.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -157679,7 +157677,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "While Luke here, destiny draws for Alter and Sense are +2.",
+    "locationDarkSideGameText": "While Luke here, destiny draws for Sense and Alter are +2.",
     "locationLightSideGameText": "While Luke here, opponent must first use 1 Force to fire a weapon anywhere.",
     "destiny": 0.0,
     "credits": 0,
@@ -157879,7 +157877,7 @@
       "ALIEN"
     ],
     "lore": "Gran convicted of murder. Exiled from his homeworld. Smuggler and bounty hunter. Slowly going insane. Fond of making things explode. Plotting to kill Jabba.",
-    "gameText": "Non-[Maintenance] Bounty hunters here may not be targeted by Rebel Barrier or Clash of Sabers. Whenever you draw a destiny of 3, may choose: activate 1 Force, draw bottom card of Used Pile, or place a card from hand on top of Used Pile.",
+    "gameText": "Non-[Maintenance] bounty hunters here are immune to Clash Of Sabers and Rebel Barrier. Whenever you draw a destiny of 3, may choose: activate 1 Force, draw bottom card of Used Pile, or place a card from hand on top of Used Pile.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -158089,7 +158087,7 @@
       "DEVICE"
     ],
     "lore": "Biotech's latest model, the Aj ^ g, boasts greater storage capacity than all other models combined. Advertised as, \"Artificial Intelligence worth shaving your head for.\"",
-    "gameText": "Deploy on an alien of ability < 3. While at a Scomp link, Computer Interface is a Used Interrupt, and once per turn may use 1 Force to [upload] Computer Interface. Once per turn, if on Lobot, may [download] a trooper here.",
+    "gameText": "Deploy on an alien of ability < 3. While present with a Scomp link, Computer Interface is a Used Interrupt and, once per turn, may use 1 Force to [upload] Computer Interface. Once per turn, if on Lobot, may [download] a trooper here.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -158131,7 +158129,7 @@
       "RESISTANCE"
     ],
     "lore": "Female leader.",
-    "gameText": "[Pilot] 2: any capital starship. During battle, if piloting a capital starship, may place it and Holdo out of play to add X to your total battle destiny, where X is that starship's armor + hyperspeed.",
+    "gameText": "[Pilot] 2: any capital starship. During battle, if piloting a capital starship, may place it and Holdo out of play to add X to your total battle destiny, where X = that starship's armor + hyperspeed.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -170274,7 +170272,7 @@
       "JEDI_MASTER"
     ],
     "lore": "Jedi Council member.",
-    "gameText": "During battle, may swing a lightsaber twice. Power +1 for each of opponent's character of ability < 2 here. Your clones are forfeit +1 here. Immune to attrition < 6.",
+    "gameText": "During battle, Mace may 'swing' one lightsaber twice. Power +1 for each opponent's character of ability < 2 here. Your clones are forfeit +1 here. Immune to attrition < 6.",
     "deployCost": 7.0,
     "destiny": 1.0,
     "credits": 0,
