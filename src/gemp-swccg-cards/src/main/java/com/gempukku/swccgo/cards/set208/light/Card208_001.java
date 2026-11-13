@@ -32,7 +32,7 @@ public class Card208_001 extends AbstractResistance {
     public Card208_001() {
         super(Side.LIGHT, 3, 3, 2, 2, 5, "Admiral U.O. Statura", Uniqueness.UNIQUE, ExpansionSet.SET_8, Rarity.V);
         setLore("Leader.");
-        setGameText("At same location, Resistance characters and [Resistance] starships are each defence value and forfeit +1. While at an [Episode VII] location with a Resistance leader, adds one battle destiny.");
+        setGameText("At same location, Resistance characters and [Resistance] starships are each defense value and forfeit +1. While at an [Episode VII] location with a Resistance leader, adds one battle destiny.");
         addIcons(Icon.EPISODE_VII, Icon.VIRTUAL_SET_8);
         addKeywords(Keyword.ADMIRAL, Keyword.LEADER);
     }
