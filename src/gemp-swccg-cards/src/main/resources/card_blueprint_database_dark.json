@@ -116055,7 +116055,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "lore": "A panic move by Black 2 send Vader spinning wildly from the Death Star trench-ironically sparing his life. His destiny would be fulfilled another time.",
+    "lore": "A panic move by Black 2 sent Vader spinning wildly from the Death Star trench-ironically sparing his life. His destiny would be fulfilled another time.",
     "gameText": "USED: Cancel all Revolutions in play (owner loses 1 Force for each). LOST: If Vader or Vader's Custom TIE was just lost, relocate that card to Used Pile. OR Relocate to Used Pile one Imperial just lost from any Death Star location.",
     "destiny": 4.0,
     "credits": 0,
@@ -117183,7 +117183,7 @@
       "WEAPON"
     ],
     "cardSubtype": "STARSHIP",
-    "lore": "Sienar Fleet Systems' latest laser cannon prototype increases the firepower most Imperial TIEs - but many Moffs consider the weapon too expensive for widespread use.",
+    "lore": "Sienar Fleet Systems' latest laser cannon prototype increases the firepower of most Imperial TIEs - but many Moffs consider the weapon too expensive for widespread use.",
     "gameText": "Use 1 Force to deploy on your TIE. May target a starship using 1 Force. Draw destiny. Subtract 2 if targeting a capital starship. Target hit if total destiny > defense value.",
     "destiny": 5.0,
     "credits": 0,
