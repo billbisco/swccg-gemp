@@ -26,6 +26,7 @@ public class Card_2_112_Tests {
                     put("escort", "1_194");
                     put("farm", "1_294");
                     put("prison", "1_284");
+                    put("transport", "1_243");
                 }},
                 20, 20,
                 StartingSetup.DefaultLSGroundLocation,
@@ -284,25 +285,29 @@ public class Card_2_112_Tests {
     }
 
     @Test
-    public void HypoCannotIncreaseAnotherDrainThatControlPhase() {
-        //test1: one chosen drain bonus spends the shared use even after moving to another site.
+    public void HypoQuestionUseRemainsSpentAfterControlPhaseTransport() {
+        //test1: actual transport preserves the shared use already spent asking a question.
         var scn = GetScenario();
         var farm = scn.GetDSCard("farm");
         var secondSite = scn.GetDSStartingLocation();
         var hypo = scn.GetDSCard("hypo");
+        var ito = scn.GetDSCard("ito");
+        var escort = scn.GetDSCard("escort");
+        var transport = scn.GetDSCard("transport");
         scn.CaptureCardWith(scn.GetDSCard("escort"), scn.GetLSCard("captive"));
+        scn.MoveCardsToDSHand(transport);
         scn.SkipToDSTurn(Phase.CONTROL);
-        scn.DSForceDrainAt(farm);
-        scn.LSPass();
-        scn.DSUseCardAction(hypo, "Add 1 to Force drain");
-        scn.PassAllResponses();
-        scn.PassForceDrainStartResponses();
-        assertEquals(3, scn.GetForceDrainTotal()); //test1
-        scn.LSPayRemainingForceLossFromReserveDeck();
-        scn.PassForceDrainEndResponses();
+        AnswerQuestion(scn, "Yes");
+        scn.PrepareDSDestiny(0);
+        scn.DSPlayCard(transport);
+        scn.DSChooseCard(farm);
+        scn.DSChooseCard(secondSite);
+        scn.DSChooseCards(ito, escort);
+        scn.PassDestinyDrawResponses();
+        scn.DSChooseYes();
         scn.PassAllResponses();
         ReturnControlToDark(scn);
-        scn.MoveCardsToLocation(secondSite, scn.GetDSCard("ito"), scn.GetDSCard("guard"), scn.GetDSCard("escort"));
+        assertTrue(scn.CardsAtLocation(secondSite, ito, escort)); //test1
         assertTrue(scn.GetLSIconsOnLocation(secondSite) > 0); //test1
         assertEquals(scn.GetDSCard("escort"), scn.GetLSCard("captive").getEscort()); //test1
         assertEquals(scn.GetDSCard("ito"), hypo.getAttachedTo()); //test1
