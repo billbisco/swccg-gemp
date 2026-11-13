@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.cards.set2.dark;
 
 import com.gempukku.swccgo.common.Phase;
+import com.gempukku.swccgo.common.TargetingReason;
 import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
@@ -18,6 +19,7 @@ public class Card_2_112_Tests {
                 new HashMap<>() {{
                     put("captive", "1_19");
                     put("hand", "1_19");
+                    put("destinationCaptive", "2_3");
                 }},
                 new HashMap<>() {{
                     put("ito", "2_93");
@@ -294,7 +296,11 @@ public class Card_2_112_Tests {
         var ito = scn.GetDSCard("ito");
         var escort = scn.GetDSCard("escort");
         var transport = scn.GetDSCard("transport");
+        var destinationEscort = scn.GetDSCard("guard");
+        var destinationCaptive = scn.GetLSCard("destinationCaptive");
         scn.CaptureCardWith(scn.GetDSCard("escort"), scn.GetLSCard("captive"));
+        scn.MoveCardsToLocation(secondSite, destinationEscort);
+        scn.CaptureCardWith(destinationEscort, destinationCaptive);
         scn.MoveCardsToDSHand(transport);
         scn.SkipToDSTurn(Phase.CONTROL);
         AnswerQuestion(scn, "Yes");
@@ -302,18 +308,20 @@ public class Card_2_112_Tests {
         scn.DSPlayCard(transport);
         scn.DSChooseCard(farm);
         scn.DSChooseCard(secondSite);
-        scn.DSChooseCards(ito, escort);
+        scn.DSChooseCard(ito);
         scn.PassDestinyDrawResponses();
         scn.DSChooseYes();
         scn.PassAllResponses();
         ReturnControlToDark(scn);
-        assertTrue(scn.CardsAtLocation(secondSite, ito, escort)); //test1
+        assertTrue(scn.CardsAtLocation(secondSite, ito, destinationEscort)); //test1
         assertTrue(scn.GetLSIconsOnLocation(secondSite) > 0); //test1
-        assertEquals(scn.GetDSCard("escort"), scn.GetLSCard("captive").getEscort()); //test1
+        assertEquals(destinationEscort, destinationCaptive.getEscort()); //test1
         assertEquals(scn.GetDSCard("ito"), hypo.getAttachedTo()); //test1
-        assertTrue(scn.GetLSCard("captive").isCaptive()); //test1
+        assertTrue(destinationCaptive.isCaptive()); //test1
         assertTrue(Filters.presentWith(hypo).accepts(scn.gameState(),
-                scn.game().getModifiersQuerying(), scn.GetLSCard("captive"))); //test1
+                scn.game().getModifiersQuerying(), destinationCaptive)); //test1
+        assertTrue(Filters.canBeTargetedBy(hypo, TargetingReason.TO_BE_TORTURED).accepts(
+                scn.gameState(), scn.game().getModifiersQuerying(), destinationCaptive)); //test1
         assertTrue(scn.DSForceDrainAvailable(secondSite)); //test1
         scn.DSForceDrainAt(secondSite);
         scn.LSPass();
