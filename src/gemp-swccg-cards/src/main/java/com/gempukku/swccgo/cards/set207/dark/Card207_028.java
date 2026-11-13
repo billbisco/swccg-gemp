@@ -30,7 +30,7 @@ import java.util.List;
 public class Card207_028 extends AbstractStarfighter {
     public Card207_028() {
         super(Side.DARK, 3, 3, 3, null, 4, 4, 4, Title.Meson_Martinet, Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
-        setGameText("May add 2 pilots and 3 passengers. During battle, your total battle destiny is +1 for each pirate aboard. While Quiggold or Sidon piloting, immune to attrition < 5.");
+        setGameText("May add 2 pilots and 3 passengers. Your total battle destiny here is +1 for each pirate aboard. While Quiggold or Sidon piloting, immune to attrition < 5.");
         addIcons(Icon.INDEPENDENT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK, Icon.EPISODE_VII, Icon.VIRTUAL_SET_7);
         addModelType(ModelType.FREIGHTER);
         setPilotCapacity(2);

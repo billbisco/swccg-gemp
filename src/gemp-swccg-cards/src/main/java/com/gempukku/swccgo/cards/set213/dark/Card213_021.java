@@ -39,7 +39,7 @@ public class Card213_021 extends AbstractUsedInterrupt {
     public Card213_021() {
         super(Side.DARK, 4, "Imperial Code Cylinder", Uniqueness.UNRESTRICTED, ExpansionSet.SET_13, Rarity.V);
         setLore("");
-        setGameText("Take Krennic or a non-spy captain into hand from Reserve Deck; reshuffle. OR Peek at the bottom card of any deck or pile. OR During the power segment of a battle, if your captain in battle with your leader, cancel one destiny just drawn (except a battle destiny).");
+        setGameText("[upload] Krennic or a non-spy captain. OR Peek at the bottom card of any deck or pile. OR During the power segment of a battle, if your captain in battle with your leader, cancel one destiny just drawn (except a battle destiny).");
         addIcons(Icon.VIRTUAL_SET_13);
         setVirtualSuffix(true);
     }

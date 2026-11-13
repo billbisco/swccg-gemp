@@ -45,7 +45,7 @@ public class Card207_026 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.Security_Precautions, Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
         setVirtualSuffix(true);
         setLore("'I think I got it.'");
-        setGameText("Deploy on a location. Your Force generation is +1 here. Unless opponent occupies a battleground site, Corellian Engineering Corporation is suspended. Once per game, may restore a just 'hit' starship to normal. (Immune to Alter.)");
+        setGameText("Deploy on a location. Your Force generation is +1 here. Once per game, you may restore a just 'hit' starship to normal. Unless opponent occupies a battleground site, Corellian Engineering Corporation is suspended. [Immune to Alter.]");
         addIcons(Icon.ENDOR, Icon.VIRTUAL_SET_7);
         addImmuneToCardTitle(Title.Alter);
     }

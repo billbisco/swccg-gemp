@@ -36,7 +36,7 @@ public class Card210_028 extends AbstractStarfighter {
         super(Side.DARK, 3, 1, 1, null, 3, null, 3, "Black 3", Uniqueness.UNIQUE, ExpansionSet.SET_10, Rarity.V);
         setVirtualSuffix(true);
         setLore("TIE/ln fighter of pilot DS-61-3. Stylized image of Corellian slice-hound painted on inner hatch.");
-        setGameText("May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and during battle here, players draw destiny from the bottom of their Reserve Deck.");
+        setGameText("May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and, during battle, players draw destiny from the bottom of their Reserve Deck.");
         addPersona(Persona.BLACK_3);
         addModelType(ModelType.TIE_LN);
         addIcons(Icon.VIRTUAL_SET_10);

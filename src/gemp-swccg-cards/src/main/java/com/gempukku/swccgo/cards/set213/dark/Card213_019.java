@@ -35,7 +35,7 @@ public class Card213_019 extends AbstractUsedOrLostInterrupt {
     public Card213_019() {
         super(Side.DARK, 4, "I Never Ask For Anything Twice", Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("");
-        setGameText("USED: Take First Light or Vos into hand from Reserve Deck; reshuffle. OR Place a character from hand on Used Pile to activate 1 Force (2 if Vos on table). LOST: Once per game, exchange two cards in hand with any one card in Lost Pile. [Immune to Sense.]");
+        setGameText("USED: [upload] First Light or Vos. OR Place a character from hand in Used Pile to activate 1 Force (2 if Vos on table). LOST: Once per game, exchange two cards in hand with any one card in Lost Pile. [Immune to Sense.]");
         addIcons(Icon.VIRTUAL_SET_13);
         addImmuneToCardTitle(Title.Sense);
     }

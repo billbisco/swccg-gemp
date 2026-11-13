@@ -40,7 +40,7 @@ public class Card207_009 extends AbstractRebel {
         super(Side.LIGHT, 2, 3, 4, 2, 6, Title.Sabine, Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
         setArmor(5);
         setLore("Female Mandalorian. Scout.");
-        setGameText("Once per turn, when firing a rifle or blaster, may target for free and add 2 to total weapon destiny. While with an Imperial (or two Rebels), whenever you win a battle here, opponent loses 2 Force. Immune to Hidden Weapons.");
+        setGameText("Once per turn, when firing a blaster or rifle, may target for free and add 2 to total weapon destiny. While with an Imperial (or two Rebels), whenever you win a battle here, opponent loses 2 Force. Immune to Hidden Weapons.");
         addPersona(Persona.SABINE);
         addIcons(Icon.PILOT, Icon.VIRTUAL_SET_7);
         addIcon(Icon.WARRIOR, 2);

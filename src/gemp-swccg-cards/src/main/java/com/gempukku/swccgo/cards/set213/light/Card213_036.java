@@ -39,7 +39,7 @@ public class Card213_036 extends AbstractAlienRebel {
     public Card213_036() {
         super(Side.LIGHT, 1, 4, 7, 2, 6, "Chewbacca", Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLore("Wookiee smuggler from Kashyyyk. Over 200 years old. Top-notch mechanic and pilot. Jabba has large bounty on this 'walking carpet.' Friends call him Chewie...or Fuzzball.");
-        setGameText("Adds 2 to power of anything he pilots (3 if Falcon). May deploy -1 as a 'react' (-2 to same location as Han). If you have completed a Kessel Run, opponent's Force retrieval is canceled. During battle here (or at a holosite), your dejariks are destiny +2.");
+        setGameText("[Pilot] 2, 3: Falcon. May deploy -1 as a 'react' (-2 to same location as Han). If you have completed a Kessel Run, opponent's Force retrieval is canceled. During battle here (or at a holosite), your dejariks are destiny +2.");
         addPersona(Persona.CHEWIE);
         addIcons(Icon.A_NEW_HOPE, Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_13);
         addKeywords(Keyword.SMUGGLER);

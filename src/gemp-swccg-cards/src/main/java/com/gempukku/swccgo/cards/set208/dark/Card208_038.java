@@ -34,7 +34,7 @@ public class Card208_038 extends AbstractNormalEffect {
     public Card208_038() {
         super(Side.DARK, 4, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Alert My Star Destroyer!", Uniqueness.UNRESTRICTED, ExpansionSet.SET_8, Rarity.V);
         setVirtualSuffix(true);
-        setLore("For important Imperial dignitaries, an individual Star Destroyer is placed at their disposal.");
+        setLore("For important Imperial dignitaries, an individual Star Destroyer is placed at their personal disposal.");
         setGameText("Deploy on table. During your deploy phase, you may reveal one Star Destroyer from hand to [upload] its matching pilot character (or vice versa) and deploy both simultaneously (for -1 Force each). [Immune to Alter]");
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_8);
         addImmuneToCardTitle(Title.Alter);

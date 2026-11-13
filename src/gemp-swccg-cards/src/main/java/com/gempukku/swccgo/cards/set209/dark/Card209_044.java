@@ -45,7 +45,7 @@ public class Card209_044 extends AbstractNormalEffect {
         super(Side.DARK, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.They_Will_Be_No_Match_For_You, Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
         setVirtualSuffix(true);
         setLore("'At last we will reveal ourselves to the Jedi.'");
-        setGameText("Deploy on table. Once per turn, may [download] Maul's Lightsaber. At start of opponent's control phase, may relocate Maul to same site as a Jedi. May place this Effect out of play to deploy Maul's Lightsaber from Lost Pile. Immune to Alter.");
+        setGameText("Deploy on table. Once per turn, may [download] Maul's Lightsaber. At start of opponent's control phase, may relocate Maul to same site as a Jedi. May place this Effect out of play to deploy Maul's Lightsaber from Lost Pile. [Immune to Alter.]");
         addIcons(Icon.CORUSCANT, Icon.EPISODE_I, Icon.VIRTUAL_SET_9);
         addImmuneToCardTitle(Title.Alter);
     }

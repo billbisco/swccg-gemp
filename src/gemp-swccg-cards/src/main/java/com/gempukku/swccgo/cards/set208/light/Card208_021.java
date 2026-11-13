@@ -53,7 +53,7 @@ public class Card208_021 extends AbstractUsedInterrupt {
         super(Side.LIGHT, 3, "Suppressive Fire", Uniqueness.UNIQUE, ExpansionSet.SET_8, Rarity.V);
         setVirtualSuffix(true);
         setLore("Echo Base heavy weapons units provided covering fire, allowing Alliance personnel to escape Hoth.");
-        setGameText("Once per turn, if drawn for destiny, you may activate 1 Force. During battle at a site, choose: Your total power is +1 for each of your characters present. OR If you have a weapon present, opponent must first use or lose 1 Force to draw their first battle destiny.");
+        setGameText("Once per turn, if drawn for destiny, you may activate 1 Force. During battle at a site, choose: Your total power is +1 for each of your characters present. OR If you have a weapon present, opponent must use or lose 1 Force to draw their first battle destiny.");
         addIcons(Icon.SPECIAL_EDITION, Icon.VIRTUAL_SET_8);
     }
 

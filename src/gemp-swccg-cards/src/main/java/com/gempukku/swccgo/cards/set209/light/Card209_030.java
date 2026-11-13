@@ -34,7 +34,7 @@ public class Card209_030 extends AbstractCapitalStarship {
     public Card209_030() {
         super(Side.LIGHT, 2, 5, 4, 5, null, 3, 5, Title.Lightmaker, Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
         setLore("Phoenix Squadron.");
-        setGameText("Permanent pilot provides ability of 2. When in battle, adds 1 to attrition against opponent for each of their starships here. Cancels opponent's immunity to attrition here.");
+        setGameText("Permanent pilot provides ability of 2. When in battle, adds 1 to attrition against opponent for each opponent's starship present. Cancels opponent's immunity to attrition here.");
         addIcons(Icon.VIRTUAL_SET_9, Icon.PILOT, Icon.NAV_COMPUTER, Icon.SCOMP_LINK);
         addKeywords(Keyword.PHOENIX_SQUADRON);
         addModelType(ModelType.HAMMERHEAD_CORVETTE);

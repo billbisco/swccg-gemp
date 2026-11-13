@@ -33,7 +33,7 @@ import java.util.List;
 public class Card213_024 extends AbstractUniqueStarshipSite {
     public Card213_024() {
         super(Side.DARK, Title.Control_Station, Persona.EXECUTOR, ExpansionSet.SET_13, Rarity.V);
-        setLocationDarkSideGameText("While your Imperial here, [Dagobah] Executor is deploy - 7 (except to Fondor).");
+        setLocationDarkSideGameText("While your Imperial here, [Dagobah] Executor is deploy -7 (except to Fondor).");
         setLocationLightSideGameText("Force drain -1 here. If you initiate battle here, add one battle destiny.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.DAGOBAH, Icon.INTERIOR_SITE, Icon.STARSHIP_SITE, Icon.MOBILE, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_13);

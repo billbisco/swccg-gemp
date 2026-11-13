@@ -32,7 +32,7 @@ import java.util.List;
 public class Card213_025 extends AbstractUniqueStarshipSite {
     public Card213_025() {
         super(Side.DARK, "First Light: Bar", Persona.FIRST_LIGHT, ExpansionSet.SET_13, Rarity.V);
-        setLocationDarkSideGameText("Once per game, may deploy Margo, Wuher, or a musician here from Reserve Deck; reshuffle.");
+        setLocationDarkSideGameText("Once per game, may [download] Margo, Wuher, or a musician here.");
         setLocationLightSideGameText("Force drain -1 here (if your musician here, Force drain +1 instead).");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 1);

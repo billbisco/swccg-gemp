@@ -38,7 +38,7 @@ public class Card213_014 extends AbstractNormalEffect {
     public Card213_014() {
         super(Side.DARK, 4, PlayCardZoneOption.ATTACHED, "Planetary Rings", Uniqueness.DIAMOND_1, ExpansionSet.SET_13, Rarity.V);
         setLore("'We're gonna get pulverized if we stay out here much longer.'");
-        setGameText("Deploy on a battleground planet system. Adds one [Light Side] icon at your related Big One. If a sector was just drawn for asteroid destiny, cancel and redraw that destiny. Once per turn, may deploy a sector to this system from Reserve Deck; reshuffle. [Immune to Alter.]");
+        setGameText("Deploy on a battleground planet system. Adds one [Light Side] icon at your related Big One. If a sector was just drawn for asteroid destiny, cancel and redraw that destiny. Once per turn, may [download] a sector to this system. [Immune to Alter.]");
         addIcons(Icon.EPISODE_I, Icon.VIRTUAL_SET_13);
         addImmuneToCardTitle(Title.Alter);
     }

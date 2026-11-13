@@ -34,7 +34,7 @@ public class Card208_016 extends AbstractNormalEffect {
     public Card208_016() {
         super(Side.LIGHT, 6, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Yarna_dal_Gargan, Uniqueness.UNIQUE, ExpansionSet.SET_8, Rarity.V);
         setVirtualSuffix(true);
-        setLore("Female dancer from Askajia. Very protective mother. Makes sure that all those she cares about are protected.");
+        setLore("Female dancer from Askajia. Very protective mother. Makes sure that all those she cares about are well protected.");
         setGameText("Deploy on table. While you have fewer than 13 cards in hand, non-unique aliens are immune to Monnok. Opponent may not increase deploy cost of your aliens. Once per turn, may [download] Arleil, Doallyn, Tessek, Wild Karrde, or a Tatooine battleground.");
         addIcons(Icon.JABBAS_PALACE, Icon.VIRTUAL_SET_8);
     }

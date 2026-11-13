@@ -38,7 +38,7 @@ public class Card209_020 extends AbstractUsedOrLostInterrupt {
     public Card209_020() {
         super(Side.LIGHT, 5, Title.Knights_Of_The_Old_Republic, Uniqueness.UNIQUE, ExpansionSet.SET_9, Rarity.V);
         setLore("A Jedi seeks nonviolent solutions to problems, but may fight to preserve the existence of life. An apprentice must learn which battles to fight and which to avoid.");
-        setGameText("USED: If present with a Dark Jedi or [Episode I] Jedi, your Padawan is power +2 for remainder of turn. OR Deploy one [Episode I] lightsaber from Reserve Deck; reshuffle. LOST: Once per game, retrieve a Padawan or [Episode I] lightsaber.");
+        setGameText("USED: If present with a Dark Jedi or [Episode I] Jedi, your Padawan is power +2 for remainder of turn. OR [download] one [Episode I] lightsaber. LOST: Once per game, retrieve a Padawan or [Episode I] lightsaber.");
         addIcons(Icon.EPISODE_I, Icon.VIRTUAL_SET_9);
     }
 

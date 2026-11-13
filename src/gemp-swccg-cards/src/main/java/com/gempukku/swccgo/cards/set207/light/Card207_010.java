@@ -40,7 +40,7 @@ public class Card207_010 extends AbstractJediMaster {
         super(Side.LIGHT, 1, 4, 3, 7, 9, "Yoda", Uniqueness.UNIQUE, ExpansionSet.SET_7, Rarity.V);
         setVirtualSuffix(true);
         setLore("Help you I can, yes. For 800 years have I trained Jedi. Judge me by my size do you? Mm? And well you should not! For my ally is the Force... and a powerful ally it is.");
-        setGameText("May deploy to Dagobah. Prevents attacks at same Dagobah site. Your training destiny draws are +1. If Great Warrior on table, once per turn may take your just-drawn destiny into hand to cancel and redraw that destiny. Immune to attrition.");
+        setGameText("May deploy to Dagobah. Prevents attacks at same Dagobah site. Your training destiny draws are +1. If Great Warrior on table, once per turn may take your just drawn destiny into hand to cancel and redraw that destiny. Immune to attrition.");
         addIcons(Icon.DAGOBAH, Icon.VIRTUAL_SET_7);
         addPersona(Persona.YODA);
     }

@@ -34,7 +34,7 @@ public class Card210_043 extends AbstractNormalEffect {
     public Card210_043() {
         super(Side.DARK, 3, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, "Death Star Reactor Terminal", Uniqueness.UNRESTRICTED, ExpansionSet.SET_10, Rarity.V);
         setLore("The Death Star has many terminals coupled to the main reactor for power distribution throughout the immense space station.");
-        setGameText("Deploy on table. During your turn, may deploy a device (except Restraining Bolt or Tractor Beam) from Lost Pile or Reserve Deck (reshuffle) OR Peek at the top X cards of your Force Pile and take one into hand, where X = number of your devices on table. [Immune to Alter.]");
+        setGameText("Deploy on table. X = number of your devices on table. Once during your turn, may peek at the top X cards of your Force Pile and take one into hand, or [download] (or deploy from Lost Pile) a device (except Restraining Bolt or Tractor Beam). [Immune to Alter.]");
         setVirtualSuffix(true);
         addIcons(Icon.VIRTUAL_SET_10);
         addImmuneToCardTitle(Title.Alter);

@@ -29,7 +29,7 @@ public class Card213_056 extends AbstractSite {
     public Card213_056() {
         super(Side.LIGHT, Title.Death_Star_II_Chasm_Walkway, Title.Death_Star_II, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
         setLocationDarkSideGameText("Your total power here is -1 for each card stacked on I Feel The Conflict.");
-        setLocationLightSideGameText("If alone, Luke is power +2 here.");
+        setLocationLightSideGameText("While Luke alone here, he is power +2.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcon(Icon.LIGHT_FORCE, 2);
         addIcons(Icon.DEATH_STAR_II, Icon.INTERIOR_SITE, Icon.MOBILE, Icon.SCOMP_LINK, Icon.VIRTUAL_SET_13);

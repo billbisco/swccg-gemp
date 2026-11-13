@@ -36,7 +36,7 @@ import java.util.List;
 public class Card215_001 extends AbstractStarfighter {
     public Card215_001() {
         super(Side.LIGHT, 3, 1, 1, null, 3, 3, 3, "Odd Ball's Torrent Starfighter", Uniqueness.UNIQUE, ExpansionSet.SET_15, Rarity.V);
-        setGameText("May add 1 clone pilot. Odd Ball deploys -1 aboard. While Odd Ball piloting, power and hyperspeed +1, and adds one destiny to total power. Immune to attrition < 3 if a clone piloting (< 5 if Odd Ball).");
+        setGameText("May add 1 clone pilot. Odd Ball deploys -1 aboard. While Odd Ball piloting, power and hyperspeed +1, and adds one destiny to total power. Immune to attrition < 3 (< 5 while Odd Ball piloting).");
         addIcons(Icon.EPISODE_I, Icon.REPUBLIC, Icon.NAV_COMPUTER, Icon.VIRTUAL_SET_15, Icon.CLONE_ARMY, Icon.SCOMP_LINK);
         addModelType(ModelType.V_19_TORRENT_STARFIGHTER);
         setPilotCapacity(1);

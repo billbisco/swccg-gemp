@@ -35,7 +35,7 @@ import java.util.List;
 public class Card213_023 extends AbstractSite {
     public Card213_023() {
         super(Side.DARK, Title.Dathomir_Mauls_Chambers, Title.Dathomir, Uniqueness.UNIQUE, ExpansionSet.SET_13, Rarity.V);
-        setLocationDarkSideGameText("May deploy [Set 13] Maul here from Reserve Deck; reshuffle.");
+        setLocationDarkSideGameText("May [download] [Set 13] Maul here.");
         setLocationLightSideGameText("Jar Jar and your spies (except Ezra) may not deploy here. Opponent may not Force drain here.");
         addIcon(Icon.DARK_FORCE, 2);
         addIcons(Icon.INTERIOR_SITE, Icon.PLANET, Icon.SCOMP_LINK);

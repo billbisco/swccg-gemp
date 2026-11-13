@@ -44,8 +44,7 @@ public class Card207_030 extends AbstractImperial {
         setVirtualSuffix(true);
         setAlternateImageSuffix(true);
         setLore("The last remaining Grand Admiral. Found legendary Katana fleet of missing dreadnaughts. Military genius. Master of unorthodox tactics. Passionate collector of art. Leader.");
-        setGameText("[Pilot] 3. if a Rebel just moved from here, your Imperials present may follow that character (using landspeed). " +
-                "While at a battleground site, functions as a general and game text of Admiral's Orders is canceled.");
+        setGameText("[Pilot] 3. If a Rebel just moved from here, your Imperials present may follow that character (using landspeed). While at a battleground site, functions as a general and game text of Admiral's Orders is canceled.");
         addIcons(Icon.REFLECTIONS_II, Icon.PILOT, Icon.WARRIOR, Icon.VIRTUAL_SET_7);
         addPersona(Persona.THRAWN);
         addKeywords(Keyword.ADMIRAL, Keyword.LEADER);
