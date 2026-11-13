@@ -72375,7 +72375,7 @@
       "ALIEN"
     ],
     "lore": "Delphidian pirate. Leader.",
-    "gameText": "[Pilot] 2, 3: Meson Martinet. Once per turn, may place opponent's character just lost from here out of play, unless opponent loses 1 Force (2 if your Rep is a pirate or you did not deploy an Objective).",
+    "gameText": "[Pilot] 2, 3: Meson Martinet. Once per turn, may place opponent's character just lost from here out of play unless opponent loses 1 Force (2 if your Rep is a pirate or you did not deploy an Objective).",
     "deployCost": 3.0,
     "destiny": 4.0,
     "credits": 0,
@@ -72477,7 +72477,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'I think I got it.'",
-    "gameText": "Deploy on a location. Your Force generation is +1 here. Unless opponent occupies a battleground site, Corellian Engineering Corporation is suspended. Once per game, may restore a just 'hit' starship to normal. (Immune to Alter.)",
+    "gameText": "Deploy on a location. Your Force generation is +1 here. Once per game, you may restore a just 'hit' starship to normal. Unless opponent occupies a battleground site, Corellian Engineering Corporation is suspended. [Immune to Alter.]",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -72558,7 +72558,7 @@
       "STARSHIP"
     ],
     "cardSubtype": "STARFIGHTER",
-    "gameText": "May add 2 pilots and 3 passengers. During battle, your total battle destiny is +1 for each pirate aboard. While Quiggold or Sidon piloting, immune to attrition < 5.",
+    "gameText": "May add 2 pilots and 3 passengers. Your total battle destiny here is +1 for each pirate aboard. While Quiggold or Sidon piloting, immune to attrition < 5.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
@@ -72678,7 +72678,7 @@
       "IMPERIAL"
     ],
     "lore": "The last remaining Grand Admiral. Found legendary Katana fleet of missing dreadnaughts. Military genius. Master of unorthodox tactics. Passionate collector of art. Leader.",
-    "gameText": "[Pilot] 3. if a Rebel just moved from here, your Imperials present may follow that character (using landspeed). While at a battleground site, functions as a general and game text of Admiral's Orders is canceled.",
+    "gameText": "[Pilot] 3. If a Rebel just moved from here, your Imperials present may follow that character (using landspeed). While at a battleground site, functions as a general and game text of Admiral's Orders is canceled.",
     "deployCost": 4.0,
     "destiny": 1.0,
     "credits": 0,
@@ -72852,7 +72852,7 @@
     "cardTypes": [
       "IMPERIAL"
     ],
-    "lore": "Fiercely devoted Royal Guard. Feels deeply indebted to those who risk their life for him. Unaware of the extent of Palpatine's atrocities and cruelty.",
+    "lore": "Fiercely devoted Royal Guard. Feels deeply indebted to those that risk their life for him. Unaware of the extent of Palpatine's atrocities and cruelty.",
     "gameText": "When deployed, may [upload] a Royal Guard. During battle, if with an Imperial and present at a site, once per game may cancel a non-[Immune to Sense] Interrupt.",
     "deployCost": 3.0,
     "destiny": 3.0,
@@ -73173,7 +73173,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "lore": "For important Imperial dignitaries, an individual Star Destroyer is placed at their disposal.",
+    "lore": "For important Imperial dignitaries, an individual Star Destroyer is placed at their personal disposal.",
     "gameText": "Deploy on table. During your deploy phase, you may reveal one Star Destroyer from hand to [upload] its matching pilot character (or vice versa) and deploy both simultaneously (for -1 Force each). [Immune to Alter]",
     "destiny": 4.0,
     "credits": 0,
@@ -73214,7 +73214,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The Trade Federation utilizes such efficient methods of droid deployment that it is rumored even they do not know exactly how many battle droids are in circulation",
-    "gameText": "Use 4 Force to deploy on table. While present with a Jedi, destroyer droids are defense value +2. If your destroyer droid was just lost, may stack it here. During your control phase, may use 2 Force to place any destroyer droid from here in Used Pile. [Immune to Alter]",
+    "gameText": "Use 4 Force to deploy on table. While present with a Jedi, destroyer droids are defense value +2. If your destroyer droid was just lost, may stack it here. During your control phase, may use 2 Force to place any destroyer droid here in Used Pile. [Immune to Alter]",
     "destiny": 1.0,
     "credits": 0,
     "icons": [
@@ -73998,7 +73998,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "Your characters here and at Watto's Junkyard are immune to opponent's Sandwhirl.",
-    "locationLightSideGameText": "For remainder of game, sites may not deploy between this site and Watto's Junkyard.",
+    "locationLightSideGameText": "For remainder of game, may not be separated from Watto's Junkyard.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -74500,7 +74500,7 @@
       "IMPERIAL"
     ],
     "lore": "Worked hard for a transfer to the Executor. One of the many noncommissioned personnel promoted to replace the vast number of officers lost during the Death Star disaster.",
-    "gameText": "Deploys -1 to Executor. While aboard a capital starship, adds 1 to armor and its defense value may not be reduced. While Fear Will Keep Them In Line here, when you win a battle at a related site where you have an Imperial, opponent loses 2 Force.",
+    "gameText": "Deploys -1 to Executor. While aboard a capital starship, adds 1 to armor and its defense value may not be reduced. If Fear Will Keep Them In Line here and your Imperial just won a battle at a related site, opponent loses 2 Force.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -74651,7 +74651,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "gameText": "Deploy on table. Once per game, may [upload] a [Set 9] Epic Event. During your deploy phase, if Krennic on Death Star, may flip Set Your Course For Alderaan (flip back at end of turn). (Immune to Alter.)",
+    "gameText": "Deploy on table. Once per game, may [upload] a [Set 9] Epic Event. During your deploy phase, if Krennic on Death Star, may flip Set Your Course For Alderaan (flip back at end of turn). [Immune to Alter.]",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -74686,7 +74686,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Ruthless and well-equipped for both air and ground assault, Vader's feared Death Squadron came to the icy Rebel Base with total domination in mind.",
-    "gameText": "Deploy on table. AT-AT Cannons deploy -1, fire for free, and add 1 to armor. During your control phase, may take a non-[Jabba's Palace] vehicle weapon (without 'lost' in game text), [Hoth] device, or [Hoth] Epic Event into hand from Reserve Deck; reshuffle. (Immune to Alter.)",
+    "gameText": "Deploy on table. AT-AT Cannons deploy -1, fire for free, and add 1 to armor. During your control phase, may [upload] a non-[Jabba's Palace] vehicle weapon (without 'lost' in game text), [Hoth] device, or [Hoth] Epic Event. [Immune to Alter.]",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -74757,7 +74757,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'At last we will reveal ourselves to the Jedi.'",
-    "gameText": "Deploy on table. Once per turn, may [download] Maul's Lightsaber. At start of opponent's control phase, may relocate Maul to same site as a Jedi. May place this Effect out of play to deploy Maul's Lightsaber from Lost Pile. Immune to Alter.",
+    "gameText": "Deploy on table. Once per turn, may [download] Maul's Lightsaber. At start of opponent's control phase, may relocate Maul to same site as a Jedi. May place this Effect out of play to deploy Maul's Lightsaber from Lost Pile. [Immune to Alter.]",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -75050,7 +75050,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Once per game, may exchange an alien in hand with a non-spy Black Sun Agent in Lost Pile.",
+    "locationDarkSideGameText": "Once per game, may exchange an alien in hand with a non-spy Black Sun agent in Lost Pile.",
     "locationLightSideGameText": "Once per game, if you control, may retrieve a Corellian.",
     "destiny": 0.0,
     "credits": 0,
@@ -75162,7 +75162,7 @@
     ],
     "cardSubtype": "STARFIGHTER",
     "lore": "TIE/ln fighter of pilot DS-61-3. Stylized image of Corellian slice-hound painted on inner hatch.",
-    "gameText": "May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and during battle here, players draw destiny from the bottom of their Reserve Deck.",
+    "gameText": "May add 1 pilot. While with a Black Squadron TIE, Force drain +1 here. While DS-61-3 piloting, immune to attrition < 4 and, during battle, players draw destiny from the bottom of their Reserve Deck.",
     "deployCost": 1.0,
     "destiny": 3.0,
     "credits": 0,
@@ -75212,7 +75212,7 @@
       "IMPERIAL"
     ],
     "lore": "Technical Services Officer of the Fleet Support Branch. Responsible for keeping Executor's 12 TIE squadrons serviced and combat ready. Just received transfer to Judicator.",
-    "gameText": "Adds 2 to power of anything he pilots (3 if Judicator). Your total battle destiny here is +1 for each TIE subtype here or aboard same starship. During your turn, may /\\ one launch bay or non-unique TIE.",
+    "gameText": "[Pilot] 2, 3: Judicator. Your total battle destiny here is +1 for each TIE subtype here or aboard same starship. During your turn, may [upload] one launch bay or non-unique TIE.",
     "deployCost": 2.0,
     "destiny": 2.0,
     "credits": 0,
@@ -75575,7 +75575,7 @@
     "cardTypes": [
       "REPUBLIC"
     ],
-    "lore": "Commanding Viceroy of the Trade Federation forces assigned to the blockade of Naboo. Takes for his own actions. Neimoidian leader.",
+    "lore": "Commanding Viceroy of the Trade Federation forces assigned to the blockade of Naboo. Takes responsibility for his own actions. Neimoidian leader.",
     "gameText": "During battle, may cancel game text of a Republic character with ability < 4 present. If with your Republic character (or character with 'Trade Federation' in lore), may add one battle destiny. Immune to attrition < 3.",
     "deployCost": 3.0,
     "destiny": 3.0,
@@ -75633,7 +75633,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "Greedo cheskopokuta klees ruya Solo. Hoko yanee boopa gush Cantina. Cheeco wa Solo's anye nyuma Greedo vakee. Jabba kul steeka et en anpaw.",
-    "gameText": "USED: Cancel Nabrun Leids. [Immune to Sense.] OR Use 1 Force to take a Rodian (or a non-unique alien of your Rep's species) into hand from Reserve Deck; reshuffle. LOST: During your move phase, \"break cover\" of an Undercover spy.",
+    "gameText": "USED: Cancel Nabrun Leids. [Immune to Sense.] OR Use 1 Force to [upload] a Rodian (or a non-unique alien of your Rep's species). LOST: During your move phase, \"break cover\" of an Undercover spy.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -75669,7 +75669,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "The Death Star has many terminals coupled to the main reactor for power distribution throughout the immense space station.",
-    "gameText": "Deploy on table. During your turn, may deploy a device (except Restraining Bolt or Tractor Beam) from Lost Pile or Reserve Deck (reshuffle) OR Peek at the top X cards of your Force Pile and take one into hand, where X = number of your devices on table. [Immune to Alter.]",
+    "gameText": "Deploy on table. X = number of your devices on table. Once during your turn, may peek at the top X cards of your Force Pile and take one into hand, or [download] (or deploy from Lost Pile) a device (except Restraining Bolt or Tractor Beam). [Immune to Alter.]",
     "destiny": 3.0,
     "credits": 0,
     "icons": [
@@ -75744,7 +75744,7 @@
       "IMPERIAL"
     ],
     "lore": "Leader.",
-    "gameText": "Adds 2 to power of anything he pilots. If a Jedi or Padawan just lost from same site as any Inquisitor, opponent loses 1 Force. If a Jedi or Padawan just moved from here, Inquisitors present may follow that character (using landspeed). Immune to attrition < 4.",
+    "gameText": "[Pilot] 2. If a Jedi or Padawan just lost from same site as any Inquisitor, opponent loses 1 Force. If a Jedi or Padawan just moved from here, Inquisitors present may follow that character (using landspeed). Immune to attrition < 4.",
     "deployCost": 5.0,
     "destiny": 1.0,
     "credits": 0,
@@ -77508,7 +77508,7 @@
       "REPUBLIC"
     ],
     "lore": "Harch Commander. Leader. Trade Federation.",
-    "gameText": "Adds 2 to power of anything he pilots. Unless alone, may place Trench in Used Pile to make an [Episode I] starship here immune to attrition for remainder of turn. While at opponent's system, their starships deploy +1 here.",
+    "gameText": "[Pilot] 2. Unless alone, may place Trench in Used Pile to make an [Episode I] starship here immune to attrition for remainder of turn. While at opponent's system, their starships deploy +1 here.",
     "deployCost": 3.0,
     "destiny": 2.0,
     "credits": 0,
@@ -77625,7 +77625,7 @@
       "IMPERIAL"
     ],
     "lore": "Leader of the Emperor's Death Squadron assigned to hunt down and crush the Rebellion. As clumsy as he is stupid. Has just failed Darth Vader for the next-to-last time.",
-    "gameText": "Adds 2 to power of anything he pilots. Matching pilot for any Death Squadron Star Destroyer and, while piloting one, instead of Force draining here, may draw top card of Reserve Deck or raise your same or related converted location to the top.",
+    "gameText": "[Pilot] 2. Matching pilot for any Death Squadron Star Destroyer and, while piloting one, instead of Force draining here, may draw top card of Reserve Deck or raise your same or related converted location to the top.",
     "deployCost": 2.0,
     "destiny": 0.0,
     "credits": 0,
@@ -77734,7 +77734,7 @@
       "IMPERIAL"
     ],
     "lore": "Female Dowutin. Inquisitor.",
-    "gameText": "Defense value -2 while opponent has a weapon present. Unless opponent's character of ability > 3 at same site, reset opponent's total battle destiny here to 0.",
+    "gameText": "Defense value -2 while opponent has a weapon present. While at a site, unless opponent's character of ability > 3 here, reset opponent's total battle destiny here to 0.",
     "deployCost": 4.0,
     "destiny": 2.0,
     "credits": 0,
@@ -77880,7 +77880,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'We're gonna get pulverized if we stay out here much longer.'",
-    "gameText": "Deploy on a battleground planet system. Adds one [Light Side] icon at your related Big One. If a sector was just drawn for asteroid destiny, cancel and redraw that destiny. Once per turn, may deploy a sector to this system from Reserve Deck; reshuffle. [Immune to Alter.]",
+    "gameText": "Deploy on a battleground planet system. Adds one [Light Side] icon at your related Big One. If a sector was just drawn for asteroid destiny, cancel and redraw that destiny. Once per turn, may [download] a sector to this system. [Immune to Alter.]",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -78066,7 +78066,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "",
-    "gameText": "USED: Take First Light or Vos into hand from Reserve Deck; reshuffle. OR Place a character from hand on Used Pile to activate 1 Force (2 if Vos on table). LOST: Once per game, exchange two cards in hand with any one card in Lost Pile. [Immune to Sense.]",
+    "gameText": "USED: [upload] First Light or Vos. OR Place a character from hand in Used Pile to activate 1 Force (2 if Vos on table). LOST: Once per game, exchange two cards in hand with any one card in Lost Pile. [Immune to Sense.]",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -78155,7 +78155,7 @@
     ],
     "cardSubtype": "USED_OR_LOST",
     "lore": "",
-    "gameText": "USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquisitor from hand to take up to two Inquisitors into hand from Reserve Deck; reshuffle.",
+    "gameText": "USED: If opponent's character is about to be lost, place all 'Hatred' cards (if any) on that character in owner's Used Pile. LOST: Lose Vader or an Inquisitor from hand to [upload] up to two Inquisitors.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -78190,7 +78190,7 @@
     ],
     "cardSubtype": "USED",
     "lore": "",
-    "gameText": "Take Krennic or a non-spy captain into hand from Reserve Deck; reshuffle. OR Peek at the bottom card of any deck or pile. OR During the power segment of a battle, if your captain in battle with your leader, cancel one destiny just drawn (except a battle destiny).",
+    "gameText": "[upload] Krennic or a non-spy captain. OR Peek at the bottom card of any deck or pile. OR During the power segment of a battle, if your captain in battle with your leader, cancel one destiny just drawn (except a battle destiny).",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -78267,7 +78267,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "May deploy [Set 13] Maul here from Reserve Deck; reshuffle.",
+    "locationDarkSideGameText": "May [download] [Set 13] Maul here.",
     "locationLightSideGameText": "Jar Jar and your spies (except Ezra) may not deploy here. Opponent may not Force drain here.",
     "destiny": 0.0,
     "credits": 0,
@@ -78310,7 +78310,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "While your Imperial here, [Dagobah] Executor is deploy - 7 (except to Fondor).",
+    "locationDarkSideGameText": "While your Imperial here, [Dagobah] Executor is deploy -7 (except to Fondor).",
     "locationLightSideGameText": "Force drain -1 here. If you initiate battle here, add one battle destiny.",
     "destiny": 0.0,
     "credits": 0,
@@ -78366,7 +78366,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Once per game, may deploy Margo, Wuher, or a musician here from Reserve Deck; reshuffle.",
+    "locationDarkSideGameText": "Once per game, may [download] Margo, Wuher, or a musician here.",
     "locationLightSideGameText": "Force drain -1 here (if your musician here, Force drain +1 instead).",
     "destiny": 0.0,
     "credits": 0,
@@ -78421,7 +78421,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Once during your move phase, your Crimson Dawn leader may move between here and any site.",
+    "locationDarkSideGameText": "During your move phase, your Crimson Dawn leader may move between here and a site.",
     "locationLightSideGameText": "Add 1 to your blaster weapon destiny draws here. Unless Vos on table, Force drain -1 here.",
     "destiny": 0.0,
     "credits": 0,
@@ -78579,7 +78579,7 @@
     ],
     "cardSubtype": "SITE",
     "locationDarkSideGameText": "You initiate battles here for free. Unless you occupy, Inquisitors deploy -1 here.",
-    "locationLightSideGameText": "Once per game, you may deploy a Padawan (except Anakin) here from Reserve Deck; reshuffle.",
+    "locationLightSideGameText": "Once per game, you may [download] a Padawan (except Anakin) here.",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -78779,7 +78779,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "While this side up, you lose no Force from Visage Of The Emperor. While Vader armed with a lightsaber, opponent's Force drain bonuses are canceled.\nFlip this card if Luke, a Jedi, or a Padawan at a battleground site (once per game, may take Vader and your cards on him into hand from a site you control) OR If Vader not on table.",
+    "gameText": "While this side up, you lose no Force from Visage Of The Emperor. While Vader armed with a lightsaber, opponent's Force drain bonuses are canceled.\nFlip this card if Vader not on table or if Luke, a Jedi, or a Padawan at a battleground site; once per game, may take Vader and your cards on him into hand from a site you control.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -78816,7 +78816,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "Deploy Maul's Chambers. If Massassi Throne Room on table, may deploy [Set 13] Maul to Maul's Chambers. For remainder of game, you may not deploy cards with ability (or [Episode I] droids) except characters with 'Black Sun,' 'Crimson Dawn,' or 'Hutt' in lore, assassins, gangsters, [Episode I] bounty hunters, and [Independent] starships. Once per turn, may deploy a non-unique blaster (or a card with 'First Light' in title) from Reserve Deck; reshuffle. Flip this card if you just 'hit' a character (or during your battle phase if your gangsters control two battlegrounds).",
+    "gameText": "Deploy Maul's Chambers. If Massassi Throne Room on table, may [download] [Set 13] Maul to Maul's Chambers. For remainder of game, you may not deploy cards with ability (or [Episode I] droids) except characters with 'Black Sun,' 'Crimson Dawn,' or 'Hutt' in lore, assassins, gangsters, [Episode I] bounty hunters, and [Independent] starships. Once per turn, may [download] a non-unique blaster (or a card with 'First Light' in title). Flip this card if you just 'hit' a character (or during your battle phase if your gangsters control two battlegrounds).",
     "destiny": 0.0,
     "credits": 0,
     "icons": [
@@ -78849,7 +78849,7 @@
     "cardTypes": [
       "OBJECTIVE"
     ],
-    "gameText": "May immediately re-circulate and shuffle your Reserve Deck. While this side up, if your gangster leader in battle at same site as your non-unique blaster, may add one destiny to total power. If Maul alone, during your draw phase may peek at the cards in your Force Pile. Flip this card at end of turn. If you are about to flip this card and you occupy three battlegrounds, opponent loses 1 Force.",
+    "gameText": "May immediately re-circulate and shuffle your Reserve Deck. While this side up, if your gangster leader in battle at same site as your non-unique blaster, may add one destiny to total power. During your draw phase, if Maul alone, may peek at the cards in your Force Pile. Flip this card at end of turn. If you are about to flip this card and you occupy three battlegrounds, opponent loses 1 Force.",
     "destiny": 7.0,
     "credits": 0,
     "icons": [
@@ -79020,7 +79020,7 @@
       "IMPERIAL"
     ],
     "lore": "Terrelian Jango Jumper. Inquisitor",
-    "gameText": "Adds 2 to power of anything he pilots. May deploy or move as a 'react' to same site as a 'Hatred' card. During your move phase, unless alone, may return one of your Inquisitors here (and all cards on them) to owner's hand.",
+    "gameText": "[Pilot] 2. May deploy or move as a 'react' to same site as a 'Hatred' card. During your move phase, unless alone, may return one of your Inquisitors here (and all cards on them) to owner's hand.",
     "deployCost": 4.0,
     "destiny": 3.0,
     "credits": 0,
@@ -79275,7 +79275,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "USED_OR_LOST",
-    "gameText": "USED: Cancel Sense. LOST: Target an Effect, Political Effect or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost (you lose no Force to Do, Or Do Not). (Immune to opponent's Objective).",
+    "gameText": "This Interrupt is immune to opponent's Objective and does not cause you to lose Force to Do, Or Do Not. USED: Cancel Sense. LOST: Target an Effect, Political Effect, or Utinni Effect, and one of your characters on table. Draw destiny. If destiny < character's ability, target Effect is canceled. OR If a battle was just initiated at a site where opponent has four or more characters, draw destiny. If destiny < number of opponent's characters at that site, opponent chooses one to be lost.",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -79355,7 +79355,7 @@
       "EFFECT"
     ],
     "cardSubtype": "NORMAL",
-    "gameText": "If I Will Finish What You Started on table, deploy on table. While [Episode VII] Emperor on Exegol, attrition against opponent is +2 at same location as Kylo, Rey, or Snoke and, once per game, may [download] an [Episode VII] battleground system. (Immune to Alter.)",
+    "gameText": "If I Will Finish What You Started on table, deploy on table. While [Episode VII] Emperor on Exegol, attrition against opponent is +2 at same location as Kylo, Rey, or Snoke and, once per game, may [download] an [Episode VII] battleground system. [Immune to Alter.]",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -79533,7 +79533,7 @@
       "LOCATION"
     ],
     "cardSubtype": "SITE",
-    "locationDarkSideGameText": "Once per game, may deploy [Episode VII] Emperor here from Reserve Deck; reshuffle.",
+    "locationDarkSideGameText": "Once per game, may [download] [Episode VII] Emperor here.",
     "locationLightSideGameText": "No Force drains here. [Light Side] icons are canceled here. Your characters deploy +2 here.",
     "destiny": 0.0,
     "credits": 0,
@@ -79811,7 +79811,7 @@
     ],
     "cardSubtype": "CAPITAL",
     "lore": "",
-    "gameText": "May add 6 pilots, 8 passengers, and 2 starfighters. Permanent pilot provides ability of 2. While alone at an [EPVII] system, adds Force icons to equalize them for both sides here. Immune to attrition < 4.",
+    "gameText": "May add 6 pilots, 8 passengers, and 2 starfighters. Permanent pilot provides ability of 2. While alone at an [Episode VII] system, adds Force icons to equalize them for both sides here. Immune to attrition < 4.",
     "deployCost": 7.0,
     "destiny": 1.0,
     "credits": 0,
