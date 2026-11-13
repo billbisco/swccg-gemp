@@ -75657,7 +75657,7 @@
       "RESISTANCE"
     ],
     "lore": "Leader.",
-    "gameText": "At same location, Resistance characters and [Resistance] starships are each defence value and forfeit +1. While at an [Episode VII] location with a Resistance leader, adds one battle destiny.",
+    "gameText": "At same location, Resistance characters and [Resistance] starships are each defense value and forfeit +1. While at an [Episode VII] location with a Resistance leader, adds one battle destiny.",
     "deployCost": 3.0,
     "destiny": 3.0,
     "credits": 0,
