@@ -304395,7 +304395,7 @@
       "REBEL"
     ],
     "lore": "Engineer who worked with Jan Dodonna to design the A-wing starfighter. Given honorary rank due to his service to the Rebellion.",
-    "gameText": "Deploys -2 aboard your Star Cruiser or to same location as your Admiral. Adds 1 to the power of anything he pilots. Adds 1 to the power and forfeit of each of your A-wings at same and related locations.",
+    "gameText": "Deploys -2 aboard your Star Cruiser or to same location as your Admiral. Adds 1 to power of anything he pilots. Adds 1 to power and forfeit of each of your A-wings at same and related locations.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,
