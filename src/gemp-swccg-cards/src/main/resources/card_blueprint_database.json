@@ -237895,7 +237895,7 @@
       "INTERRUPT"
     ],
     "cardSubtype": "LOST",
-    "lore": "'It's not wise to upset a Wookiee.' 'But sir, nobody worries about upsetting a droid.' 'That's cause a droid don't pull people's arms out of their sockets when they lose.'",
+    "lore": "'It's not wise to upset a Wookiee.' 'But sir, nobody worries about upsetting a droid.' 'That's 'cause a droid don't pull people's arms out of their sockets when they lose.'",
     "gameText": "During a battle at a holosite, add one battle destiny. OR Target an opponent's character of ability < 5 present with your Wookiee that just participated in a battle you lost; character is Disarmed (power -1 and may no longer carry weapons). Stack on that character.",
     "destiny": 5.0,
     "credits": 0,
