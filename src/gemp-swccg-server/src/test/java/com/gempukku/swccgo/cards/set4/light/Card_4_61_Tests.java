@@ -55,6 +55,27 @@ public class Card_4_61_Tests {
         return scn.LSGetDecision() != null && scn.LSCardActionAvailable(crazy, "Add 2");
     }
 
+    private void PassUntilAddTwoAvailable(VirtualTableScenario scn, PhysicalCardImpl crazy) {
+        for (int i = 0; i < 20; i++) {
+            if (AddTwoAvailable(scn, crazy)) {
+                return;
+            }
+            if (scn.DSGetDecision() != null
+                    && scn.DSGetDecision().getText() != null
+                    && scn.DSGetDecision().getText().toLowerCase().contains("optional response")) {
+                scn.DSPass();
+                continue;
+            }
+            if (scn.LSGetDecision() != null
+                    && scn.LSGetDecision().getText() != null
+                    && scn.LSGetDecision().getText().toLowerCase().contains("optional response")) {
+                scn.LSPass();
+                continue;
+            }
+            return;
+        }
+    }
+
     private void DSPassResponse(VirtualTableScenario scn, String trigger) {
         assertTrue(scn.LSGetDecision() == null);
         assertTrue(scn.DSDecisionAvailable(trigger + " - Optional responses"));
