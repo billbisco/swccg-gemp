@@ -95,9 +95,7 @@ public class Card_4_61_Tests {
     }
 
     private void PassDestinyDrawUntilAddTwoAvailable(VirtualTableScenario scn) {
-        PassBothResponses(scn, "COST_TO_DRAW_DESTINY_CARD");
-        PassBothResponses(scn, "ABOUT_TO_DRAW_DESTINY_CARD");
-        DSPassResponse(scn, "DESTINY_DRAWN");
+        PassUntilAddTwoAvailable(scn, scn.GetLSCard("crazy"));
     }
 
     private void PlayTheydBeCrazyOnTieDuringDsControl(VirtualTableScenario scn) {
