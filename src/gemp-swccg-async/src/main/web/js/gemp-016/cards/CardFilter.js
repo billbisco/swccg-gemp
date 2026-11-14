@@ -653,14 +653,14 @@ var CardFilter = Class.extend({
         // Shared-search pilot449: public read-only lookup, preserving builder context.
         if (typeof window !== 'undefined' && /\/deckBuild\.html$/.test(window.location.pathname)) {
             var sharedPilotWindow = null;
-            var sharedPilotButton = $("<button type='button' id='sharedSearchPilot449'>Symbols, uniqueness &amp; decklists (pilot)</button>");
-            sharedPilotButton.click(function () {
+            var sharedPilotLink = $("<a href='searchPilot.html' id='sharedSearchPilot449' style='color:#8fc8ff'>Symbols, uniqueness &amp; decklists (pilot)</a>");
+            sharedPilotLink.click(function (event) {
+                event.preventDefault();
                 var sharedPilotUrl = new URL('searchPilot.html', window.location.href);
                 var existingTitle = $('#nameInput').val();
                 if (existingTitle) sharedPilotUrl.searchParams.set('sp_text', existingTitle);
                 sharedPilotWindow = window.open(sharedPilotUrl.href, 'swccgSharedSearchPilot449');
             });
-            filterTable.append($('<tr><td colspan="4"></td></tr>').find('td').append(sharedPilotButton).end());
             window.addEventListener('message', function (event) {
                 if (event.origin !== window.location.origin || event.source !== sharedPilotWindow || !sharedPilotWindow) return;
                 if (!event.data || event.data.type !== 'swccg-search-pilot-title' || typeof event.data.title !== 'string') return;
@@ -694,6 +694,7 @@ var CardFilter = Class.extend({
                             + '</td><td>' + this.landspeedLabel[0].outerHTML + '</td><td>' + this.landspeedCompareSelect[0].outerHTML + this.landspeedValueInput[0].outerHTML + '</td></tr>');
         filterTable.append('<tr><td colspan="4"><div class="buttonHolder">' + this.resetAdvancedFiltersButton[0].outerHTML + this.resetAllFiltersButton[0].outerHTML + '</div></td></tr>');
 
+        if (typeof sharedPilotLink !== 'undefined') filterTable.find('.cardFilterText').append(' · ', sharedPilotLink);
         this.fullFilterDiv.append(filterTable);
         elem.append(this.fullFilterDiv);
 
