@@ -20,7 +20,7 @@ import static org.junit.Assert.assertSame;
  */
 public class Card_1_045_TextStates_Tests {
     private static final String PRINTED_TEXT = "Deploy on your side of table. You may place lost vehicles, droids, weapons and devices here instead of Lost Pile. Once each turn, during your deploy phase, you may exchange any one hand card with one card from your 'memorial'.";
-    private static final String CURRENT_TEXT = "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here.";
+    private static final String CURRENT_TEXT = "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here. Any cards stacked here are considered 'supporting.'";
 
     private static VirtualTableScenario GetScenario(String id) {
         return new VirtualTableScenario(

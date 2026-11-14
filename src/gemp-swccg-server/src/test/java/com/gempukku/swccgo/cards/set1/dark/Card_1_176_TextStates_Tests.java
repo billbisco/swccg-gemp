@@ -20,7 +20,7 @@ import static org.junit.Assert.assertSame;
  */
 public class Card_1_176_TextStates_Tests {
     private static final String PRINTED_TEXT = "To initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Light Side Force] icons and [Dark Side Force] icons present. If a droid is present, Trevagg's 'game text' is unusable.";
-    private static final String CURRENT_TEXT = "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present.";
+    private static final String CURRENT_TEXT = "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present with him.";
 
     private static VirtualTableScenario GetScenario(String id) {
         return new VirtualTableScenario(
