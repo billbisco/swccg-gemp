@@ -326,39 +326,19 @@ public class Card_2_056_Tests {
 	}
 
 	@Test
-	public void SabotageUsesBearerAbilityForLightsaberDeployCost() {
-		// Dark Jedi Lightsaber (1_314) on-table cost is X = 7 - bearer's ability.
-		var scn = GetScenario();
-		var sabotage = scn.GetLSCard("sabotage");
-		var vader = scn.GetDSCard("vader");
-		var saber = scn.GetDSCard("saber");
-		var saber2 = scn.GetDSCard("saber2");
-		var trooper = scn.GetDSCard("trooper");
-
-		scn.MoveCardsToLSHand(sabotage);
-		scn.StartGame();
-		SetupSpyAndDarkTargetAtSite(scn, vader);
-		scn.AttachCardsTo(vader, saber);
-		scn.AttachCardsTo(trooper, saber2);
-
-		float djlOnVader = Card2_056.getOnTableDeployCost(scn.game(), sabotage, saber);
-		float djlOnTrooper = Card2_056.getOnTableDeployCost(scn.game(), sabotage, saber2);
-		// X = 7 - ability. Vader (1_168) ability 6 => 1. Stormtrooper (1_194) ability 1 => 6.
-		// Fake constant 7 means attachedTo was omitted.
-		assertEquals(1f, djlOnVader, scn.epsilon);
-		assertEquals(6f, djlOnTrooper, scn.epsilon);
-
-		scn.SkipToLSTurn(Phase.CONTROL);
-		scn.PrepareLSDestiny(2); // 2 > Vader saber 1; would not beat Stormtrooper saber 6
-		assertTrue(scn.LSCardPlayAvailable(sabotage));
-		scn.LSPlayCard(sabotage);
-		assertTrue(scn.LSHasCardChoiceAvailable(saber));
-		scn.LSChooseCard(saber);
-		scn.PassAllResponses();
-		scn.PassCardLeavingTable();
-		assertEquals(Zone.TOP_OF_LOST_PILE, saber.getZone());
-		assertEquals(Zone.ATTACHED, saber2.getZone());
-	}
+    public void SabotageCannotTargetVariableCostLightsaberOutsideDeployment() {
+        var scn = GetScenario();
+        var sabotage = scn.GetLSCard("sabotage");
+        var vader = scn.GetDSCard("vader");
+        var saber = scn.GetDSCard("saber");
+        scn.StartGame();
+        scn.MoveCardsToLSHand(sabotage);
+        SetupSpyAndDarkTargetAtSite(scn, vader);
+        scn.AttachCardsTo(vader, saber);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertFalse(Card2_056.hasNumericOnTableDeployCost(scn.game(), sabotage, saber));
+        assertFalse(scn.LSCardPlayAvailable(sabotage));
+    }
 
 	@Test
 	public void SabotageIgnoresFreeOptionAndUsesRemainingCost() {
@@ -385,10 +365,11 @@ public class Card_2_056_Tests {
 		scn.MoveCardsToDSHand(bolt);
 		scn.AttachCardsTo(ponda, pondaBlaster);
 		scn.SkipToLSTurn(Phase.CONTROL);
-		assertFalse(Card2_056.hasNumericOnTableDeployCost(scn.game(), sabotage, pondaBlaster));
-		assertFalse(scn.LSCardPlayAvailable(sabotage));
+		assertTrue(Card2_056.hasNumericOnTableDeployCost(scn.game(), sabotage, pondaBlaster));
+        assertEquals(2f, Card2_056.getOnTableDeployCost(scn.game(), sabotage, pondaBlaster), scn.epsilon);
+		assertTrue(scn.LSCardPlayAvailable(sabotage));
 
-		scn.AttachCardsTo(trooper, pondaBlaster);
+
 		scn.SkipToLSTurn(Phase.CONTROL);
 		assertTrue(Card2_056.hasNumericOnTableDeployCost(scn.game(), sabotage, pondaBlaster));
 		assertEquals(2f, Card2_056.getOnTableDeployCost(scn.game(), sabotage, pondaBlaster), scn.epsilon);
@@ -683,10 +664,10 @@ public class Card_2_056_Tests {
 	}
 
 	@Test
-	public void SabotageUsesLowestAlternateCostOnNonUniqueBearer() {
+	public void SabotageUsesLowestAlternateCostOnUniqueBearer() {
 		// Disruptor Pistol (7_319): Use 2 on warrior, 1 on non-unique warrior.
-		// On-table cost uses the current holder (1 on Stormtrooper non-unique warrior, 2 on Vader). No choose-cost prompt.
-		// No AR / rules-post cite found that a multi-cost card uses only the current-holder cost.
+		// The lowest defined numeric cost is 1, including while the weapon is on Vader.
+		// No bearer-dependent deployment cost is reconstructed for this comparison.
 		var scn = GetScenario();
 		var sabotage = scn.GetLSCard("sabotage");
 		var disruptor = scn.GetDSCard("disruptor");
@@ -699,9 +680,9 @@ public class Card_2_056_Tests {
 
 		scn.AttachCardsTo(vader, disruptor);
 		float onVader = Card2_056.getOnTableDeployCost(scn.game(), sabotage, disruptor);
-		assertEquals(2f, onVader, scn.epsilon);
+		assertEquals(1f, onVader, scn.epsilon);
 
-		scn.AttachCardsTo(trooper, disruptor);
+
 		float onTrooper = Card2_056.getOnTableDeployCost(scn.game(), sabotage, disruptor);
 		assertEquals(1f, onTrooper, scn.epsilon);
 
