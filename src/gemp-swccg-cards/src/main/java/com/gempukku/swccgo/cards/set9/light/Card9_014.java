@@ -31,7 +31,7 @@ public class Card9_014 extends AbstractRebel {
     public Card9_014() {
         super(Side.LIGHT, 3, 2, 1, 2, 3, "General Walex Blissex", Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.U);
         setLore("Engineer who worked with Jan Dodonna to design the A-wing starfighter. Given honorary rank due to his service to the Rebellion.");
-        setGameText("Deploys -2 aboard your Star Cruiser or to same location as your Admiral. Adds 1 to the power of anything he pilots. Adds 1 to the power and forfeit of each of your A-wings at same and related locations.");
+        setGameText("Deploys -2 aboard your Star Cruiser or to same location as your Admiral. Adds 1 to power of anything he pilots. Adds 1 to power and forfeit of each of your A-wings at same and related locations.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT);
         addKeywords(Keyword.GENERAL);
     }
