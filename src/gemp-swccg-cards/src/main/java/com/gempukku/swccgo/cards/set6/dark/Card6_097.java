@@ -39,7 +39,7 @@ public class Card6_097 extends AbstractAlien {
     public Card6_097() {
         super(Side.DARK, 3, null, 2, 2, 2, "Beedo", Uniqueness.UNIQUE, ExpansionSet.JABBAS_PALACE, Rarity.R);
         setLore("Rodian bounty hunter. Relative of Greedo. Taking Greedo's place in Jabba's court. Fearful of Jabba's wrath. Notorious sycophant.");
-        setGameText("* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo threatens a smuggler, may add 2 to destiny draw.");
+        setGameText("* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo 'threatens' a smuggler, may add 2 to destiny draw.");
         addIcons(Icon.JABBAS_PALACE, Icon.WARRIOR);
         addKeywords(Keyword.BOUNTY_HUNTER);
         setSpecies(Species.RODIAN);

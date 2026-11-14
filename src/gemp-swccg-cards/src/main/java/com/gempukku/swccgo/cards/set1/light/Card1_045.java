@@ -35,7 +35,7 @@ public class Card1_045 extends AbstractNormalEffect {
     public Card1_045() {
         super(Side.LIGHT, 5, PlayCardZoneOption.YOUR_SIDE_OF_TABLE, Title.Crash_Site_Memorial, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.U1);
         setLore("Mos Eisley was built around wreckage of the colony ship Dowager Queen. The wreck remains as a monument where residents leave junk for Jawa scavengers.");
-        setGameText("Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here.");
+        setGameText("Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here. Any cards stacked here are considered 'supporting.'");
     }
 
     @Override

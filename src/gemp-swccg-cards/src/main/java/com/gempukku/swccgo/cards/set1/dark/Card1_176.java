@@ -31,7 +31,7 @@ public class Card1_176 extends AbstractAlien {
     public Card1_176() {
         super(Side.DARK, 4, 2, 2, 1, 3, Title.Feltipern_Trevagg, Uniqueness.UNIQUE, ExpansionSet.PREMIERE, Rarity.U1);
         setLore("Corrupt tax collector. A male Gotal. Bounty hunter. Once sought a bounty on Obi-Wan. Has limited sensing ability to droid emanations. Romanced M'iiyoom Onith.");
-        setGameText("While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present.");
+        setGameText("While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present with him.");
         addIcons(Icon.WARRIOR);
         addKeywords(Keyword.BOUNTY_HUNTER, Keyword.TAX_COLLECTOR);
         setSpecies(Species.GOTAL);

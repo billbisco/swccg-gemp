@@ -40,7 +40,7 @@ public class Card9_019 extends AbstractRebel {
     public Card9_019() {
         super(Side.LIGHT, 3, 2, 2, 2, 4, Title.Keir_Santage, Uniqueness.UNIQUE, ExpansionSet.DEATH_STAR_II, Rarity.U);
         setLore("Rescued from an Imperial detention center by Wedge Antilles. Rogue Squadron veteran. Assigned to Red Squadron at the Battle of Endor. Coordinates with Rebellion procurement.");
-        setGameText("Adds 2 to the power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.");
+        setGameText("Adds 2 to power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.");
         addIcons(Icon.DEATH_STAR_II, Icon.PILOT);
         addKeywords(Keyword.ROGUE_SQUADRON, Keyword.RED_SQUADRON);
     }
