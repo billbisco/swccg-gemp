@@ -9,8 +9,11 @@ import com.gempukku.swccgo.common.ModelType;
 import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
+import com.gempukku.swccgo.common.TargetingReason;
+import java.util.Collections;
 import com.gempukku.swccgo.common.Uniqueness;
 import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import org.junit.Test;
 
@@ -74,6 +77,35 @@ public class Card_2_107_Tests {
         scn.PassAllResponses();
 
         assertFalse(u3po.isUndercover());
+    }
+
+    @Test
+    public void U3POStealTargetingUsesActingPlayerRatherThanSourceOwner() {
+        var scn = GetScenario();
+        var source = scn.GetDSCard("u3po");
+        var target = scn.GetDSCard("eg6");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), source, target);
+        var reasons = Collections.singleton(TargetingReason.TO_BE_STOLEN);
+        assertTrue(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), target, source, null, reasons, scn.LS));
+        assertFalse(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), target, source, null, reasons, scn.DS));
+        assertTrue(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), source, source, null, reasons, scn.LS));
+        assertFalse(scn.game().getModifiersQuerying().canBeTargetedBy(scn.gameState(), source, source, null, reasons, scn.DS));
+    }
+
+    @Test
+    public void U3POStealingHelpersRejectOwnDeviceBeforeOfferingAction() {
+        var scn = GetScenario();
+        var luke = scn.GetLSCard("luke");
+        var caller = scn.GetLSCard("caller");
+        var u3po = scn.GetDSCard("u3po");
+        scn.StartGame();
+        scn.MoveCardsToLocation(scn.GetLSStartingLocation(), luke, u3po);
+        scn.AttachCardsTo(luke, caller);
+        assertFalse(Filters.canStealAndCarry(caller).accepts(scn.game(), luke));
+        assertTrue(Filters.canStealAndCarry(caller).accepts(scn.game(), u3po));
+        assertFalse(Filters.canBeStolenBy(luke, Filters.sameCardId(luke)).accepts(scn.game(), caller));
+        assertTrue(Filters.canBeStolenBy(u3po, Filters.sameCardId(u3po)).accepts(scn.game(), caller));
     }
 
     @Test
@@ -202,7 +234,7 @@ public class Card_2_107_Tests {
         if (scn.LSHasCardChoiceAvailable(eg6)) {
             scn.LSChooseCard(eg6);
         }
-        // Caller steal is a targeting Effect (before-action). Do not PassAllResponses —
+        // Caller steal is a targeting Effect (before-action). Do not PassAllResponses â€”
         // that skips the Oh, Switch Off window.
         for (int i = 0; i < 12 && !scn.DSCardPlayAvailable(ohSwitchOff); i++) {
             if (scn.LSAnyDecisionsAvailable() && !scn.DSAnyDecisionsAvailable()) {
