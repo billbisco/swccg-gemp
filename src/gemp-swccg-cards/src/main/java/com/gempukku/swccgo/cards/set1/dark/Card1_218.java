@@ -57,7 +57,7 @@ public class Card1_218 extends AbstractNormalEffect {
     public Card1_218() {
         super(Side.DARK, 5, PlayCardZoneOption.ATTACHED, Title.Ive_Lost_Artoo, Uniqueness.UNRESTRICTED, ExpansionSet.PREMIERE, Rarity.U1);
         setLore("'WHAAAAAAAAAOOOOW!'");
-        setGameText("Use 1 Force to target a starship's [Nav Computer] or astromech. Draw destiny. If destiny > 1, [Nav Computer] or astromech is lost. If starship's [Nav Computer] is lost, place Effect on starship (may add 1 astromech); otherwise, Effect lost.");
+        setGameText("Use 1 Force to deploy on a starship with a [Nav Computer] or astromech aboard. Target [Nav Computer] or astromech and draw destiny. If destiny > 1, astromech lost (lose Effect) or [Nav Computer] is canceled (may add 1 astromech); otherwise, Effect lost.");
     }
 
     @Override

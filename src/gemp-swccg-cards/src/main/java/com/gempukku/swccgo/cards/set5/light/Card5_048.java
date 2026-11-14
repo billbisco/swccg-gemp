@@ -36,7 +36,7 @@ public class Card5_048 extends AbstractLostInterrupt {
     public Card5_048() {
         super(Side.LIGHT, 4, "Gambler's Luck", Uniqueness.UNIQUE, ExpansionSet.CLOUD_CITY, Rarity.R);
         setLore("Works every time.");
-        setGameText("If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny, and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three and choose two).");
+        setGameText("If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three destiny and choose two).");
         addIcons(Icon.CLOUD_CITY);
     }
 

@@ -41,7 +41,7 @@ public class Card10_015 extends AbstractCharacterDevice {
     public Card10_015() {
         super(Side.LIGHT, 2, "Obi-Wan's Journal", Uniqueness.UNIQUE, ExpansionSet.REFLECTIONS_II, Rarity.PM);
         setLore("Written by Obi-Wan Kenobi. Used by Luke to construct his lightsaber. Contained instructions on building required tools as well. Keyed to self-destruct if not opened by Luke.");
-        setGameText("Deploy on Luke or Obi-Wan. Your characters present armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.");
+        setGameText("Deploy on Luke or Obi-Wan. Your characters present here armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.");
         addIcons(Icon.REFLECTIONS_II);
     }
 
