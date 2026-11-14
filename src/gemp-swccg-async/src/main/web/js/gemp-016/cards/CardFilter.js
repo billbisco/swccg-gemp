@@ -650,6 +650,25 @@ var CardFilter = Class.extend({
         this.resetAllFiltersButton = $("<button id='resetAllFiltersButton' class='ui-button-icon-primary'>Reset all filters</button>")
 
         var filterTable = $("<table id='filterTable' />");
+        // Shared-search pilot449: public read-only lookup, preserving builder context.
+        if (typeof window !== 'undefined' && /\/deckBuild\.html$/.test(window.location.pathname)) {
+            var sharedPilotWindow = null;
+            var sharedPilotButton = $("<button type='button' id='sharedSearchPilot449'>Symbols, uniqueness &amp; decklists (pilot)</button>");
+            sharedPilotButton.click(function () {
+                var sharedPilotUrl = new URL('searchPilot.html', window.location.href);
+                var existingTitle = $('#nameInput').val();
+                if (existingTitle) sharedPilotUrl.searchParams.set('sp_text', existingTitle);
+                sharedPilotWindow = window.open(sharedPilotUrl.href, 'swccgSharedSearchPilot449');
+            });
+            filterTable.append($('<tr><td colspan="4"></td></tr>').find('td').append(sharedPilotButton).end());
+            window.addEventListener('message', function (event) {
+                if (event.origin !== window.location.origin || event.source !== sharedPilotWindow || !sharedPilotWindow) return;
+                if (!event.data || event.data.type !== 'swccg-search-pilot-title' || typeof event.data.title !== 'string') return;
+                if (!event.data.title.trim() || event.data.title.length > 120) return;
+                $('#nameInput').val(event.data.title).change();
+            });
+        }
+
         filterTable.append('<tr><td>' + this.productLabel[0].outerHTML + '</td><td>' + this.productSelect[0].outerHTML + '</td><td>'
                                       + this.rarityLabel[0].outerHTML + '</td><td>' + this.raritySelect[0].outerHTML + '</td></tr>');
         filterTable.append('<tr><td>' + this.sideLabel[0].outerHTML + '</td><td>' + this.sideSelect[0].outerHTML + '</td><td>'
