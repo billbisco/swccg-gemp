@@ -41,7 +41,9 @@ public class Card2_093 extends AbstractDroid {
     @Override
     protected List<Modifier> getGameTextWhileActiveInPlayModifiers(SwccgGame game, final PhysicalCard self) {
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new ForceDrainModifier(self, Filters.here(self), new AndCondition(new AtCondition(self, Filters.Detention_Block_Corridor), new HereCondition(self, SpotOverride.INCLUDE_CAPTIVE, Filters.captive)), new HereEvaluator(self, SpotOverride.INCLUDE_CAPTIVE, Filters.captive), self.getOwner()));
+        if (self.getOwner().equals(game.getDarkPlayer())) {
+            modifiers.add(new ForceDrainModifier(self, Filters.here(self), new AndCondition(new AtCondition(self, Filters.Detention_Block_Corridor), new HereCondition(self, SpotOverride.INCLUDE_CAPTIVE, Filters.captive)), new HereEvaluator(self, SpotOverride.INCLUDE_CAPTIVE, Filters.captive), self.getOwner()));
+        }
         modifiers.add(new ImmuneToTitleModifier(self, Title.Restraining_Bolt));
         return modifiers;
     }

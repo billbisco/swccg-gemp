@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set2.dark;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.framework.StartingSetup;
+import com.gempukku.swccgo.filters.Filters;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -112,5 +113,275 @@ public class Card_2_093_Tests
         assertEquals(3, scn.GetForceDrainTotal());
     }
 
+
+    private VirtualTableScenario GetDrainScenario() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("captive", "1_19");
+                    put("captive2", "1_5");
+                    put("purchaser", "1_33");
+                }},
+                new HashMap<>() {{
+                    put("ito", "2_93");
+                    put("hypo", "2_112");
+                    put("guard", "1_194");
+                    put("farm", "1_294");
+                    put("otherPrison", "6_164");
+                }},
+                20, 20,
+                StartingSetup.DefaultLSGroundLocation,
+                new StartingSetup.StartingLocation("1_284"),
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open);
+        scn.StartGame();
+        scn.MoveLocationToTable(scn.GetDSCard("farm"));
+        scn.MoveLocationToTable(scn.GetDSCard("otherPrison"));
+        return scn;
+    }
+
+    private VirtualTableScenario GetPurchasedDrainScenario(boolean withHypo, boolean withCaptive) {
+        var scn = GetDrainScenario();
+        var site = scn.GetDSStartingLocation();
+        var ito = scn.GetDSCard("ito");
+        var purchaser = scn.GetLSCard("purchaser");
+        scn.MoveCardsToLocation(site, ito, purchaser);
+        if (withHypo) {
+            scn.AttachCardsTo(ito, scn.GetDSCard("hypo"));
+        }
+        if (withCaptive) {
+            scn.gameState().imprisonCharacter(scn.game(), scn.GetLSCard("captive"), site);
+        }
+        PurchaseITOWithWioslea(scn);
+        if (withCaptive) {
+            assertTrue(scn.GetLSCard("captive").isImprisoned());
+            assertFalse(scn.GetLSCard("captive").isFrozen());
+            assertEquals(site, scn.GetLSCard("captive").getAttachedTo());
+        }
+        if (withHypo) {
+            assertEquals(scn.gameState().getLightPlayer(), scn.GetDSCard("hypo").getOwner());
+            assertEquals(ito, scn.GetDSCard("hypo").getAttachedTo());
+        }
+        return scn;
+    }
+
+    private void AssertLightDrainTotal(VirtualTableScenario scn, int expected) {
+        var site = scn.GetDSStartingLocation();
+        assertEquals(1, scn.GetDSIconsOnLocation(site));
+        assertTrue(scn.LSForceDrainAvailable(site));
+        scn.LSForceDrainAt(site);
+        scn.DSPass();
+        assertTrue(scn.IsActiveForceDrain());
+        scn.PassAllResponses();
+        scn.PassForceDrainStartResponses();
+        assertEquals(expected, scn.GetForceDrainTotal());
+    }
+
+    @Test
+    public void ITOPurchasedByLightCannotIncreaseForceDrain() {
+        AssertLightDrainTotal(GetPurchasedDrainScenario(false, true), 2);
+    }
+
+    @Test
+    public void ITOPurchasedByLightWithHypoCannotIncreaseForceDrain() {
+        AssertLightDrainTotal(GetPurchasedDrainScenario(true, true), 2);
+    }
+
+    @Test
+    public void ITOPurchasedByLightWithoutCaptiveRetainsNativeDrain() {
+        AssertLightDrainTotal(GetPurchasedDrainScenario(false, false), 2);
+    }
+
+    private VirtualTableScenario GetDarkDrainScenario(int captives, boolean withHypo,
+                                                    boolean captiveElsewhere, boolean itoElsewhere) {
+        var scn = GetDrainScenario();
+        var site = scn.GetDSStartingLocation();
+        var itoSite = itoElsewhere ? scn.GetDSCard("farm") : site;
+        scn.MoveCardsToLocation(itoSite, scn.GetDSCard("ito"));
+        scn.MoveCardsToLocation(site, scn.GetDSCard("guard"));
+        if (withHypo) {
+            scn.AttachCardsTo(scn.GetDSCard("ito"), scn.GetDSCard("hypo"));
+        }
+        var prison = captiveElsewhere ? scn.GetDSCard("otherPrison") : site;
+        if (captives > 0) {
+            scn.gameState().imprisonCharacter(scn.game(), scn.GetLSCard("captive"), prison);
+        }
+        if (captives > 1) {
+            scn.gameState().imprisonCharacter(scn.game(), scn.GetLSCard("captive2"), prison);
+        }
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertEquals(scn.gameState().getDarkPlayer(), scn.GetDSCard("ito").getOwner());
+        return scn;
+    }
+
+    private void AssertDarkDrainTotal(VirtualTableScenario scn, int expected) {
+        var site = scn.GetDSStartingLocation();
+        assertEquals(0, scn.GetLSIconsOnLocation(site));
+        assertTrue(scn.DSForceDrainAvailable(site));
+        int lostBefore = scn.GetLSLostPileCount();
+        int handBefore = scn.GetLSHandCount();
+        int lifeForceBefore = scn.GetLSReserveDeckCount() + scn.GetLSForcePileCount() + scn.GetLSUsedPileCount();
+        scn.DSForceDrainAt(site);
+        scn.LSPass();
+        assertTrue(scn.IsActiveForceDrain());
+        scn.PassAllResponses();
+        scn.PassForceDrainStartResponses();
+        if (expected == 0) {
+            assertFalse(scn.IsActiveForceDrain());
+            assertEquals(lostBefore, scn.GetLSLostPileCount());
+            assertEquals(handBefore, scn.GetLSHandCount());
+            assertEquals(lifeForceBefore, scn.GetLSReserveDeckCount() + scn.GetLSForcePileCount() + scn.GetLSUsedPileCount());
+        } else {
+            assertEquals(expected, scn.GetForceDrainTotal());
+        }
+    }
+
+    @Test
+    public void ITOAddsOneForDarkCaptiveAtDetentionBlockCorridor() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(1, false, false, false), 1);
+    }
+
+    @Test
+    public void ITOAddsTwoForDarkCaptivesAtDetentionBlockCorridor() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(2, false, false, false), 2);
+    }
+
+    @Test
+    public void ITOWithHypoRetainsDarkCaptiveBonus() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(1, true, false, false), 1);
+    }
+
+    @Test
+    public void ITODoesNotCountCaptiveAtAnotherPrison() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(1, false, true, false), 0);
+    }
+
+    @Test
+    public void ITODoesNotModifyDrainWhenAtAnotherSite() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(1, false, false, true), 0);
+    }
+
+    @Test
+    public void ITODoesNotModifyDarkDrainWithoutCaptives() {
+        AssertDarkDrainTotal(GetDarkDrainScenario(0, false, false, false), 0);
+    }
+
+    private void PurchaseITOWithWioslea(VirtualTableScenario scn) {
+        var site = scn.GetDSStartingLocation();
+        var ito = scn.GetDSCard("ito");
+        var purchaser = scn.GetLSCard("purchaser");
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.EnsureLSForcePile(8);
+        scn.PrepareLSDestiny(5);
+        assertTrue(scn.LSCardActionAvailable(purchaser, "'Purchase' transport vehicle or droid"));
+        scn.LSUseCardAction(purchaser, "'Purchase' transport vehicle or droid");
+        scn.LSChooseCard(ito);
+        scn.PassAllResponses();
+        if (scn.AwaitingDSControlPhaseActions()) {
+            scn.DSPass();
+        }
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertEquals(4, scn.GetLSForcePileCount());
+        assertEquals(scn.gameState().getLightPlayer(), ito.getOwner());
+        assertAtLocation(site, ito);
+        assertAtLocation(site, purchaser);
+    }
+
+    private VirtualTableScenario GetOriginalEscortedScenario(boolean purchaseByLight) {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("captive", "1_19");
+                    put("purchaser", "1_33");
+                }},
+                new HashMap<>() {{
+                    put("ito", "2_93o");
+                    put("escort", "4_101");
+                    put("guard", "1_194");
+                }},
+                20, 20,
+                StartingSetup.DefaultLSGroundLocation,
+                new StartingSetup.StartingLocation("1_284"),
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                "anything_goes");
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        var ito = scn.GetDSCard("ito");
+        var escort = scn.GetDSCard("escort");
+        var captive = scn.GetLSCard("captive");
+        scn.MoveCardsToLocation(site, ito, escort);
+        scn.CaptureCardWith(escort, captive);
+        assertEquals(escort, captive.getEscort());
+        assertFalse(captive.isImprisoned());
+        assertFalse(captive.isFrozen());
+        assertTrue(Filters.presentWith(ito).accepts(scn.gameState(), scn.game().getModifiersQuerying(), captive));
+        if (purchaseByLight) {
+            scn.MoveCardsToLocation(site, scn.GetLSCard("purchaser"));
+            PurchaseITOWithWioslea(scn);
+            assertEquals(scn.gameState().getDarkPlayer(), escort.getOwner());
+            assertEquals(escort, captive.getEscort());
+            assertTrue(Filters.presentWith(ito).accepts(scn.gameState(), scn.game().getModifiersQuerying(), captive));
+        } else {
+            scn.MoveCardsToLocation(site, scn.GetDSCard("guard"));
+            scn.SkipToDSTurn(Phase.CONTROL);
+            assertEquals(scn.gameState().getDarkPlayer(), ito.getOwner());
+        }
+        return scn;
+    }
+
+    @Test
+    public void ITOOriginalPurchasedByLightCannotIncreaseDrainForPresentEscortedCaptive() {
+        AssertLightDrainTotal(GetOriginalEscortedScenario(true), 2);
+    }
+
+    @Test
+    public void ITOOriginalRetainsDarkBonusForPresentEscortedCaptive() {
+        AssertDarkDrainTotal(GetOriginalEscortedScenario(false), 1);
+    }
+
+    @Test
+    public void ITOPurchasedByLightRemainsImmuneToNativeRestrainingBoltDeployment() {
+        var scn = new VirtualTableScenario(
+                new HashMap<>() {{
+                    put("purchaser", "1_33");
+                    put("lin", "1_18");
+                }},
+                new HashMap<>() {{
+                    put("ito", "2_93");
+                    put("bolt", "1_205");
+                    put("otherDroid", "1_192");
+                }},
+                20, 20,
+                StartingSetup.DefaultLSGroundLocation,
+                new StartingSetup.StartingLocation("1_284"),
+                StartingSetup.NoLSStartingInterrupts,
+                StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields,
+                StartingSetup.NoDSShields,
+                VirtualTableScenario.Open);
+        scn.StartGame();
+        var site = scn.GetDSStartingLocation();
+        var ito = scn.GetDSCard("ito");
+        var lin = scn.GetLSCard("lin");
+        var bolt = scn.GetDSCard("bolt");
+        scn.MoveCardsToLocation(site, ito, lin, scn.GetLSCard("purchaser"), scn.GetDSCard("otherDroid"));
+        scn.MoveCardsToDSHand(bolt);
+        PurchaseITOWithWioslea(scn);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        assertTrue(scn.DSCardPlayAvailable(bolt));
+        scn.DSPlayCard(bolt);
+        assertTrue(scn.DSHasCardChoiceAvailable(lin));
+        assertTrue(scn.DSHasCardChoiceAvailable(scn.GetDSCard("otherDroid")));
+        assertFalse(scn.DSHasCardChoiceAvailable(ito));
+        scn.DSChooseCard(lin);
+        scn.PassAllResponses();
+        assertEquals(lin, bolt.getAttachedTo());
+        assertTrue(scn.IsCardActive(bolt));
+    }
 }
 
