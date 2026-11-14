@@ -234041,7 +234041,7 @@
     "cardTypes": [
       "DEVICE"
     ],
-    "lore": "'Why are we moving towards it?'",
+    "lore": "'Why are we still moving towards it?'",
     "gameText": "Use 2 Force to deploy on Docking Bay 327. At the end of a battle at Death Star system, may target an opponent's starship present (except a Mon Calamari star cruiser) using 2 Force. Draw two destiny. Target captured if total destiny > defense value.",
     "destiny": 3.0,
     "credits": 0,
