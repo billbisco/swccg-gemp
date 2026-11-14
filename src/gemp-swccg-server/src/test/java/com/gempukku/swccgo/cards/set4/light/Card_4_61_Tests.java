@@ -111,9 +111,10 @@ public class Card_4_61_Tests {
 
         scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSPass();
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, corvette, tie);
         scn.EnsureLSForcePile(2);
+        scn.SkipToPhase(Phase.CONTROL);
         assertTrue(scn.AwaitingDSControlPhaseActions());
         scn.DSPass();
 
@@ -205,12 +206,13 @@ public class Card_4_61_Tests {
         scn.MoveCardsToLSHand(crazy);
         scn.MoveLocationToTable(kessel);
         scn.MoveLocationToTable(asteroid);
+
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, xwing, tie);
         scn.AttachCardsTo(xwing, cannon);
-
-        scn.SkipToLSTurn(Phase.CONTROL);
         scn.EnsureLSForcePile(3);
         scn.LSActivateForceCheat(3);
+        scn.SkipToPhase(Phase.CONTROL);
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
         scn.LSChooseCard(tie);
@@ -253,11 +255,12 @@ public class Card_4_61_Tests {
         scn.MoveCardsToLSHand(crazy, scn.GetLSCard("crazy2"));
         scn.MoveLocationToTable(kessel);
         scn.MoveLocationToTable(asteroid);
+
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, xwing, tie);
         scn.AttachCardsTo(xwing, cannon);
-
-        scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSActivateForceCheat(3);
+        scn.SkipToPhase(Phase.CONTROL);
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
         scn.LSChooseCard(tie);
@@ -310,11 +313,12 @@ public class Card_4_61_Tests {
         scn.MoveCardsToLSHand(crazy);
         scn.MoveLocationToTable(kessel);
         scn.MoveLocationToTable(asteroid);
+
+        scn.SkipToLSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, xwing, tie);
         scn.AttachCardsTo(xwing, cannon);
-
-        scn.SkipToLSTurn(Phase.CONTROL);
         scn.LSActivateForceCheat(3);
+        scn.SkipToPhase(Phase.CONTROL);
         assertTrue(scn.LSCardPlayAvailable(crazy));
         scn.LSPlayCard(crazy);
         scn.LSChooseCard(tie);
@@ -367,10 +371,11 @@ public class Card_4_61_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(scn.GetLSCard("kessel"));
         scn.MoveLocationToTable(asteroid);
+        scn.MoveCardsToLSHand(crazy);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, xwing, destroyer);
         scn.AttachCardsTo(destroyer, battery);
-        scn.MoveCardsToLSHand(crazy);
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToPhase(Phase.CONTROL);
         scn.DSPass();
         scn.LSActivateForceCheat(1);
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSDestiny(0), scn.GetDSDestiny(1), scn.GetDSDestiny(2));
@@ -402,10 +407,11 @@ public class Card_4_61_Tests {
         scn.StartGame();
         scn.MoveLocationToTable(scn.GetLSCard("kessel"));
         scn.MoveLocationToTable(asteroid);
+        scn.MoveCardsToLSHand(crazy);
+        scn.SkipToDSTurn(Phase.ACTIVATE);
         scn.MoveCardsToLocation(asteroid, xwing, destroyer);
         scn.AttachCardsTo(destroyer, battery);
-        scn.MoveCardsToLSHand(crazy);
-        scn.SkipToDSTurn(Phase.CONTROL);
+        scn.SkipToPhase(Phase.CONTROL);
         scn.DSPass();
         scn.LSActivateForceCheat(1);
         scn.MoveCardsToTopOfDSForcePile(scn.GetDSDestiny(0), scn.GetDSDestiny(1), scn.GetDSDestiny(2));
