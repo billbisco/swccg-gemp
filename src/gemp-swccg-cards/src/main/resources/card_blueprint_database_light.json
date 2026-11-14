@@ -2126,7 +2126,7 @@
       "DEVICE"
     ],
     "lore": "Written by Obi-Wan Kenobi. Used by Luke to construct his lightsaber. Contained instructions on building required tools as well. Keyed to self-destruct if not opened by Luke.",
-    "gameText": "Deploy on Luke or Obi-Wan. Your characters present armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.",
+    "gameText": "Deploy on Luke or Obi-Wan. Your characters present here armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -63854,7 +63854,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Mos Eisley was built around wreckage of the colony ship Dowager Queen. The wreck remains as a monument where residents leave junk for Jawa scavengers.",
-    "gameText": "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here.",
+    "gameText": "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here. Any cards stacked here are considered 'supporting.'",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -130717,7 +130717,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Works every time.",
-    "gameText": "If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny, and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three and choose two).",
+    "gameText": "If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three destiny and choose two).",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -152796,7 +152796,7 @@
       "REBEL"
     ],
     "lore": "Rescued from an Imperial detention center by Wedge Antilles. Rogue Squadron veteran. Assigned to Red Squadron at the Battle of Endor. Coordinates with Rebellion procurement.",
-    "gameText": "Adds 2 to the power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.",
+    "gameText": "Adds 2 to power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,

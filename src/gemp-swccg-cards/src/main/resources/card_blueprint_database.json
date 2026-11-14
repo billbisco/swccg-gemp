@@ -3856,7 +3856,7 @@
       "DEVICE"
     ],
     "lore": "Written by Obi-Wan Kenobi. Used by Luke to construct his lightsaber. Contained instructions on building required tools as well. Keyed to self-destruct if not opened by Luke.",
-    "gameText": "Deploy on Luke or Obi-Wan. Your characters present armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.",
+    "gameText": "Deploy on Luke or Obi-Wan. Your characters present here armed with a unique (•) lightsaber Weapon card may not be Disarmed, once per battle may cancel a weapon destiny just drawn, and that lightsaber's Force drain modifiers may not be canceled. Lost if about to be stolen.",
     "destiny": 2.0,
     "credits": 0,
     "icons": [
@@ -121878,7 +121878,7 @@
       "ALIEN"
     ],
     "lore": "Corrupt tax collector. A male Gotal. Bounty hunter. Once sought a bounty on Obi-Wan. Has limited sensing ability to droid emanations. Romanced M'iiyoom Onith.",
-    "gameText": "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present.",
+    "gameText": "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present with him.",
     "deployCost": 2.0,
     "destiny": 4.0,
     "credits": 0,
@@ -123666,7 +123666,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'WHAAAAAAAAAOOOOW!'",
-    "gameText": "Use 1 Force to target a starship's [Nav Computer] or astromech. Draw destiny. If destiny > 1, [Nav Computer] or astromech is lost. If starship's [Nav Computer] is lost, place Effect on starship (may add 1 astromech); otherwise, Effect lost.",
+    "gameText": "Use 1 Force to deploy on a starship with a [Nav Computer] or astromech aboard. Target [Nav Computer] or astromech and draw destiny. If destiny > 1, astromech lost (lose Effect) or [Nav Computer] is canceled (may add 1 astromech); otherwise, Effect lost.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -128418,7 +128418,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "Mos Eisley was built around wreckage of the colony ship Dowager Queen. The wreck remains as a monument where residents leave junk for Jawa scavengers.",
-    "gameText": "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here.",
+    "gameText": "Deploy on your side of table. If you just lost a vehicle, droid, weapon, or device, may stack it here. Once during your deploy phase, you may exchange any one card in hand with one card stacked here. Any cards stacked here are considered 'supporting.'",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -259415,7 +259415,7 @@
     ],
     "cardSubtype": "LOST",
     "lore": "Works every time.",
-    "gameText": "If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny, and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three and choose two).",
+    "gameText": "If your gambler is defending a battle alone at a site, add one battle destiny (draw two destiny and choose one). OR if your Lando is defending a battle alone at a site, add two battle destiny (draw three destiny and choose two).",
     "destiny": 4.0,
     "credits": 0,
     "icons": [
@@ -280284,7 +280284,7 @@
       "ALIEN"
     ],
     "lore": "Rodian bounty hunter. Relative of Greedo. Taking Greedo's place in Jabba's court. Fearful of Jabba's wrath. Notorious sycophant.",
-    "gameText": "* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo threatens a smuggler, may add 2 to destiny draw.",
+    "gameText": "* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo 'threatens' a smuggler, may add 2 to destiny draw.",
     "destiny": 3.0,
     "credits": 0,
     "power": 2.0,
@@ -306721,7 +306721,7 @@
       "REBEL"
     ],
     "lore": "Rescued from an Imperial detention center by Wedge Antilles. Rogue Squadron veteran. Assigned to Red Squadron at the Battle of Endor. Coordinates with Rebellion procurement.",
-    "gameText": "Adds 2 to the power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.",
+    "gameText": "Adds 2 to power of anything he pilots. When at a system, sector, or docking bay, once during each of your deploy phases, subtracts 2 from deploy cost of your unique (•) X-wing deploying here.",
     "deployCost": 2.0,
     "destiny": 3.0,
     "credits": 0,

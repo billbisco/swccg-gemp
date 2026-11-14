@@ -59213,7 +59213,7 @@
       "ALIEN"
     ],
     "lore": "Corrupt tax collector. A male Gotal. Bounty hunter. Once sought a bounty on Obi-Wan. Has limited sensing ability to droid emanations. Romanced M'iiyoom Onith.",
-    "gameText": "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present.",
+    "gameText": "While no droid present with Trevagg, to initiate battles at same location as Trevagg, player must use X Force, where X = total number of [Dark Side Force] and [Light Side Force] present with him.",
     "deployCost": 2.0,
     "destiny": 4.0,
     "credits": 0,
@@ -60787,7 +60787,7 @@
     ],
     "cardSubtype": "NORMAL",
     "lore": "'WHAAAAAAAAAOOOOW!'",
-    "gameText": "Use 1 Force to target a starship's [Nav Computer] or astromech. Draw destiny. If destiny > 1, [Nav Computer] or astromech is lost. If starship's [Nav Computer] is lost, place Effect on starship (may add 1 astromech); otherwise, Effect lost.",
+    "gameText": "Use 1 Force to deploy on a starship with a [Nav Computer] or astromech aboard. Target [Nav Computer] or astromech and draw destiny. If destiny > 1, astromech lost (lose Effect) or [Nav Computer] is canceled (may add 1 astromech); otherwise, Effect lost.",
     "destiny": 5.0,
     "credits": 0,
     "icons": [
@@ -138967,7 +138967,7 @@
       "ALIEN"
     ],
     "lore": "Rodian bounty hunter. Relative of Greedo. Taking Greedo's place in Jabba's court. Fearful of Jabba's wrath. Notorious sycophant.",
-    "gameText": "* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo threatens a smuggler, may add 2 to destiny draw.",
+    "gameText": "* Replaces any other male Rodian for free (Rodian goes to the Used Pile) or deploys for 3 Force. While at Audience Chamber, all your Rodians are power +2, and whenever Greedo 'threatens' a smuggler, may add 2 to destiny draw.",
     "destiny": 3.0,
     "credits": 0,
     "power": 2.0,
