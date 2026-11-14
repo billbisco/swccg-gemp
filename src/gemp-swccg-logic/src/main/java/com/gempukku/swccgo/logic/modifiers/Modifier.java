@@ -366,6 +366,9 @@ public interface Modifier {
 
     boolean isPlayCardOption(PlayCardOption playCardOption);
 
+    /** A numeric cost explicitly fixed in game text, or null for a variable cost. */
+    default Float getFixedDeployCost() { return null; }
+
     float getPrintedValueDefinedByGameText(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card);
 
     float getBaseFerocityDefinedByGameText(GameState gameState, ModifiersQuerying modifiersQuerying, PhysicalCard card);
