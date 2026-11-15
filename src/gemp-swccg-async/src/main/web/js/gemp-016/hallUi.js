@@ -176,7 +176,7 @@ var HallConnectionIndicator = Class.extend({
 });
 
 HallConnectionIndicator.loginUrl = function () {
-	return "/gemp-swccg/";
+	return GEMP_UI_ROOT;
 };
 
 // The bar along the top edge of the chat: drag it (or focus it and use the Up / Down arrow keys) to make the chat
@@ -2337,12 +2337,12 @@ var GempSwccgHallUI = Class.extend({
         var url;
         if (kind === "draft") {
             if (cubeSoloType)
-                url = "/gemp-swccg/soloDraft.html?leagueType=" + encodeURIComponent(collectionCode || cubeSoloType);
+                url = GEMP_UI_ROOT + "soloDraft.html?leagueType=" + encodeURIComponent(collectionCode || cubeSoloType);
             else
-                url = "/gemp-swccg/draft.html?tournamentId=" + encodeURIComponent(tournamentId)
+                url = GEMP_UI_ROOT + "draft.html?tournamentId=" + encodeURIComponent(tournamentId)
                     + (collectionCode ? "&collection=" + encodeURIComponent(collectionCode) : "");
         } else {
-            url = "/gemp-swccg/deckBuild.html?collection=" + encodeURIComponent(collectionCode || "")
+            url = GEMP_UI_ROOT + "deckBuild.html?collection=" + encodeURIComponent(collectionCode || "")
                 + "&product=" + encodeURIComponent("all");
         }
         window.open(url, "_blank");
@@ -3195,7 +3195,7 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         if (this.playLeagueUI == null) {
-            this.playLeagueUI = new LeagueResultsUI("/gemp-swccg-server",
+            this.playLeagueUI = new LeagueResultsUI(GEMP_SERVER,
                 function (leagueCode) { that.leagueJoined(leagueCode); },
                 {
                     list: this.playLeagueList,
@@ -3699,7 +3699,7 @@ var GempSwccgHallUI = Class.extend({
             win = this.pendingBotWin;
         this.pendingBotWin = null;
         var participantId = getUrlParam("participantId");
-        var url = "/gemp-swccg/game.html?gameId=" + encodeURIComponent(gameId);
+        var url = GEMP_UI_ROOT + "game.html?gameId=" + encodeURIComponent(gameId);
         if (participantId != null)
             url += "&participantId=" + encodeURIComponent(participantId);
         if (win && !win.closed) {
@@ -3829,7 +3829,7 @@ var GempSwccgHallUI = Class.extend({
         if (mainPageButton) {
             buttons["Go to main page"] =
                 function() {
-                    location.href = "/gemp-swccg/";
+                    location.href = GEMP_UI_ROOT;
                 };
         }
 

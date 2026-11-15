@@ -6,7 +6,7 @@
             $("#infoMain").tabs().addClass("ui-tabs-vertical ui-helper-clearfix");
             $("#info-tabs > ol > li").removeClass("ui-corner-top").addClass("ui-corner-left");
 
-            var ui = new StatsUI("/gemp-swccg-server", $("#statsParameters"), $("#stats"));
+            var ui = new StatsUI(GEMP_SERVER, $("#statsParameters"), $("#stats"));
             $(".getStats", $("#statsParameters")).click();
             // coming back to Server Stats after a while re-fetches the stats last displayed (GempHallTabs.onReturn,
             // gameHall.js); the date / period fields keep whatever the viewer has typed

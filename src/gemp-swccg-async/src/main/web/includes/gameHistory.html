@@ -11,7 +11,7 @@
                     return /^#(account\/history|history)\?/.test(h || "");
                 };
                 var link = isHistoryLink(hash) ? hash : (isHistoryLink(remembered) ? remembered : null);
-                var ui = new GameHistoryUI("/gemp-swccg-server", {container: $("#gameHistory"), link: link});
+                var ui = new GameHistoryUI(GEMP_SERVER, {container: $("#gameHistory"), link: link});
                 $("#gameHistory").data("gameHistoryUI", ui);
                 window.GempHistoryPage = ui;
                 // coming back to the sub-tab after a while re-fetches the page shown, keeping its page and filters

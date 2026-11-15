@@ -22,6 +22,7 @@
     <script type="text/javascript" src="js/jquery/jquery.touchSwipe.js"></script>
     <script type="text/javascript" src="js/jquery/jQueryRotate.js"></script>
 
+    <script type="text/javascript" src="js/gemp-016/playPaths.js?v=20261115"></script>
     <script type="text/javascript" src="js/gemp-016/inheritance.js"></script>
     <script type="text/javascript" src="js/gemp-016/common.js"></script>
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
@@ -75,7 +76,7 @@
             function () {
                 var replay = getUrlParam("replayId");
 
-                ui = new GempSwccgGameUI("/gemp-swccg-server", replay != null);
+                ui = new GempSwccgGameUI(GEMP_SERVER, replay != null);
 
                 $(window).resize(function () {
                     ui.windowResized();

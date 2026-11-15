@@ -20,6 +20,7 @@
     <script type="text/javascript" src="js/jquery/jquery.layout.js"></script>
     <script type="text/javascript" src="js/jquery/jquery.touchSwipe.js"></script>
 
+    <script type="text/javascript" src="js/gemp-016/playPaths.js?v=20261115"></script>
     <script type="text/javascript" src="js/gemp-016/inheritance.js"></script>
     <script type="text/javascript" src="js/gemp-016/common.js"></script>
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
@@ -38,7 +39,7 @@
     <script type="text/javascript">
         $(document).ready(
                 function () {
-                    var ui = new GempSwccgDraftUI("/gemp-swccg-server");
+                    var ui = new GempSwccgDraftUI(GEMP_SERVER);
                     $('body').layout({
                         applyDefaultStyles:true,
                         onresize:function () {

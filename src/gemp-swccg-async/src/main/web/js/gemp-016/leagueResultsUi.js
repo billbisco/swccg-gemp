@@ -140,7 +140,7 @@ var LeagueResultsUI = Class.extend({
                 if (lockedDeckType === "when_first_played") {
                     memberDiv.append($("<div>Decks are locked-in automatically after first use and cannot be replaced.</div>"));
                     memberDiv.append($("<div></div>").append($("<a target='_blank'>View your locked-in decks here.</a>")
-                        .attr("href", "/gemp-swccg-server/league/deck/html?leagueType=" + encodeURIComponent(leagueType))));
+                        .attr("href", GEMP_SERVER + "/league/deck/html?leagueType=" + encodeURIComponent(leagueType))));
                 }
                 if (draftable == "true") {
                     var draftBut = $("<button type='button'>--> Go to draft <--</button>").button();

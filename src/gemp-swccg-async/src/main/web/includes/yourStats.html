@@ -3,7 +3,7 @@
     // GET /playerStats.  Coming back after a while fetches them again (GempHallTabs.onReturn, gameHall.js).
     $("#playerStatsPage").ready(
         function () {
-            var ui = new PlayerStatsUI("/gemp-swccg-server");
+            var ui = new PlayerStatsUI(GEMP_SERVER);
             if (window.GempHallTabs)
                 GempHallTabs.onReturn($("#playerStatsPage"), function () { ui.loadPlayerStats(); });
         });

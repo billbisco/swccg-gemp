@@ -1451,16 +1451,16 @@ var GempSwccgGameUI = Class.extend({
         this.playNowEndShown = true;
         var buttons = {
             "Play again": function () {
-                location.href = "/gemp-swccg/guest.html";
+                location.href = GEMP_UI_ROOT + "guest.html";
             }
         };
         if (this.guestMode) {
             buttons["Create an account"] = function () {
-                location.href = "/gemp-swccg/";
+                location.href = GEMP_UI_ROOT;
             };
         } else {
             buttons["Go to Game Hall"] = function () {
-                location.href = "/gemp-swccg/hall.html";
+                location.href = GEMP_UI_ROOT + "hall.html";
             };
         }
         buttons["Stay here"] = function () {
@@ -2301,7 +2301,7 @@ var GempSwccgGameUI = Class.extend({
         if (playNowButton) {
             buttons["Start a new game"] =
                 function () {
-                    location.href = "/gemp-swccg/guest.html";
+                    location.href = GEMP_UI_ROOT + "guest.html";
                 };
         }
         if (reloadButton) {
@@ -2313,13 +2313,13 @@ var GempSwccgGameUI = Class.extend({
         if (mainPageButton) {
             buttons["Go to main page"] =
                 function () {
-                    location.href = "/gemp-swccg/";
+                    location.href = GEMP_UI_ROOT;
                 };
         }
         if (gameHallButton) {
             buttons["Go to Game Hall"] =
                 function () {
-                    location.href = "/gemp-swccg/hall.html";
+                    location.href = GEMP_UI_ROOT + "hall.html";
                 };
         }
 
