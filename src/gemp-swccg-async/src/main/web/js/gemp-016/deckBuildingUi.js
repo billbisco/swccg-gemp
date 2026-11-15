@@ -58,7 +58,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
         if (typeof Card !== "undefined" && Card.applyFoilPresentation)
             Card.applyFoilPresentation();
 
-        this.comm = new GempSwccgCommunication("/gemp-swccg-server", that.processError);
+        this.comm = new GempSwccgCommunication(GEMP_SERVER, that.processError);
 
         this.collectionType = "default";
 
@@ -986,12 +986,12 @@ var GempSwccgDeckBuildingUI = Class.extend({
                     (function (deckName) {
                            if (sampleDeck) {
                                 return function () {
-                                    window.open('/gemp-swccg-server/deck/libraryHtml?deckName=' + encodeURIComponent(deckName), "_blank");
+                                    window.open(GEMP_SERVER + '/deck/libraryHtml?deckName=' + encodeURIComponent(deckName), "_blank");
                                     }
                             }
                             else {
                                 return function () {
-                                    window.open('/gemp-swccg-server/deck/html?deckName=' + encodeURIComponent(deckName), "_blank");
+                                    window.open(GEMP_SERVER + '/deck/html?deckName=' + encodeURIComponent(deckName), "_blank");
                                     }
                             }
                     })(deckName));
@@ -1217,7 +1217,7 @@ var GempSwccgDeckBuildingUI = Class.extend({
     loadShields: function (side) {
         $(".cardOutsideDeck").remove();
         var that = this;
-        var shieldUrl = "/gemp-swccg-server/collection/default?participantId=null&filter=side%3A" + side + "+format%3Aall+cardType%3ADEFENSIVE_SHIELD+sort%3Aname%2Cset%2CcardType+product%3Acard&start=0&count=100&_=1726509590294"
+        var shieldUrl = GEMP_SERVER + "/collection/default?participantId=null&filter=side%3A" + side + "+format%3Aall+cardType%3ADEFENSIVE_SHIELD+sort%3Aname%2Cset%2CcardType+product%3Acard&start=0&count=100&_=1726509590294"
         this.comm.loadShields(shieldUrl, function (xml) {
               var $xml = $(xml);
               var blueprintIds = $xml.find('card').map(function() {

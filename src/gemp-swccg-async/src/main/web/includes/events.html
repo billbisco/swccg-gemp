@@ -10,14 +10,14 @@
 			// Current Leagues / Current Tournaments: one header row per event, whose + Details button opens that
 			// event's own drawer right beneath it (eventDrawer.js).  Joining a league re-renders its drawer in place
 			// and refreshes the hall's league list and the calendar's "joined" marks.
-			var leagueUI = new LeagueResultsUI("/gemp-swccg-server", function () {
+			var leagueUI = new LeagueResultsUI(GEMP_SERVER, function () {
 				if (window.hall && hall.playLeagueUI != null && typeof hall.playLeagueUI.refreshList == "function")
 					hall.playLeagueUI.refreshList();
 				if (calendar != null)
 					calendar.refresh();
 			}, {list: $("#eventLeagueList"), eventLinks: true});
 
-			var tourneyUI = new TournamentResultsUI("/gemp-swccg-server", {list: $("#eventTournamentList"), eventLinks: true});
+			var tourneyUI = new TournamentResultsUI(GEMP_SERVER, {list: $("#eventTournamentList"), eventLinks: true});
 
 			// Completed events, a month at a time, one kind per sub-tab.  Each panel renders a row's details with
 			// the same UI object as the live list above it.  A panel loads by itself (the newest month with completed

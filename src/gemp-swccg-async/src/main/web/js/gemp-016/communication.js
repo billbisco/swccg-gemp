@@ -1763,7 +1763,7 @@ var GempSwccgCommunication = Class.extend({
     getRegistrationForm:function (callback, errorMap) {
         $.ajax({
             type:"POST",
-            url:"/gemp-swccg/includes/registrationForm.html",
+            url:GEMP_UI_ROOT + "includes/registrationForm.html",
             cache:false,
             async:false,
             data:{

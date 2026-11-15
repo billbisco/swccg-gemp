@@ -208,7 +208,7 @@ var GempLinks = {
 
     // A link to the hall from another page (deck builder, game page).
     hallUrl: function (hash) {
-        return "/gemp-swccg/hall.html" + (hash || "");
+        return GEMP_UI_ROOT + "hall.html" + (hash || "");
     },
 
     // ---- start-up ----

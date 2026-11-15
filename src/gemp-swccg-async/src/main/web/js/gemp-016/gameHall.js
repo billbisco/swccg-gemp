@@ -133,11 +133,11 @@ $(document).ready(function () {
         active: GempLinks.initialTabIndex()
     });
 
-    chat = new ChatBoxUI("Game Hall", $("#chat"), "/gemp-swccg-server", true, null, false, true, [], true);
+    chat = new ChatBoxUI("Game Hall", $("#chat"), GEMP_SERVER, true, null, false, true, [], true);
     chat.showTimestamps = true;
     chat.beginGameChat();
 
-    hall = new GempSwccgHallUI($("#hall"), "/gemp-swccg-server", chat);
+    hall = new GempSwccgHallUI($("#hall"), GEMP_SERVER, chat);
 
     // Hall links (hallLinks.js): #game-hall, #events/calendar, #account/history, #league-<type>, ... open their tab;
     // switching tabs by hand writes that tab's link into the address bar.

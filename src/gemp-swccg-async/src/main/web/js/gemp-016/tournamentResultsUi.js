@@ -345,7 +345,7 @@ var TournamentResultsUI = Class.extend({
             var player = $("<td></td>");
             if (tournamentStage == "Finished") {
                 player.append($("<a target='_blank'></a>")
-                    .attr("href", "/gemp-swccg-server/tournament/" + encodeURIComponent(tournamentId) + "/deck/"
+                    .attr("href", GEMP_SERVER + "/tournament/" + encodeURIComponent(tournamentId) + "/deck/"
                         + encodeURIComponent(standing.player) + "/html")
                     .attr("title", "The deck " + playerNameText(standing.player) + " played")
                     .text(playerNameText(standing.player)));

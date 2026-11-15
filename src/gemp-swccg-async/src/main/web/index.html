@@ -42,6 +42,7 @@
     <script type="text/javascript" src="js/jquery/jquery.touchSwipe.js"></script>
     <script type="text/javascript" src="js/jquery/jQueryRotate.js"></script>
 
+    <script type="text/javascript" src="js/gemp-016/playPaths.js?v=20261115"></script>
     <script type="text/javascript" src="js/gemp-016/inheritance.js"></script>
     <script type="text/javascript" src="js/gemp-016/common.js"></script>
     <script type="text/javascript" src="js/gemp-016/logging.js"></script>
@@ -80,7 +81,7 @@
             return this;
         };
 
-        var comm = new GempSwccgCommunication("/gemp-swccg-server", function () {
+        var comm = new GempSwccgCommunication(GEMP_SERVER, function () {
             alert("Unable to contact the server");
         });
 
@@ -102,7 +103,7 @@
                         var notice = request ? request.getResponseHeader("X-Guest-Notice") : null;
                         if (notice)
                             alert(notice);
-                        location.href = "/gemp-swccg/hall.html";
+                        location.href = GEMP_UI_ROOT + "hall.html";
                     }
                 },
                         {
@@ -181,7 +182,7 @@
                         $("#login").val(login);
                     }
                     else {
-                        location.href = "/gemp-swccg/hall.html";
+                        location.href = GEMP_UI_ROOT + "hall.html";
                     }
                 },
                 {
@@ -264,7 +265,7 @@
             }
             $("body").addClass("sbox-pending");
             setTimeout(classic, 4000);
-            $.ajax({type: "GET", url: "/gemp-swccg-server/oidc/status", cache: false, dataType: "json", timeout: 3500,
+            $.ajax({type: "GET", url: GEMP_SERVER + "/oidc/status", cache: false, dataType: "json", timeout: 3500,
                 success: function (s) {
                     if (decided) return;
                     if (!(s && s.enabled) || !window.SwccgSignInBox || !window.fetch) { classic(); return; }
@@ -272,6 +273,7 @@
                     $("body").removeClass("sbox-pending").addClass("sbox-on");
                     $(".sbox-wrap").show();
                     var el = $(".sbox-wrap .sbox")[0];
+                    el.setAttribute("data-params-url", GEMP_SERVER + "/oidc/box");
                     el.sbox = new SwccgSignInBox(el);
                 },
                 error: classic});

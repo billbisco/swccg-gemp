@@ -3,7 +3,7 @@
     // Coming back after a while fetches them again (GempHallTabs.onReturn, gameHall.js).
     $("#collectionStatsPage").ready(
         function () {
-            var ui = new CollectionStatsUI("/gemp-swccg-server");
+            var ui = new CollectionStatsUI(GEMP_SERVER);
             if (window.GempHallTabs)
                 GempHallTabs.onReturn($("#collectionStatsPage"), function () { ui.loadCollectionStats(); });
         });
