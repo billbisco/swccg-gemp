@@ -13,6 +13,8 @@ var GempSwccgCommunication = Class.extend({
             var errorStatus = "" + xhr.status;
             // #518: Play forgot this session (restart, idle) but swccg.com may still be signed in: restore it
             // with a full-page silent sign-in instead of showing errors. At most once every 2 minutes per tab.
+            if (swccgSigningOut())
+                return;
             if (errorStatus == "401" && swccgSilentSignIn())
                 return;
             if (errorMap != null && errorMap[errorStatus] != null)
@@ -1887,6 +1889,18 @@ var GempSwccgCommunication = Class.extend({
 });
 
 /**
+ * #504: the page is leaving through Sign out. Errors from requests still in flight (401 once the Play session
+ * has ended) are expected then and must neither show a dialog nor start a silent sign-in.
+ */
+function swccgMarkSigningOut() {
+    window.swccgSigningOutAt = Date.now();
+}
+
+function swccgSigningOut() {
+    return window.swccgSigningOutAt != null && Date.now() - window.swccgSigningOutAt < 30000;
+}
+
+/**
  * #518: a full-page silent (prompt=none) sign-in through swccg.com that comes back to this page.
  * Only on swccg.com's /play/ pages, only for pages with a signed-in look (hall, deck builder, game, merchant),
  * and at most once every 2 minutes per tab so a signed-out reader never loops.
@@ -1894,6 +1908,8 @@ var GempSwccgCommunication = Class.extend({
  */
 function swccgSilentSignIn() {
     try {
+        if (swccgSigningOut())
+            return false;
         if (typeof GEMP_UI_ROOT === "undefined" || GEMP_UI_ROOT !== "/play/" || typeof GEMP_SERVER === "undefined")
             return false;
         if (!/^\/play\/(hall|deckBuild|game|merchant|draft|soloDraft)\.html$/.test(window.location.pathname))
