@@ -395,7 +395,9 @@ public class AuthService {
      * @return the player, or null if there is no such player (or it is a bot)
      */
     public Player closeAccount(int playerId) throws SQLException {
-        Player player = _playerDAO.getPlayer(playerId);
+        // Includes a player already deactivated, so a retried close (or an older disable-only close) still
+        // answers with the player rather than not_found (#524 follow-up).
+        Player player = _playerDAO.getPlayerIncludingDeactivated(playerId);
         if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
             return null;
         if (!player.hasType(Player.Type.DEACTIVATED)
@@ -405,21 +407,13 @@ public class AuthService {
         return player;
     }
 
-    /** The five Close-account placeholder prefixes (#524), a space and the account's own number. */
+    /**
+     * The five Close-account placeholder prefixes (#524), a space and the account's own number, with an optional
+     * short suffix ("Mynock 3901-2") used when every plain placeholder is already somebody's chosen name. Members may
+     * choose names of this shape (Bill, 2026-11-16), so it is never reserved.
+     */
     public static final java.util.regex.Pattern PLACEHOLDER = java.util.regex.Pattern.compile(
-            "^(Frozen in Carbonite|Lost to the Sarlacc|One with the Force|Dewback Rider|Mynock) ([0-9]{1,12})$");
-
-    /** Any spelling of the placeholder shape (any case, spaces or underscores): never allowed as a chosen name. */
-    private static final java.util.regex.Pattern PLACEHOLDER_SHAPE = java.util.regex.Pattern.compile(
-            "^(frozen ?in ?carbonite|lost ?to ?the ?sarlacc|one ?with ?the ?force|dewback ?rider|mynock) ?[0-9]+$");
-
-    /** True if name has the reserved Close-account placeholder shape (#524 R4). */
-    public static boolean isPlaceholderShape(String name) {
-        if (name == null)
-            return false;
-        String k = name.replace('_', ' ').trim().replaceAll("\\s+", " ").toLowerCase(java.util.Locale.ROOT);
-        return PLACEHOLDER_SHAPE.matcher(k).matches();
-    }
+            "^(Frozen in Carbonite|Lost to the Sarlacc|One with the Force|Dewback Rider|Mynock) ([0-9]{1,12})(-[0-9]{1,2})?$");
 
     private volatile java.io.File _replayRoot;
 
