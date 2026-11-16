@@ -334,6 +334,11 @@ public class AuthService {
         return _playerDAO.getPlayer(login);
     }
 
+    /** The player with exactly this name (deactivated included), or null. */
+    public Player getPlayerByName(String name) {
+        return _playerDAO.getPlayer(name, true);
+    }
+
     /** The player with this id (deactivated included), or null. */
     public Player getPlayer(int playerId) {
         return _playerDAO.getPlayer(playerId);
@@ -384,6 +389,62 @@ public class AuthService {
             return null;
         _resetTickets.values().removeIf(t -> t.playerId == playerId);
         return player;
+    }
+
+    /** The five Close-account placeholder prefixes (#524), a space and the account's own number. */
+    public static final java.util.regex.Pattern PLACEHOLDER = java.util.regex.Pattern.compile(
+            "^(Frozen in Carbonite|Lost to the Sarlacc|One with the Force|Dewback Rider|Mynock) ([0-9]{1,12})$");
+
+    /** Any spelling of the placeholder shape (any case, spaces or underscores): never allowed as a chosen name. */
+    private static final java.util.regex.Pattern PLACEHOLDER_SHAPE = java.util.regex.Pattern.compile(
+            "^(frozen ?in ?carbonite|lost ?to ?the ?sarlacc|one ?with ?the ?force|dewback ?rider|mynock) ?[0-9]+$");
+
+    /** True if name has the reserved Close-account placeholder shape (#524 R4). */
+    public static boolean isPlaceholderShape(String name) {
+        if (name == null)
+            return false;
+        String k = name.replace('_', ' ').trim().replaceAll("\\s+", " ").toLowerCase(java.util.Locale.ROOT);
+        return PLACEHOLDER_SHAPE.matcher(k).matches();
+    }
+
+    private volatile java.io.File _replayRoot;
+
+    /** Where replays live (default: application.root/replays). */
+    public void setReplayRoot(java.io.File root) {
+        _replayRoot = root;
+    }
+
+    private java.io.File replayRoot() {
+        java.io.File r = _replayRoot;
+        return r != null ? r : new java.io.File(com.gempukku.swccgo.common.ApplicationConfiguration.getProperty("application.root"), "replays");
+    }
+
+    /**
+     * Close account, Play's part (swccg-guild/work#524): rewrites the old name in every replay of the player's games
+     * (both seats), then in one transaction renames the player to the placeholder and removes their personal data
+     * (see {@link PlayerDAO#erasePlayer}). Safe to retry.
+     * @return null when done, else "not_found", "name_invalid" or "name_taken"
+     */
+    public String eraseAccount(int playerId, String placeholder) throws Exception {
+        java.util.regex.Matcher m = PLACEHOLDER.matcher(placeholder == null ? "" : placeholder);
+        if (!m.matches() || !m.group(2).equals(String.valueOf(playerId)))
+            return "name_invalid";
+        Player player = _playerDAO.getPlayer(playerId);
+        if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
+            return "not_found";
+        String oldName = player.getName();
+        if (!oldName.equals(placeholder)) {
+            java.io.File root = replayRoot();
+            for (String[] ref : _playerDAO.replaysOf(playerId)) {
+                java.io.File f = new java.io.File(new java.io.File(root, ref[0]), ref[1] + ".xml.gz");
+                com.gempukku.swccgo.game.ReplayNameRewriter.rewrite(f, oldName, placeholder);
+            }
+        }
+        String refused = _playerDAO.erasePlayer(playerId, placeholder);
+        if (refused != null)
+            return refused;
+        _resetTickets.values().removeIf(t -> t.playerId == playerId);
+        return null;
     }
 
     /**

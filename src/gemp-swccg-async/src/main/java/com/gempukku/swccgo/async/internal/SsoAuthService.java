@@ -38,7 +38,9 @@ public class SsoAuthService {
     public static final String CLOSE = "/internal/v2/close";
     /** Rename by player id (#261, #264): refused while the player is at a table; ends their GEMP sessions. */
     public static final String RENAME = "/internal/v2/rename";
-    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE, RENAME);
+    /** Close account, Play's part (#524): rename to the placeholder and remove personal data; "check" changes nothing. */
+    public static final String ERASE = "/internal/v2/erase";
+    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE, RENAME, ERASE);
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
@@ -128,6 +130,7 @@ public class SsoAuthService {
                 case PASSWORD: return setPassword(json, keyId, nonce, nowMillis);
                 case CLOSE: return close(json, keyId, nonce);
                 case RENAME: return rename(json, keyId, nonce, nowMillis);
+                case ERASE: return erase(json, keyId, nonce);
                 default: return status(json, keyId, nonce);
             }
         } catch (Exception e) {
@@ -248,6 +251,53 @@ public class SsoAuthService {
             ender.accept(p.getName());
         LOG.info("sso-auth: close id=" + id + " key=" + keyId);
         return result(200, okUser(p), keyId, nonce);
+    }
+
+    /**
+     * Close account (#524). {"id", "placeholder", "check"}: with check, answers whether the erase would go through
+     * (player exists, not at a table, placeholder free) and changes nothing. Without, rewrites the replays, renames
+     * and removes the player's personal data in one transaction, ends their sessions and drops cached copies.
+     * Idempotent. The old name is never logged.
+     */
+    private WikiAuthService.Result erase(JSONObject json, String keyId, String nonce) throws Exception {
+        Object id = json.get("id");
+        String placeholder = asString(json.get("placeholder"));
+        Object check = json.get("check");
+        if (!(id instanceof Long) || (Long) id <= 0 || (Long) id > Integer.MAX_VALUE || placeholder == null
+                || placeholder.length() > 64 || (check != null && !(check instanceof Boolean)))
+            return result(400, error("bad_request"), keyId, nonce);
+        int playerId = ((Long) id).intValue();
+        java.util.regex.Matcher m = AuthService.PLACEHOLDER.matcher(placeholder);
+        if (!m.matches() || !m.group(2).equals(String.valueOf(playerId)))
+            return result(200, error("name_invalid"), keyId, nonce);
+        Player before = _authService.getPlayer(playerId);
+        if (before == null || Player.isBot(before.getName()))
+            return result(200, error("not_found"), keyId, nonce);
+        Player other = _authService.getPlayerByName(placeholder);
+        if (other != null && other.getId() != playerId)
+            return result(200, error("name_taken"), keyId, nonce);
+        java.util.function.Predicate<String> atTable = _atTable;
+        if (!before.getName().equals(placeholder) && atTable != null && atTable.test(before.getName()))
+            return result(200, error("busy"), keyId, nonce);
+        if (Boolean.TRUE.equals(check)) {
+            JSONObject ok = new JSONObject();
+            ok.put("ok", true);
+            return result(200, ok, keyId, nonce);
+        }
+        String refused = _authService.eraseAccount(playerId, placeholder);
+        if (refused != null)
+            return result(200, error(refused), keyId, nonce);
+        java.util.function.Consumer<String> ender = _sessionEnder;
+        if (ender != null) {
+            ender.accept(before.getName());
+            ender.accept(placeholder);
+        }
+        Runnable after = _afterRename;
+        if (after != null)
+            after.run();
+        LOG.info("sso-auth: erase id=" + playerId + " key=" + keyId);
+        Player p = _authService.getPlayer(playerId);
+        return result(200, p != null ? okUser(p) : error("not_found"), keyId, nonce);
     }
 
     private WikiAuthService.Result rename(JSONObject json, String keyId, String nonce, long now) throws Exception {

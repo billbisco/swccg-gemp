@@ -298,4 +298,45 @@ class SsoAuthServiceTest {
         assertEquals(400, probe.status); //test4
         assertTrue(probe.signature != null); //test4
     }
+
+    @Test
+    void eraseCheckChangesNothingThenEraseRenamesEndsSessionsAndClearsCaches() throws Exception {
+        //test1: check mode answers ok and calls nothing that changes data
+        //test2: the erase renames, ends the sessions of both names and clears caches
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        int[] cleared = {0};
+        service.setSessionEnder(ended::add);
+        service.setRenameHooks(name -> false, () -> cleared[0]++);
+        when(auth.getPlayer(3901)).thenReturn(player(3901, "Finn", "ud"));
+        JSONObject r = json(call(KEY, SsoAuthService.ERASE, "{\"id\":3901,\"placeholder\":\"Mynock 3901\",\"check\":true}", NOW));
+        assertEquals(true, r.get("ok")); //test1
+        verify(auth, never()).eraseAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
+        assertEquals(0, cleared[0]); //test1
+        when(auth.eraseAccount(3901, "Mynock 3901")).thenReturn(null);
+        r = json(call(KEY, SsoAuthService.ERASE, "{\"id\":3901,\"placeholder\":\"Mynock 3901\"}", NOW));
+        assertEquals(true, r.get("ok")); //test2
+        verify(auth).eraseAccount(3901, "Mynock 3901"); //test2
+        assertEquals(java.util.List.of("Finn", "Mynock 3901"), ended); //test2
+        assertEquals(1, cleared[0]); //test2
+    }
+
+    @Test
+    void eraseRefusals() throws Exception {
+        //test1: a placeholder that isn't one of the five, or isn't this account's number, is refused
+        //test2: busy at a table, nothing changes
+        //test3: placeholder held by another player
+        //test4: an empty body is a signed 400, so swccg-login shows Close account
+        service.setRenameHooks(name -> name.equals("Rey"), null);
+        when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Bantha 12\"}", NOW)).get("error")); //test1
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Mynock 13\"}", NOW)).get("error")); //test1
+        assertEquals("busy", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Mynock 12\"}", NOW)).get("error")); //test2
+        verify(auth, never()).eraseAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test2
+        when(auth.getPlayer(14)).thenReturn(player(14, "Poe", "u"));
+        when(auth.getPlayerByName("Dewback Rider 14")).thenReturn(player(99, "Dewback Rider 14", "u"));
+        assertEquals("name_taken", json(call(KEY, SsoAuthService.ERASE, "{\"id\":14,\"placeholder\":\"Dewback Rider 14\"}", NOW)).get("error")); //test3
+        WikiAuthService.Result probe = call(KEY, SsoAuthService.ERASE, "{}", NOW);
+        assertEquals(400, probe.status); //test4
+        assertTrue(probe.signature != null); //test4
+    }
 }

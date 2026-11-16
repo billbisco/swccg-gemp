@@ -648,4 +648,103 @@ public class DbPlayerDAO implements PlayerDAO {
             }
         }
     }
+
+    /** Name-as-text columns that show the placeholder after a close (#524), besides RENAME_COLUMNS. */
+    static final String[][] ERASE_ID_COLUMNS = {
+            {"game_history", "winner", "winner_id"}, {"game_history", "loser", "loser_id"}
+    };
+
+    /** A game counts as League or Tournament when it has a league type or a non-casual event name. */
+    static final String COMPETITIVE = "(league_type<>'' OR (tournament IS NOT NULL AND tournament<>'' AND tournament NOT LIKE 'Casual%'))";
+
+    @Override
+    public synchronized String erasePlayer(int playerId, String placeholder) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                String oldName;
+                try (PreparedStatement st = conn.prepareStatement("SELECT name FROM player WHERE id=? FOR UPDATE")) {
+                    st.setInt(1, playerId);
+                    try (ResultSet rs = st.executeQuery()) {
+                        if (!rs.next()) {
+                            conn.rollback();
+                            return "not_found";
+                        }
+                        oldName = rs.getString(1);
+                    }
+                }
+                try (PreparedStatement st = conn.prepareStatement("SELECT 1 FROM player WHERE LOWER(name)=LOWER(?) AND id<>? LIMIT 1")) {
+                    st.setString(1, placeholder);
+                    st.setInt(2, playerId);
+                    try (ResultSet rs = st.executeQuery()) {
+                        if (rs.next()) {
+                            conn.rollback();
+                            return "name_taken";
+                        }
+                    }
+                }
+                // Decks: keep the ones used in a League or Tournament game (locked league decks, tournament
+                // entries, or the deck name of a competitive game in the history); delete the rest.
+                exec(conn, "DELETE FROM deck WHERE player_id=? AND name NOT IN ("
+                        + " SELECT locked_ls_deck_name FROM league_participation WHERE player_name IN (?,?) AND locked_ls_deck_name IS NOT NULL"
+                        + " UNION SELECT locked_ds_deck_name FROM league_participation WHERE player_name IN (?,?) AND locked_ds_deck_name IS NOT NULL"
+                        + " UNION SELECT deck_name FROM tournament_player WHERE player IN (?,?) AND deck_name IS NOT NULL"
+                        + " UNION SELECT winner_deck_name FROM game_history WHERE winner_id=? AND winner_deck_name IS NOT NULL AND " + COMPETITIVE
+                        + " UNION SELECT loser_deck_name FROM game_history WHERE loser_id=? AND loser_deck_name IS NOT NULL AND " + COMPETITIVE + ")",
+                        playerId, oldName, placeholder, oldName, placeholder, oldName, placeholder, playerId, playerId);
+                exec(conn, "DELETE FROM collection WHERE player_id=?", playerId);
+                exec(conn, "DELETE FROM game_save WHERE owner IN (?,?,?)", oldName, placeholder, String.valueOf(playerId));
+                exec(conn, "DELETE FROM player_password_reset WHERE player_id=?", playerId);
+                exec(conn, "DELETE FROM player_game_settings WHERE player_id=?", playerId);
+                exec(conn, "UPDATE league_participation SET join_ip=NULL WHERE player_name IN (?,?)", oldName, placeholder);
+                exec(conn, "UPDATE player SET name=?, password='', last_ip=NULL, create_ip=NULL WHERE id=?", placeholder, playerId);
+                if (!oldName.equals(placeholder)) {
+                    for (String[] tc : RENAME_COLUMNS)
+                        exec(conn, "UPDATE " + tc[0] + " SET " + tc[1] + "=? WHERE " + tc[1] + "=?", placeholder, oldName);
+                }
+                for (String[] tc : ERASE_ID_COLUMNS)
+                    exec(conn, "UPDATE " + tc[0] + " SET " + tc[1] + "=? WHERE " + tc[2] + "=?", placeholder, playerId);
+                conn.commit();
+                return null;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
+            }
+        }
+    }
+
+    private static void exec(Connection conn, String sql, Object... args) throws SQLException {
+        try (PreparedStatement st = conn.prepareStatement(sql)) {
+            for (int i = 0; i < args.length; i++)
+                st.setObject(i + 1, args[i]);
+            st.executeUpdate();
+        }
+    }
+
+    @Override
+    public List<String[]> replaysOf(int playerId) throws SQLException {
+        List<String[]> out = new java.util.ArrayList<>();
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement st = conn.prepareStatement(
+                     "SELECT winner_id, winner, win_recording_id, loser_id, loser, lose_recording_id FROM game_history WHERE winner_id=? OR loser_id=?")) {
+            st.setInt(1, playerId);
+            st.setInt(2, playerId);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    for (int side = 0; side < 2; side++) {
+                        int o = side * 3;
+                        int id = rs.getInt(1 + o);
+                        String folder = rs.wasNull() ? rs.getString(2 + o) : String.valueOf(id);
+                        String rec = rs.getString(3 + o);
+                        if (folder != null && rec != null)
+                            out.add(new String[]{folder, rec});
+                    }
+                }
+            }
+        }
+        return out;
+    }
 }
