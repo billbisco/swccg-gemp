@@ -271,7 +271,7 @@ public class SsoAuthService {
         java.util.regex.Matcher m = AuthService.PLACEHOLDER.matcher(placeholder);
         if (!m.matches() || !m.group(2).equals(String.valueOf(playerId)))
             return result(200, error("name_invalid"), keyId, nonce);
-        Player before = _authService.getPlayer(playerId);
+        Player before = _authService.getPlayerIncludingDeactivated(playerId);
         if (before == null || Player.isBot(before.getName()))
             return result(200, error("not_found"), keyId, nonce);
         Player other = _authService.getPlayerByName(placeholder);
@@ -294,7 +294,7 @@ public class SsoAuthService {
         if (after != null)
             after.run();
         LOG.info("sso-auth: erase id=" + playerId + " key=" + keyId);
-        Player p = _authService.getPlayer(playerId);
+        Player p = _authService.getPlayerIncludingDeactivated(playerId);
         return result(200, p != null ? okUser(p) : error("not_found"), keyId, nonce);
     }
 

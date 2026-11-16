@@ -307,7 +307,7 @@ class SsoAuthServiceTest {
         int[] cleared = {0};
         service.setSessionEnder(ended::add);
         service.setRenameHooks(name -> false, () -> cleared[0]++);
-        when(auth.getPlayer(3901)).thenReturn(player(3901, "Finn", "ud"));
+        when(auth.getPlayerIncludingDeactivated(3901)).thenReturn(player(3901, "Finn", "ud"));
         JSONObject r = json(call(KEY, SsoAuthService.ERASE, "{\"id\":3901,\"placeholder\":\"Mynock 3901\",\"check\":true}", NOW));
         assertEquals(true, r.get("ok")); //test1
         assertNotNull(r.get("user"), "the sign-in service needs the player in every ok answer"); //test1
@@ -328,12 +328,12 @@ class SsoAuthServiceTest {
         //test3: placeholder held by another player
         //test4: an empty body is a signed 400, so swccg-login shows Close account
         service.setRenameHooks(name -> name.equals("Rey"), null);
-        when(auth.getPlayer(12)).thenReturn(player(12, "Rey", "u"));
+        when(auth.getPlayerIncludingDeactivated(12)).thenReturn(player(12, "Rey", "u"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Bantha 12\"}", NOW)).get("error")); //test1
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Mynock 13\"}", NOW)).get("error")); //test1
         assertEquals("busy", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Mynock 12\"}", NOW)).get("error")); //test2
         verify(auth, never()).eraseAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test2
-        when(auth.getPlayer(14)).thenReturn(player(14, "Poe", "u"));
+        when(auth.getPlayerIncludingDeactivated(14)).thenReturn(player(14, "Poe", "u"));
         when(auth.getPlayerByName("Dewback Rider 14")).thenReturn(player(99, "Dewback Rider 14", "u"));
         assertEquals("name_taken", json(call(KEY, SsoAuthService.ERASE, "{\"id\":14,\"placeholder\":\"Dewback Rider 14\"}", NOW)).get("error")); //test3
         WikiAuthService.Result probe = call(KEY, SsoAuthService.ERASE, "{}", NOW);
