@@ -280,11 +280,8 @@ public class SsoAuthService {
         java.util.function.Predicate<String> atTable = _atTable;
         if (!before.getName().equals(placeholder) && atTable != null && atTable.test(before.getName()))
             return result(200, error("busy"), keyId, nonce);
-        if (Boolean.TRUE.equals(check)) {
-            JSONObject ok = new JSONObject();
-            ok.put("ok", true);
-            return result(200, ok, keyId, nonce);
-        }
+        if (Boolean.TRUE.equals(check)) // same answer shape as every other call: ok + the player (unchanged)
+            return result(200, okUser(before), keyId, nonce);
         String refused = _authService.eraseAccount(playerId, placeholder);
         if (refused != null)
             return result(200, error(refused), keyId, nonce);
