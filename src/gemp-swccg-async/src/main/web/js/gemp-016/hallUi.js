@@ -440,7 +440,7 @@ var GempSwccgHallUI = Class.extend({
             if (thrownError != "abort") {
                 if (xhr != null) {
                     if (xhr.status == 401) {
-                        chat.appendMessage("Game hall problem - You're not logged in, go to the <a href='index.html'>main page</a> to log in", "warningMessage");
+                        chat.appendMessage("Game hall problem - You're not signed in. <a href='index.html?return=" + encodeURIComponent(window.location.pathname + window.location.search) + "'>Sign in</a> and you'll come back here.", "warningMessage");
                         return;
                     } else {
                         chat.appendMessage("The game hall had a problem communicating with the server (" + xhr.status + "), no new updates will be displayed.", "warningMessage");
