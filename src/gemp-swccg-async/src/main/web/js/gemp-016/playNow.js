@@ -3,7 +3,7 @@
  * The pure functions at the top have no jQuery or DOM use, so tests can run them under node.
  */
 var PlayNow = {
-    SERVER: (window.location.pathname.indexOf("/play/") === 0) ? "/play/gemp-swccg-server" : "/gemp-swccg-server",
+    SERVER: (typeof window !== "undefined" && window.location.pathname.indexOf("/play/") === 0) ? "/play/gemp-swccg-server" : "/gemp-swccg-server",
     SIDES: {light: "Light Side", dark: "Dark Side"},
     BOTS: {ozzel: "OzzelBot (beginner)", yoda: "YodaBot (advanced)"},
 
@@ -32,7 +32,7 @@ var PlayNow = {
 
     /** The game page for a Play now game. */
     gameUrl: function (gameId, participantId, guest) {
-        return ((window.location.pathname.indexOf("/play/") === 0) ? "/play/" : "/gemp-swccg/") + "game.html?gameId=" + encodeURIComponent(gameId)
+        return ((typeof window !== "undefined" && window.location.pathname.indexOf("/play/") === 0) ? "/play/" : "/gemp-swccg/") + "game.html?gameId=" + encodeURIComponent(gameId)
             + "&participantId=" + encodeURIComponent(participantId)
             + "&playNow=1" + (guest ? "&guest=1" : "");
     },

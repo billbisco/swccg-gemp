@@ -33,21 +33,17 @@ public class PlayerNamesWebClientTests {
             int chat = html.indexOf("js/gemp-016/chat.js");
             assertTrue(names > 0 && names < chat, page);
         }
-        String index = read("index.html");
-        assertTrue(index.indexOf("js/swccg-names.js") < index.indexOf("js/swccg-login-box.js"));
     }
 
     @Test
     public void NameBoxesAreFiltered() throws IOException {
-        //test2: classic signup and the sign-in box's signup mode filter the name box; sign-in does not.
-        String form = read("includes/registrationForm.html");
-        assertTrue(form.contains("id='login' type='text' maxlength='32'"));
-        assertTrue(form.contains("id='loginNameNote'"));
-        assertTrue(read("index.html").contains("SwccgNames.attach(document.getElementById(\"login\")"));
-        String box = read("js/swccg-login-box.js");
-        assertTrue(box.contains("SwccgNames.attach(this.name"));
-        assertTrue(box.contains("box.mode.value === \"signup\""));
-        assertTrue(box.contains("this.name.setAttribute(\"maxlength\", signup ? \"32\" : \"40\")"));
+        //test2: Play has no name box of its own any more (swccg-guild/work#512): names are chosen on the one
+        // sign-in page at swccg.com/login, so index.html has no sign-in box, password box or classic signup.
+        String index = read("index.html");
+        assertTrue(!index.contains("swccg-login-box"), "index.html still loads the sign-in box");
+        assertTrue(!index.contains("type=\"password\"") && !index.contains("type='password'"),
+                "index.html still has a password box");
+        assertTrue(!index.contains("registrationForm.html"), "index.html still loads classic signup");
     }
 
     @Test
