@@ -116,7 +116,26 @@
                             function(html) {
                                 $(".status").append(html);
                             });
-                    signInScreen();
+                    // #559: one login. Already signed in (here, on the forum or on the wiki)? Then go
+                    // straight to the page you asked for, or the hall, instead of showing "Sign in".
+                    // A 401 (not signed in) or no answer within 4 seconds shows the Sign in button.
+                    $.ajax({
+                        type: "GET",
+                        url: GEMP_SERVER + "/deck/list",
+                        cache: false,
+                        timeout: 4000,
+                        success: function () {
+                            var m = /[?&]return=([^&#]*)/.exec(window.location.search);
+                            var ret = m ? decodeURIComponent(m[1]) : "";
+                            var ok = /^\/play\/[A-Za-z0-9._~!&()*+=:@%\/?-]*$/.test(ret) && ret.indexOf("..") < 0 &&
+                                !/^\/play\/(?:index\.html)?(?:\?|$)/.test(ret);
+                            window.location.replace(ok ? ret : "hall.html");
+                        },
+                        error: function () {
+                            signInScreen();
+                            $(".centerContainer").center();
+                        }
+                    });
                     $(".centerContainer").center();
                 });
     </script>
