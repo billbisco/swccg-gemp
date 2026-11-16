@@ -310,6 +310,7 @@ class SsoAuthServiceTest {
         when(auth.getPlayer(3901)).thenReturn(player(3901, "Finn", "ud"));
         JSONObject r = json(call(KEY, SsoAuthService.ERASE, "{\"id\":3901,\"placeholder\":\"Mynock 3901\",\"check\":true}", NOW));
         assertEquals(true, r.get("ok")); //test1
+        assertNotNull(r.get("user"), "the sign-in service needs the player in every ok answer"); //test1
         verify(auth, never()).eraseAccount(anyInt(), org.mockito.ArgumentMatchers.anyString()); //test1
         assertEquals(0, cleared[0]); //test1
         when(auth.eraseAccount(3901, "Mynock 3901")).thenReturn(null);
