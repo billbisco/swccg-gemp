@@ -144,7 +144,8 @@ public class SsoAuthService {
                 || password.isEmpty() || password.length() > 1024 || !validIp(clientIp))
             return result(400, error("bad_request"), keyId, nonce);
         // Failures count per name and IP (#519): guessing at a player's name from one place must not lock
-        // that player out everywhere. AuthService's LoginThrottle keeps its own higher per-account ceiling.
+        // that player out everywhere. Per account alone there is no lock anywhere (#564); the sign-in service
+        // slows down a name under attack instead.
         String userKey = username.toLowerCase(Locale.ROOT) + "\n" + clientIp;
         long retry = Math.max(_ipAttempts.retryAfterSeconds(clientIp, now), _userFailures.retryAfterSeconds(userKey, now));
         if (retry > 0)

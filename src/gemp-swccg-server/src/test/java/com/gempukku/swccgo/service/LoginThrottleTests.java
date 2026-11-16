@@ -29,15 +29,19 @@ public class LoginThrottleTests {
     }
 
     @Test
-    public void failuresSpreadOverIpsHitTheAccountCeiling() {
+    public void failuresSpreadOverIpsSlowTheNameButNeverLockIt() {
         LoginThrottle throttle = new LoginThrottle(3, 6, 1000, 60_000, 30_000);
         long t = 7_000_000;
         for (int i = 0; i < 5; i++)
             throttle.recordFailure("Bill", "ip" + i, t);
-        assertFalse(throttle.isBlocked("Bill", "fresh", t + 1), "below the account ceiling");
+        assertEquals(0, throttle.delayMillis("Bill", t + 1), "below the account ceiling");
         throttle.recordFailure("Bill", "ip5", t);
-        assertTrue(throttle.isBlocked("Bill", "fresh", t + 1), "ceiling reached: locked on every IP");
-        assertFalse(throttle.isBlocked("Alice", "fresh", t + 1));
+        assertEquals(LoginThrottle.DELAY_STEP_MILLIS, throttle.delayMillis("Bill", t + 1));
+        for (int i = 6; i < 100; i++)
+            throttle.recordFailure("Bill", "ip" + i, t);
+        assertEquals(LoginThrottle.MAX_DELAY_MILLIS, throttle.delayMillis("Bill", t + 1), "capped");
+        assertFalse(throttle.isBlocked("Bill", "fresh", t + 1), "never locked on an IP that did not guess (#564)");
+        assertEquals(0, throttle.delayMillis("Alice", t + 1));
     }
 
     @Test
@@ -49,8 +53,10 @@ public class LoginThrottleTests {
         throttle.recordFailure("Bill", "b", t);
         throttle.recordFailure("Bill", "b", t);
         assertTrue(throttle.isBlocked("Bill", "a", t + 1));
-        assertTrue(throttle.isBlocked("Bill", "c", t + 1));
+        assertFalse(throttle.isBlocked("Bill", "c", t + 1), "no account-wide lock (#564)");
+        assertEquals(LoginThrottle.DELAY_STEP_MILLIS, throttle.delayMillis("Bill", t + 1));
         throttle.recordSuccess("bill", null);
+        assertEquals(0, throttle.delayMillis("Bill", t + 1));
         assertFalse(throttle.isBlocked("Bill", "a", t + 1));
         assertFalse(throttle.isBlocked("Bill", "b", t + 1));
         assertFalse(throttle.isBlocked("Bill", "c", t + 1));

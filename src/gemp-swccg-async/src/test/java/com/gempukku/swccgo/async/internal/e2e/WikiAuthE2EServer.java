@@ -64,9 +64,10 @@ public final class WikiAuthE2EServer {
         // One-time reset code issued by an admin.
         seed.put("reset_id", register(auth, dao, "e2ereset", PASSWORD));
         seed.put("reset_code", auth.issueResetCode("e2ereset", "e2eadmin"));
-        // Account already locked by failed game logins (same AuthService, so same LoginThrottle).
+        // Many failed game logins for one name from SEED_IP (same AuthService, so same LoginThrottle):
+        // locked for SEED_IP only, never for other IPs (#564).
         seed.put("throt_id", register(auth, dao, "e2ethrot", PASSWORD));
-        for (int i = 0; i < LoginThrottle.DEFAULT_MAX_ACCOUNT_FAILURES; i++) {
+        for (int i = 0; i < LoginThrottle.DEFAULT_MAX_PAIR_FAILURES; i++) {
             AuthService.Status s = auth.verifyCredentials("e2ethrot", "wrong-" + i, SEED_IP).getStatus();
             if (s != AuthService.Status.INVALID)
                 throw new IllegalStateException("seed failure " + i + " was " + s);

@@ -298,14 +298,38 @@ public class AuthServiceTests {
     }
 
     @Test
-    public void distributedGuessingHitsTheHigherPerAccountCeiling() throws Exception {
+    public void distributedGuessingNeverLocksTheAccountOnlySlowsIt() throws Exception {
         dao.addWithStoredHash("Bill", hasher.hash("rightpass"), "u", null);
-        for (int i = 0; i < LoginThrottle.DEFAULT_MAX_ACCOUNT_FAILURES; i++)
-            auth.verifyCredentials("Bill", "guess" + i, "198.51." + (i / 200) + "." + (i % 200));
+        assertEquals(0, auth.accountDelayMillis("Bill"));
+        // The old account-wide lock tripped at 100; go past it, from many IPs.
+        for (int i = 0; i < 150; i++)
+            assertEquals(AuthService.Status.INVALID,
+                    auth.verifyCredentials("Bill", "guess" + i, "198.51." + (i / 200) + "." + (i % 200)).getStatus());
 
-        assertEquals(AuthService.Status.THROTTLED, auth.verifyCredentials("Bill", "rightpass", "192.0.2.1").getStatus());
-        now.addAndGet(LoginThrottle.DEFAULT_LOCK_MILLIS + 1);
-        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", "192.0.2.1").getStatus());
+        assertEquals(LoginThrottle.MAX_DELAY_MILLIS, auth.accountDelayMillis("bill"), "slowed, capped at 5 s");
+        assertEquals(AuthService.Status.OK, auth.verifyCredentials("Bill", "rightpass", "192.0.2.1").getStatus(),
+                "the owner on a clean IP still gets in");
+        assertEquals(0, auth.accountDelayMillis("Bill"), "a success clears the slow-down");
+    }
+
+    @Test
+    public void accountDelayGrowsHalfASecondPerFailurePastTheCeilingAndExpires() throws Exception {
+        LoginThrottle t = new LoginThrottle();
+        long start = 1_000_000L;
+        int ceiling = LoginThrottle.DEFAULT_ACCOUNT_DELAY_AFTER;
+        for (int i = 0; i < ceiling - 1; i++)
+            t.recordFailure("Bill", "203.0.113." + i, start);
+        assertEquals(0, t.delayMillis("bill", start));
+        t.recordFailure("Bill", "203.0.113.250", start);
+        assertEquals(500, t.delayMillis("bill", start));
+        t.recordFailure("Bill", "203.0.113.251", start);
+        assertEquals(1000, t.delayMillis("BILL", start));
+        for (int i = 0; i < 50; i++)
+            t.recordFailure("Bill", "198.51.100." + i, start);
+        assertEquals(LoginThrottle.MAX_DELAY_MILLIS, t.delayMillis("bill", start));
+        for (int i = 0; i < 200; i++)
+            assertFalse(t.isBlocked("bill", "192.0.2." + i, start), "no IP is blocked by the name's total");
+        assertEquals(0, t.delayMillis("bill", start + LoginThrottle.DEFAULT_WINDOW_MILLIS));
     }
 
     @Test

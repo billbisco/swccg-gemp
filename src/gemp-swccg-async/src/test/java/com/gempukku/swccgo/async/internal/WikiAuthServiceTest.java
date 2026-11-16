@@ -248,17 +248,24 @@ class WikiAuthServiceTest {
     }
 
     @Test
-    void secondLayerPerAccountLimit() throws Exception {
+    void secondLayerLimitIsPerAccountAndIpNeverPerAccountAlone() throws Exception {
         answer(Status.INVALID, null);
+        // Ten failures for one name, each from a different IP: no lock for the owner anywhere (#564).
         for (int i = 0; i < 10; i++)
             assertEquals(200, call("Victim", "wrong" + i, "198.51.100." + i, NOW + i).status);
-        WikiAuthService.Result limited = call("victim", PASSWORD, "198.51.100.200", NOW + 20);
+        when(auth.verifyCredentials(eq("victim"), eq(PASSWORD), anyString())).thenReturn(AuthResults.of(Status.OK, player("Victim", "u", null)));
+        assertEquals(true, json(call("victim", PASSWORD, "198.51.100.200", NOW + 20)).get("ok"));
+
+        // Ten failures for one name from one IP: that name is limited on that IP only.
+        answer(Status.INVALID, null);
+        for (int i = 0; i < 10; i++)
+            assertEquals(200, call("Other", "wrong" + i, "203.0.113.50", NOW + 30 + i).status);
+        WikiAuthService.Result limited = call("other", PASSWORD, "203.0.113.50", NOW + 50);
         assertEquals(429, limited.status);
         assertEquals("throttled", json(limited).get("error"));
         assertTrue(((Number) json(limited).get("retry_after")).longValue() > 0);
-        verify(auth, times(10)).verifyCredentials(anyString(), anyString(), anyString());
-        when(auth.verifyCredentials(eq("victim"), eq(PASSWORD), anyString())).thenReturn(AuthResults.of(Status.OK, player("Victim", "u", null)));
-        assertEquals(true, json(call("victim", PASSWORD, "198.51.100.201", NOW + 15 * 60_000L + 100)).get("ok"));
+        when(auth.verifyCredentials(eq("other"), eq(PASSWORD), anyString())).thenReturn(AuthResults.of(Status.OK, player("Other", "u", null)));
+        assertEquals(true, json(call("other", PASSWORD, "203.0.113.51", NOW + 51)).get("ok"));
     }
 
     @Test
