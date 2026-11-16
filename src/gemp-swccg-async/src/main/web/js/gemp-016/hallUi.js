@@ -517,6 +517,9 @@ var GempSwccgHallUI = Class.extend({
         $("#bug-button").button();
         $("#wiki-button").button();
         $("#merchant-button").button();
+        // #504: Sign out posts to Play's own server path (older hosts serve it at the root).
+        $("#signout-form").attr("action", GEMP_SERVER + "/oidc/logout");
+        $("#signout-button").button();
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
         // Drag (or focus and arrow) the bar on top of the chat to make it taller or shorter.

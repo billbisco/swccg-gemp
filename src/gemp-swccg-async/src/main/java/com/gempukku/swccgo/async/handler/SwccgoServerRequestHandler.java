@@ -297,9 +297,14 @@ public class SwccgoServerRequestHandler {
     }
 
     protected Map<String, String> logUserReturningHeaders(String remoteIp, String login) throws SQLException {
+        return logUserReturningHeaders(remoteIp, login, null, null);
+    }
+
+    /** As above, keeping the swccg.com ID token and sid with the session (server-side only, #504/#506). */
+    protected Map<String, String> logUserReturningHeaders(String remoteIp, String login, String idToken, String sid) throws SQLException {
         _playerDao.updateLastLoginIp(login, remoteIp);
 
-        String sessionId = _loggedUserHolder.logUser(login);
+        String sessionId = (idToken == null && sid == null) ? _loggedUserHolder.logUser(login) : _loggedUserHolder.logUser(login, idToken, sid);
         // HttpOnly: page scripts (and any injected script) cannot read the session.
         // SameSite=Lax: other sites cannot make the browser send it on POSTs (CSRF).
         // Secure: HTTPS only (see secureCookies()).
