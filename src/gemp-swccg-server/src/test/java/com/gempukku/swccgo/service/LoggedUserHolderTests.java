@@ -47,4 +47,41 @@ public class LoggedUserHolderTests {
         assertNull(holder.getLoggedUser(s2));
         assertEquals(0, holder.expireSessions(Long.MAX_VALUE / 2), "no stale access entries left behind");
     }
+
+    @Test
+    public void keepsTheIdTokenServerSideAndDropsItWithTheSession() {
+        LoggedUserHolder holder = new LoggedUserHolder();
+        String s1 = holder.logUser("Rey", "tok-1", "sid-A");
+        assertEquals("tok-1", holder.getIdToken(s1));
+        assertTrue(holder.logoutSession(s1));
+        assertNull(holder.getLoggedUser(s1));
+        assertNull(holder.getIdToken(s1));
+        assertFalse(holder.logoutSession(s1));
+        assertNull(holder.getIdToken(null));
+    }
+
+    @Test
+    public void backChannelBySidEndsOnlyThatDevice() {   // #506
+        LoggedUserHolder holder = new LoggedUserHolder();
+        String phone = holder.logUser("Rey", "tok-1", "sid-A");
+        String laptop = holder.logUser("Rey", "tok-2", "sid-B");
+        assertEquals(1, holder.forceLogoutSid("sid-A"));
+        assertNull(holder.getLoggedUser(phone));
+        assertEquals("Rey", holder.getLoggedUser(laptop));
+        assertEquals(0, holder.forceLogoutSid("sid-A"));
+        assertEquals(1, holder.forceLogoutUser("Rey"));   // account-wide: everything left
+        assertNull(holder.getLoggedUser(laptop));
+        assertNull(holder.getIdToken(laptop));
+    }
+
+    @Test
+    public void expiryDropsTheKeptToken() {
+        LoggedUserHolder holder = new LoggedUserHolder();
+        long now = System.currentTimeMillis();
+        String s = holder.logUser("Finn", "tok", "sid-C");
+        holder.setLastAccessForTest(s, now - 11 * 60 * 1000);
+        assertEquals(1, holder.expireSessions(now));
+        assertNull(holder.getIdToken(s));
+        assertEquals(0, holder.forceLogoutSid("sid-C"));
+    }
 }

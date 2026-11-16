@@ -68,6 +68,23 @@ class SsoAuthServiceTest {
         return (JSONObject) new JSONParser().parse(r.bodyAsString());
     }
 
+    private static String verifyBody(String name, String pw, String ip) {
+        return "{\"username\":\"" + name + "\",\"password\":\"" + pw + "\",\"client_ip\":\"" + ip + "\"}";
+    }
+
+    @Test
+    void wrongPasswordsLockTheNameOnlyFromThatIp() throws Exception {
+        String other = "198.51.100.20";
+        when(auth.verifyCredentials(eq("leia"), startsWith("wrong"), anyString())).thenReturn(result(AuthService.Status.INVALID, null));
+        when(auth.verifyCredentials(eq("leia"), eq("right"), anyString())).thenReturn(result(AuthService.Status.OK, player(9, "Leia", "u")));
+        for (int i = 0; i < 10; i++)
+            assertEquals("invalid_credentials", json(call(KEY, SsoAuthService.VERIFY, verifyBody("leia", "wrong" + i, IP), NOW)).get("error"));
+        assertEquals("throttled", json(call(KEY, SsoAuthService.VERIFY, verifyBody("leia", "right", IP), NOW)).get("error"),
+                "the guessing IP is refused for that name");
+        JSONObject ok = json(call(KEY, SsoAuthService.VERIFY, verifyBody("leia", "right", other), NOW));
+        assertEquals(9L, ((JSONObject) ok.get("user")).get("id"), "the player on another IP still signs in");
+    }
+
     @Test
     void verifyNeverSendsAdminFlag() throws Exception {
         Player admin = player(5, "Bill", "au");

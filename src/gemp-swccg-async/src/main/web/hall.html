@@ -35,7 +35,7 @@
     <script type="text/javascript" src="js/swccg-names.js?v=20261111-u15"></script>
     <script type="text/javascript" src="js/gemp-016/playerMenu.js?v=20261112-invite"></script>
     <script type="text/javascript" src="js/gemp-016/chat.js?v=20261112-invite"></script>
-    <script type="text/javascript" src="js/gemp-016/communication.js?v=20261112-221-222"></script>
+    <script type="text/javascript" src="js/gemp-016/communication.js?v=20261115-518"></script>
     <script type="text/javascript" src="js/gemp-016/deliveryService.js?v=20261006h"></script>
     <script type="text/javascript" src="js/gemp-016/commonUi.js?v=20261020c"></script>
     <script type="text/javascript" src="js/gemp-016/cards/CardFilter.js"></script>
@@ -49,7 +49,8 @@
     <script type="text/javascript" src="js/gemp-016/gameOptionsForm.js?v=20261103-135"></script>
     <script type="text/javascript" src="js/gemp-016/deckDraftHistory.js?v=20261112-221"></script>
     <script type="text/javascript" src="js/gemp-016/cardPoolForm.js?v=20261112-222"></script>
-    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261112-221-222"></script>
+    <script type="text/javascript" src="js/gemp-016/hallUi.js?v=20261115-504"></script>
+    <script type="text/javascript" src="/js/swccg-auth.js?v=20261115-510" defer></script>
     <!-- The Events tab (LOTR hall): the drawer rows, the calendar, the completed-event browser -->
     <script type="text/javascript" src="js/gemp-016/eventDrawer.js?v=20261020d"></script>
     <script type="text/javascript" src="js/gemp-016/leagueResultsUi.js?v=20261111-nf"></script>
@@ -102,6 +103,11 @@
                     <a id="merchant-button" class="toolbar-button" href="/merchant.html" target="_blank" rel="noopener noreferrer">
                         <span class="custom-icon icon-merchant"></span><span>Merchant</span>
                     </a>
+
+                    <!-- #504/#508: Sign out of this device, one click (Play ends its session, then swccg.com with the ID-token hint) -->
+                    <form id="signout-form" method="post" action="/play/gemp-swccg-server/oidc/logout" style="display:inline;margin:0">
+                        <button id="signout-button" type="submit" class="toolbar-button" title="Sign out of Play, the forum and the wiki on this device"><span>Sign out</span></button>
+                    </form>
                 </div>
                 <div class="flex-horiz" id="messageArea">
                     <div id="motd" class="motd"></div>
