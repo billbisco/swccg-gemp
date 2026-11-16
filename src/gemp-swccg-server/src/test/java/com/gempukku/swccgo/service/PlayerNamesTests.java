@@ -124,4 +124,12 @@ public class PlayerNamesTests {
         assertTrue(PlayerNames.isWellFormed("\uA7C0\u1C80\u0CDD"));   // letters already in 15.0
         assertFalse(PlayerNames.isWellFormed("Han\u3164Solo"));         // a Hangul filler is invisible, not a letter
     }
+
+    @Test
+    public void placeholderShapedNamesAreAllowed() {
+        //test: members may choose a name shaped like a Close-account placeholder (Bill, 2026-11-16)
+        for (String n : new String[]{"Mynock 99999", "Frozen in Carbonite 12", "dewback_rider_7", "Lost to the Sarlacc 3-2"}) {
+            assertFalse(PlayerNames.isReserved(n), n);
+        }
+    }
 }

@@ -327,6 +327,7 @@ class SsoAuthServiceTest {
         //test2: busy at a table, nothing changes
         //test3: placeholder held by another player
         //test4: an empty body is a signed 400, so swccg-login shows Close account
+        //test5: suffixed placeholder
         service.setRenameHooks(name -> name.equals("Rey"), null);
         when(auth.getPlayerIncludingDeactivated(12)).thenReturn(player(12, "Rey", "u"));
         assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":12,\"placeholder\":\"Bantha 12\"}", NOW)).get("error")); //test1
@@ -336,6 +337,9 @@ class SsoAuthServiceTest {
         when(auth.getPlayerIncludingDeactivated(14)).thenReturn(player(14, "Poe", "u"));
         when(auth.getPlayerByName("Dewback Rider 14")).thenReturn(player(99, "Dewback Rider 14", "u"));
         assertEquals("name_taken", json(call(KEY, SsoAuthService.ERASE, "{\"id\":14,\"placeholder\":\"Dewback Rider 14\"}", NOW)).get("error")); //test3
+        //test5: a suffixed placeholder (used when the five plain ones are taken) is accepted; a long suffix is not
+        assertEquals(true, json(call(KEY, SsoAuthService.ERASE, "{\"id\":14,\"placeholder\":\"Dewback Rider 14-2\",\"check\":true}", NOW)).get("ok")); //test5
+        assertEquals("name_invalid", json(call(KEY, SsoAuthService.ERASE, "{\"id\":14,\"placeholder\":\"Dewback Rider 14-100\"}", NOW)).get("error")); //test5
         WikiAuthService.Result probe = call(KEY, SsoAuthService.ERASE, "{}", NOW);
         assertEquals(400, probe.status); //test4
         assertTrue(probe.signature != null); //test4

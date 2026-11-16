@@ -708,6 +708,8 @@ public class DbPlayerDAO implements PlayerDAO {
                         playerId, oldName, placeholder, oldName, placeholder, oldName, placeholder, playerId, playerId);
                 exec(conn, "DELETE FROM collection WHERE player_id=?", playerId);
                 exec(conn, "DELETE FROM game_save WHERE owner IN (?,?,?)", oldName, placeholder, String.valueOf(playerId));
+                if (!oldName.equals(placeholder))
+                    rewriteGames(conn, oldName, placeholder);
                 exec(conn, "DELETE FROM player_password_reset WHERE player_id=?", playerId);
                 exec(conn, "DELETE FROM player_game_settings WHERE player_id=?", playerId);
                 exec(conn, "UPDATE league_participation SET join_ip=NULL WHERE player_name IN (?,?)", oldName, placeholder);
@@ -725,6 +727,41 @@ public class DbPlayerDAO implements PlayerDAO {
                 throw e;
             } finally {
                 conn.setAutoCommit(autoCommit);
+            }
+        }
+    }
+
+    /**
+     * The old name in stored game setups and in other members' saved games becomes the placeholder (#524 follow-up).
+     * A saved game whose header can't be read is deleted rather than left holding the name.
+     */
+    private static void rewriteGames(Connection conn, String oldName, String placeholder) throws SQLException {
+        try (PreparedStatement st = conn.prepareStatement("SELECT id, game_setup FROM game_history WHERE INSTR(game_setup, ?)>0 FOR UPDATE")) {
+            st.setString(1, oldName);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    String json = EraseRewriter.setup(rs.getString(2), oldName, placeholder);
+                    if (json != null)
+                        exec(conn, "UPDATE game_history SET game_setup=? WHERE id=?", json, rs.getLong(1));
+                }
+            }
+        }
+        try (PreparedStatement st = conn.prepareStatement("SELECT game_id, header, move_log FROM game_save WHERE INSTR(header, ?)>0 FOR UPDATE")) {
+            st.setString(1, oldName);
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    String gameId = rs.getString(1);
+                    EraseRewriter.Save save;
+                    try {
+                        save = EraseRewriter.save(rs.getString(2), rs.getBytes(3), oldName, placeholder);
+                    } catch (RuntimeException e) {
+                        exec(conn, "DELETE FROM game_save WHERE game_id=?", gameId);
+                        continue;
+                    }
+                    if (save != null)
+                        exec(conn, "UPDATE game_save SET header=?, move_log=?, snapshot=NULL, snapshot_log_size=0, snapshot_fingerprint=NULL WHERE game_id=?",
+                                save.header(), save.log(), gameId);
+                }
             }
         }
     }
