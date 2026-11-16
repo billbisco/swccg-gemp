@@ -11,6 +11,10 @@ var GempSwccgCommunication = Class.extend({
         var that = this;
         return function (xhr, status, request) {
             var errorStatus = "" + xhr.status;
+            // #518: Play forgot this session (restart, idle) but swccg.com may still be signed in: restore it
+            // with a full-page silent sign-in instead of showing errors. At most once every 2 minutes per tab.
+            if (errorStatus == "401" && swccgSilentSignIn())
+                return;
             if (errorMap != null && errorMap[errorStatus] != null)
                 errorMap[errorStatus](xhr, status, request);
             else if (""+xhr.status != "200")
@@ -1881,3 +1885,27 @@ var GempSwccgCommunication = Class.extend({
         });
     }
 });
+
+/**
+ * #518: a full-page silent (prompt=none) sign-in through swccg.com that comes back to this page.
+ * Only on swccg.com's /play/ pages, only for pages with a signed-in look (hall, deck builder, game, merchant),
+ * and at most once every 2 minutes per tab so a signed-out reader never loops.
+ * @return true when the page is navigating away
+ */
+function swccgSilentSignIn() {
+    try {
+        if (typeof GEMP_UI_ROOT === "undefined" || GEMP_UI_ROOT !== "/play/" || typeof GEMP_SERVER === "undefined")
+            return false;
+        if (!/^\/play\/(hall|deckBuild|game|merchant|draft|soloDraft)\.html$/.test(window.location.pathname))
+            return false;
+        var key = "swccg_silent_signin", last = parseInt(window.sessionStorage.getItem(key) || "0", 10);
+        if (Date.now() - last < 120000)
+            return false;
+        window.sessionStorage.setItem(key, "" + Date.now());
+        window.location.href = GEMP_SERVER + "/oidc/start?prompt=none&return=" +
+            encodeURIComponent(window.location.pathname + window.location.search);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}

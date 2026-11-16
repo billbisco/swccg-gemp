@@ -37,8 +37,13 @@ import java.util.concurrent.ConcurrentHashMap;
  *        it to /authorize with idp=google etc. Same pending state, cookie binding and limits as start.
  *   GET  /gemp-swccg-server/oidc/callback     code -> ID token -> GEMP session by player id (sub);
  *        an error (bad password etc.) goes back to the login page as ?sso_error=<reason>
- *   POST /gemp-swccg-server/oidc/backchannel-logout  OpenID back-channel logout: ends the player's GEMP sessions
- *        ("backchannel" is still accepted as an alias)
+ *   POST /gemp-swccg-server/oidc/logout       Sign out (#504): ends this Play session first, then 303 to
+ *        swccg-login's end_session with this session's ID token as id_token_hint (one click, no page).
+ *        Without a kept token (classic sign-in, after a restart) it still ends the Play session and goes
+ *        to end_session without a hint, which asks. Same-origin POST only (checked by the root handler).
+ *   POST /gemp-swccg-server/oidc/backchannel-logout  OpenID back-channel logout: a token with a sid ends only the
+ *        Play sessions signed in from that sign-in session (this device, #506); a token without a sid ends all of
+ *        the player's Play sessions (block, reset, Sign out everywhere). "backchannel" is still accepted as an alias.
  *
  * The player is found by the ID token's sub (the GEMP player id), never by name or email, and
  * GEMP's own ban/deactivation state is checked again here. No rights come from the token.
@@ -62,11 +67,21 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
 
     static final class Pending {
         final String nonce, verifier, bindHash;
+        /** #518: a silent (prompt=none) restore after Play forgot the session; failure goes back quietly. */
+        final boolean silent;
+        /** #518: the Play page to return to (same-origin path under Play's front page), or null. */
+        final String returnTo;
 
         Pending(String nonce, String verifier, String bindHash) {
+            this(nonce, verifier, bindHash, false, null);
+        }
+
+        Pending(String nonce, String verifier, String bindHash, boolean silent, String returnTo) {
             this.nonce = nonce;
             this.verifier = verifier;
             this.bindHash = bindHash;
+            this.silent = silent;
+            this.returnTo = returnTo;
         }
     }
 
@@ -86,27 +101,32 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
             // The login page shows "Sign in with swccg.com" only when this answers.
             responseWriter.writeJsonResponse("{\"enabled\":true}");
         } else if (path.equals("start") && request.method() == HttpMethod.GET)
-            start(responseWriter, remoteIp);
+            start(request, responseWriter, remoteIp);
         else if (path.equals("box") && request.method() == HttpMethod.GET)
             box(responseWriter, remoteIp);
         else if (path.equals("callback") && request.method() == HttpMethod.GET)
             callback(request, responseWriter, remoteIp);
+        else if (path.equals("logout") && request.method() == HttpMethod.POST)
+            logout(request, responseWriter);
         else if ((path.equals("backchannel-logout") || path.equals("backchannel")) && request.method() == HttpMethod.POST)
             backchannel(request, responseWriter);
         else
             throw new HttpProcessingException(404);
     }
 
-    private void start(ResponseWriter rw, String remoteIp) throws Exception {
+    private void start(HttpRequest request, ResponseWriter rw, String remoteIp) throws Exception {
+        Map<String, List<String>> params = new QueryStringDecoder(request.uri()).parameters();
+        boolean silent = "none".equals(first(params, "prompt"));
+        String returnTo = safeReturn(first(params, "return"), playFrontPage(_client.config().redirectUri));
         String state = _client.random(), nonce = _client.random(), verifier = _client.random(), bind = _client.random();
         String url;
         try {
-            url = _client.authorizeUrl(state, nonce, verifier);
+            url = _client.authorizeUrl(state, nonce, verifier) + (silent ? "&prompt=none" : "");
         } catch (Exception e) {
             LOG.warn("swccg-login discovery failed: " + e.getClass().getSimpleName());
             throw new HttpProcessingException(503);
         }
-        if (!_pending.put(state, new Pending(nonce, verifier, sha256(bind)), remoteIp, System.currentTimeMillis()))
+        if (!_pending.put(state, new Pending(nonce, verifier, sha256(bind), silent, returnTo), remoteIp, System.currentTimeMillis()))
             throw new HttpProcessingException(429);
         Map<String, String> h = new HashMap<>();
         h.put("Location", url);
@@ -152,6 +172,10 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         if (iss == null || !iss.equals(_client.config().issuer))
             throw new HttpProcessingException(400);
         if (first(params, "error") != null) {
+            if (p.silent) {   // #518: not signed in at swccg.com either; back to the page, quietly signed out
+                redirect(rw, p.returnTo != null ? p.returnTo : playFrontPage(_client.config().redirectUri), null);
+                return;
+            }
             redirect(rw, "/gemp-swccg/?sso_error=" + ssoErrorReason(first(params, "error"), first(params, "error_description")), null);
             return;
         }
@@ -159,12 +183,14 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         if (code == null || code.length() > 512)
             throw new HttpProcessingException(400);
         int playerId;
+        String idToken, sid;
         try {
-            String idToken = _client.exchange(code, p.verifier);
+            idToken = _client.exchange(code, p.verifier);
             JSONObject claims = _client.verifier().verify(idToken, System.currentTimeMillis() / 1000, null);
             if (!p.nonce.equals(claims.get("nonce")))
                 throw new JwtVerifier.InvalidTokenException("nonce");
             playerId = JwtVerifier.playerId(claims);
+            sid = claims.get("sid") instanceof String ? (String) claims.get("sid") : null;
         } catch (JwtVerifier.InvalidTokenException e) {
             LOG.warn("swccg-login: ID token refused (" + e.getMessage() + ")");
             throw new HttpProcessingException(403);
@@ -175,19 +201,24 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         AuthService.AuthResult status = _authService.accountStatus(playerId);
         if (status.getStatus() != AuthService.Status.OK || status.getPlayer() == null || Player.isBot(status.getPlayer().getName()))
             throw new HttpProcessingException(403);
-        completeSignIn(request, rw, remoteIp, status.getPlayer().getName(), playerId);
+        completeSignIn(request, rw, remoteIp, status.getPlayer().getName(), playerId, idToken, sid, p.returnTo);
     }
 
     /** The verified player signs in: a GEMP session, a new account's guest games, and back to Play. */
     void completeSignIn(HttpRequest request, ResponseWriter rw, String remoteIp, String name, int playerId) throws Exception {
+        completeSignIn(request, rw, remoteIp, name, playerId, null, null, null);
+    }
+
+    void completeSignIn(HttpRequest request, ResponseWriter rw, String remoteIp, String name, int playerId, String idToken, String sid,
+                        String returnTo) throws Exception {
         // #264 R6/AC3 (Bill 2026-11-11, t135u): a membership just made through the sign-in service (Google, Discord
         // or a password signup in the sign-in box) takes this browser's guest Play now games on its first Play
         // session, as a classic signup does. Only that first session of a new account; an existing account
         // signing in never takes them. Only this browser's guest cookie's games move; never another account's.
         boolean firstSession = getGuestId(request) != null && _hallServer != null
                 && _playerDao.claimFirstPlaySession(name, remoteIp, FIRST_SESSION_MAX_AGE_SECONDS);
-        Map<String, String> h = logUserReturningHeaders(remoteIp, name);
-        String after = _client.config().afterLoginUrl;
+        Map<String, String> h = logUserReturningHeaders(remoteIp, name, idToken, sid);
+        String after = returnTo != null ? returnTo : _client.config().afterLoginUrl;
         if (firstSession) {
             h = adoptGuestGamesSafely(_hallServer, request, name, h, RegisterRequestHandler.SIGNUP_ADOPT_FAILED_NOTICE);
             if (h.containsKey(GUEST_NOTICE_HEADER)) {   // a redirect can't carry the notice header: the hall shows it
@@ -217,10 +248,19 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
                 throw new JwtVerifier.InvalidTokenException("jti");
             _seenJti.entrySet().removeIf(e -> e.getValue() < now - 2 * JwtVerifier.MAX_AGE_SECONDS);
             int playerId = JwtVerifier.playerId(c);
-            Player player = _playerDao.getPlayer(playerId);
-            if (player != null)
-                _loggedUserHolder.forceLogoutUser(player.getName());
-            LOG.info("swccg-login: back-channel logout for player id " + playerId);
+            Object sid = c.get("sid");
+            int ended = 0;
+            if (sid instanceof String && !((String) sid).isEmpty()) {
+                // This device only (#506): the Play sessions signed in from that sign-in session.
+                ended = _loggedUserHolder.forceLogoutSid((String) sid);
+            } else {
+                // Account-wide (block, reset, Sign out everywhere): every Play session of the player.
+                Player player = _playerDao.getPlayer(playerId);
+                if (player != null)
+                    ended = _loggedUserHolder.forceLogoutUser(player.getName());
+            }
+            LOG.info("swccg-login: back-channel logout for player id " + playerId + " (" + (sid instanceof String ? "one sign-in session" : "account-wide")
+                    + "), Play sessions ended: " + ended);
             Map<String, String> h = new HashMap<>();
             h.put("Cache-Control", "no-store");
             rw.writeError(200, h);
@@ -230,6 +270,72 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         } finally {
             decoder.destroy();
         }
+    }
+
+    /** Sign out (#504): end this Play session first, then hand the browser to end_session with the hint. */
+    private void logout(HttpRequest request, ResponseWriter rw) throws Exception {
+        String sessionId = getCookieValue(request, "loggedUser");
+        String idToken = _loggedUserHolder.getIdToken(sessionId);
+        boolean ended = _loggedUserHolder.logoutSession(sessionId);
+        String url = endSessionUrl(idToken);
+        Map<String, String> h = new HashMap<>();
+        h.put("Location", url);
+        h.put(HttpHeaderNames.SET_COOKIE.toString(), encodeProtectedCookie("loggedUser", "", 0, CookieHeaderNames.SameSite.Lax));
+        h.put("Cache-Control", "no-store");
+        LOG.info("swccg-login: Play sign-out (session ended: " + ended + ", hint: " + (idToken != null) + ")");
+        rw.writeError(303, h);
+    }
+
+    /** end_session with client_id, post_logout_redirect_uri (Play's front page), state and, when kept, the hint. */
+    String endSessionUrl(String idToken) {
+        String endpoint = null;
+        try {
+            Object e = _client.discovery().get("end_session_endpoint");
+            if (e instanceof String && ((String) e).startsWith("https://"))
+                endpoint = (String) e;
+        } catch (Exception ignored) {
+            // discovery down: the issuer's standard path still works
+        }
+        if (endpoint == null)
+            endpoint = _client.config().issuer + "/end_session";
+        StringBuilder u = new StringBuilder(endpoint).append("?client_id=").append(enc(_client.config().clientId))
+                .append("&post_logout_redirect_uri=").append(enc(playFrontPage(_client.config().redirectUri)))
+                .append("&state=").append(enc(_client.random()));
+        if (idToken != null)
+            u.append("&id_token_hint=").append(enc(idToken));
+        return u.toString();
+    }
+
+    /** https://swccg.com/play/ from https://swccg.com/play/gemp-swccg-server/oidc/callback (older hosts: /gemp-swccg/). */
+    static String playFrontPage(String redirectUri) {
+        String tail = "gemp-swccg-server/oidc/callback";
+        if (redirectUri.endsWith(tail) && redirectUri.length() > tail.length() + 8) {
+            String root = redirectUri.substring(0, redirectUri.length() - tail.length());
+            if (!root.endsWith("://") && !root.matches("https://[^/]+/"))
+                return root;
+            return root + "gemp-swccg/";
+        }
+        int slash = redirectUri.indexOf('/', 8);
+        return (slash > 0 ? redirectUri.substring(0, slash) : redirectUri) + "/gemp-swccg/";
+    }
+
+    /**
+     * A return path for after sign-in: only a path under Play's own front page on this origin
+     * (no scheme, no "//", no "..", no backslash, short), else null. Prevents open redirects.
+     */
+    static String safeReturn(String ret, String frontPage) {
+        if (ret == null || ret.length() > 300)
+            return null;
+        int slash = frontPage.indexOf('/', 8);
+        String rootPath = slash > 0 ? frontPage.substring(slash) : "/";
+        if (!ret.startsWith(rootPath) || ret.startsWith("//") || ret.contains("..") || ret.contains("\\")
+                || ret.contains("//") || !ret.matches("[A-Za-z0-9._~!&()*+=:@%/?,;$'-]*"))
+            return null;
+        return ret;
+    }
+
+    private static String enc(String s) {
+        return java.net.URLEncoder.encode(s, StandardCharsets.UTF_8);
     }
 
     private static void redirect(ResponseWriter rw, String location, Map<String, String> extra) {

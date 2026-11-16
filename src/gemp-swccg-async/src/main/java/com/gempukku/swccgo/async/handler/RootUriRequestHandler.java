@@ -100,6 +100,10 @@ public class RootUriRequestHandler implements UriRequestHandler {
             // logout (POST, signed token, no Origin), so outside the Origin check below.
             if (_oidcRequestHandler == null)
                 throw new HttpProcessingException(404);
+            // Sign out (#504) is a state-changing browser POST: only from our own pages.
+            if (uri.startsWith(_serverContextPath + "oidc/logout")
+                    && !_originPolicy.allowsOnlyFromOurPages("POST", request.headers().get("Origin"), request.headers().get("Referer")))
+                throw new HttpProcessingException(403);
             _oidcRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 5), request, context,
                     responseWriter, remoteIp);
         } else if (uri.equals(_serverContextPath)) {
