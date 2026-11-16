@@ -519,6 +519,11 @@ var GempSwccgHallUI = Class.extend({
         $("#merchant-button").button();
         // #504: Sign out posts to Play's own server path (older hosts serve it at the root).
         $("#signout-form").attr("action", GEMP_SERVER + "/oidc/logout");
+        // #504: once Sign out is pressed the Play session ends at once, so a pending hall request comes back 401.
+        // Mark the page as signing out so that 401 does not start a silent sign-in that would replace the sign-out landing.
+        $("#signout-form").on("submit", function () {
+            swccgMarkSigningOut();
+        });
         $("#signout-button").button();
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
