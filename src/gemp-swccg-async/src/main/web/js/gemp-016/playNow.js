@@ -32,7 +32,7 @@ var PlayNow = {
 
     /** The game page for a Play now game. */
     gameUrl: function (gameId, participantId, guest) {
-        return ((window.location.pathname.indexOf("/play/") === 0) ? "/play/" : "/gemp-swccg/") + "game.html?gameId=" + encodeURIComponent(gameId)
+        return ((typeof window !== "undefined" && window.location.pathname.indexOf("/play/") === 0) ? "/play/" : "/gemp-swccg/") + "game.html?gameId=" + encodeURIComponent(gameId)
             + "&participantId=" + encodeURIComponent(participantId)
             + "&playNow=1" + (guest ? "&guest=1" : "");
     },
