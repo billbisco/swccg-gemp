@@ -204,6 +204,11 @@ public interface PlayerDAO {
      * unfinished saved games, reset codes and game settings. Idempotent: a retry finishes the job.
      * @return null when done, else "not_found" or "name_taken"
      */
+    /** The player with this id even when deactivated (close account runs after the block step deactivates). */
+    default Player getPlayerIncludingDeactivated(int id) {
+        return getPlayer(id);
+    }
+
     default String erasePlayer(int playerId, String placeholder) throws SQLException {
         throw new UnsupportedOperationException("erase");
     }

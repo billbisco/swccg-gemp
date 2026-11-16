@@ -98,6 +98,15 @@ public class DbPlayerDAOEraseIT {
         assertEquals(List.of("Mynock 10"), list("SELECT player FROM transfer"));
         assertEquals(4, dao.replaysOf(10).size(), "both seats of both games");
         assertNull(dao.erasePlayer(10, "Mynock 10"), "a retry is safe");
+        //test: close account deactivates first (block step); the erase must still find the player
+        try (Connection c = ds.getConnection(); Statement st = c.createStatement()) {
+            st.execute("INSERT INTO player(id,name,password,type) VALUES (12,'Deact Han','x','du')");
+        }
+        assertNull(dao.getPlayer(12), "the normal lookup leaves out deactivated players");
+        com.gempukku.swccgo.service.AuthService auth = new com.gempukku.swccgo.service.AuthService(dao,
+                new com.gempukku.swccgo.security.PasswordHasher(1), new com.gempukku.swccgo.service.LoginThrottle());
+        assertNull(auth.eraseAccount(12, "Mynock 12"));
+        assertEquals(List.of("Mynock 12"), list("SELECT name FROM player WHERE id=12"));
         assertEquals(List.of("comp game", "league deck", "tourney deck"), list("SELECT name FROM deck WHERE player_id=10 ORDER BY name"));
     }
 }

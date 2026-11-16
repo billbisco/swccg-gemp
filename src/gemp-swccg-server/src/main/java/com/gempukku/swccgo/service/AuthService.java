@@ -348,9 +348,14 @@ public class AuthService {
         return _playerDAO.getPlayer(name, true);
     }
 
-    /** The player with this id (deactivated included), or null. */
+    /** The player with this id, or null (the database lookup leaves out deactivated players). */
     public Player getPlayer(int playerId) {
         return _playerDAO.getPlayer(playerId);
+    }
+
+    /** The player with this id, deactivated included, or null (close account, #524). */
+    public Player getPlayerIncludingDeactivated(int playerId) {
+        return _playerDAO.getPlayerIncludingDeactivated(playerId);
     }
 
     /**
@@ -438,7 +443,7 @@ public class AuthService {
         java.util.regex.Matcher m = PLACEHOLDER.matcher(placeholder == null ? "" : placeholder);
         if (!m.matches() || !m.group(2).equals(String.valueOf(playerId)))
             return "name_invalid";
-        Player player = _playerDAO.getPlayer(playerId);
+        Player player = _playerDAO.getPlayerIncludingDeactivated(playerId);
         if (player == null || player.getId() != playerId || Player.isBot(player.getName()))
             return "not_found";
         String oldName = player.getName();

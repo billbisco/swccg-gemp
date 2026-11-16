@@ -543,6 +543,19 @@ public class DbPlayerDAO implements PlayerDAO {
      * @return the player, or null if no player found
      * @throws SQLException an SQL exception
      */
+    @Override
+    public Player getPlayerIncludingDeactivated(int id) {
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement statement = conn.prepareStatement(_selectPlayer + " where id=?")) {
+            statement.setInt(1, id);
+            try (ResultSet rs = statement.executeQuery()) {
+                return rs.next() ? getPlayerFromResultSet(rs) : null;
+            }
+        } catch (SQLException exp) {
+            throw new RuntimeException("Error while retrieving player", exp);
+        }
+    }
+
     private Player getPlayerFromDBById(int id) throws SQLException {
         try (Connection conn = _dbAccess.getDataSource().getConnection()) {
             try (PreparedStatement statement = conn.prepareStatement(_selectPlayer + " where id=?" + _notDeactivated)) {

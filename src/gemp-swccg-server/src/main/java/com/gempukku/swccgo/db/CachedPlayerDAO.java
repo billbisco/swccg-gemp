@@ -40,6 +40,11 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public Player getPlayerIncludingDeactivated(int id) {
+        return _delegate.getPlayerIncludingDeactivated(id);
+    }
+
+    @Override
     public Player getPlayer(int id) {
         Player player = _playerById.get(id);
         if (player == null) {
