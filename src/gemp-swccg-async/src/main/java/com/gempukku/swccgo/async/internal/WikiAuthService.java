@@ -34,7 +34,8 @@ public class WikiAuthService {
     private final AuthService _authService;
     private final InternalAuthSigner _signer;
     private final NonceCache _nonces = new NonceCache(2 * MAX_SKEW_SECONDS * 1000, 100_000);
-    // Failed attempts per GEMP account (case-folded): 10 per 15 minutes.
+    // Failed attempts per GEMP account (case-folded) and end-user IP: 10 per 15 minutes. Never per account
+    // alone (#564): a stranger failing on purpose from many places must not lock a player out.
     final KeyedRateLimiter _userFailures = new KeyedRateLimiter(10, 15 * 60_000L);
     // All attempts per end-user IP (client_ip from the signed body): 30 per 5 minutes.
     final KeyedRateLimiter _ipAttempts = new KeyedRateLimiter(30, 5 * 60_000L);
@@ -107,8 +108,8 @@ public class WikiAuthService {
                 || clientIp == null || !IP.matcher(clientIp).matches())
             return result(400, error("bad_request"), nonce);
 
-        String userKey = username.toLowerCase(Locale.ROOT);
         String ipKey = clientIp;
+        String userKey = username.toLowerCase(Locale.ROOT) + "\n" + ipKey;
         long retry = Math.max(_global.retryAfterSeconds("all", nowMillis),
                 Math.max(_ipAttempts.retryAfterSeconds(ipKey, nowMillis), _userFailures.retryAfterSeconds(userKey, nowMillis)));
         if (retry > 0) {

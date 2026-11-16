@@ -133,7 +133,8 @@ public class AuthService {
     /**
      * Checks a name + password. Handles both the new PBKDF2 hashes and legacy unsalted SHA-256
      * (upgrading the latter in place on success), admin reset codes, bans and deactivation,
-     * and per-account / per-IP failure throttling.
+     * and per-(account, IP) / per-IP failure throttling. Per account there is no lock, only
+     * {@link #accountDelayMillis}.
      *
      * @param login the name as typed (matched case-insensitively)
      * @param password the password as typed
@@ -189,6 +190,14 @@ public class AuthService {
                 return new AuthResult(Status.TEMP_BANNED, player);
         }
         return new AuthResult(Status.OK, player);
+    }
+
+    /**
+     * How long a caller should hold a sign-in try for this name before checking it (#564): a capped
+     * slow-down once the name has had many failures from any IPs. Never a lock.
+     */
+    public long accountDelayMillis(String login) {
+        return login == null ? 0 : _throttle.delayMillis(login, _clock.getAsLong());
     }
 
     private boolean isResetCodeValid(Player player, String candidate, long now) throws SQLException {
