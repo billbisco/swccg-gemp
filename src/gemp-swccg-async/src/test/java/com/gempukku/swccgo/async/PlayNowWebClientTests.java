@@ -105,12 +105,11 @@ public class PlayNowWebClientTests {
 
     @Test
     public void SignupShowsTheNoticeWhenAGuestGameCouldNotBeMoved() throws IOException {
-        //test9: the signup page passes the response on and shows the server's notice before going to the hall
+        //test9: responses are passed on so callers can read the server's X-Guest-Notice. Play's own signup page
+        // is gone (swccg-guild/work#512); new accounts are made on the one sign-in page at swccg.com/login.
         assertTrue(read("js/gemp-016/communication.js").contains("callback(xml, request.status, request);"));
         String html = read("index.html");
-        int notice = html.indexOf("getResponseHeader(\"X-Guest-Notice\")");
-        int hall = html.indexOf("location.href = \"/gemp-swccg/hall.html\"", notice);
-        assertTrue(notice > 0 && hall > notice);
+        assertTrue(!html.contains("register.html") && !html.contains("registrationForm.html"));
         assertTrue(html.contains("js/gemp-016/communication.js?v="));
     }
 }
