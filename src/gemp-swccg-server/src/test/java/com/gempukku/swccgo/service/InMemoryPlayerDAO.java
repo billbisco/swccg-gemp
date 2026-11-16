@@ -218,4 +218,18 @@ class InMemoryPlayerDAO implements PlayerDAO {
                 old.getBannedUntil(), old.getCreateIp(), old.getLastIp()));
         return null;
     }
+
+    /** Close account (#524) in memory: rename, blank password and addresses. */
+    @Override
+    public String erasePlayer(int playerId, String placeholder) {
+        Player old = _players.get(playerId);
+        if (old == null)
+            return "not_found";
+        for (Player p : _players.values())
+            if (p.getId() != playerId && p.getName().equalsIgnoreCase(placeholder))
+                return "name_taken";
+        _players.put(playerId, new Player(playerId, placeholder, "", old.getType(), old.getLastLoginReward(),
+                old.getBannedUntil(), null, null));
+        return null;
+    }
 }

@@ -196,4 +196,23 @@ public interface PlayerDAO {
     default String renamePlayer(int playerId, String newName) throws SQLException {
         throw new UnsupportedOperationException("rename");
     }
+
+    /**
+     * Close account (swccg-guild/work#524): in one transaction, renames the player to the placeholder everywhere
+     * Play stores the name as text (game history included, so the games show the placeholder), blanks the password
+     * and stored addresses, deletes the collection and every deck not used in a League or Tournament game, and deletes
+     * unfinished saved games, reset codes and game settings. Idempotent: a retry finishes the job.
+     * @return null when done, else "not_found" or "name_taken"
+     */
+    default String erasePlayer(int playerId, String placeholder) throws SQLException {
+        throw new UnsupportedOperationException("erase");
+    }
+
+    /**
+     * The replay files of every game the player sat in, both seats: {folder, recordingId} pairs, where folder is the
+     * seat's account id (or the seat's name for bots and guests). For Close account (#524).
+     */
+    default List<String[]> replaysOf(int playerId) throws SQLException {
+        return java.util.Collections.emptyList();
+    }
 }

@@ -251,4 +251,16 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
         clearCache();
         return result;
     }
+
+    @Override
+    public String erasePlayer(int playerId, String placeholder) throws SQLException {
+        String result = _delegate.erasePlayer(playerId, placeholder);
+        clearCache();
+        return result;
+    }
+
+    @Override
+    public List<String[]> replaysOf(int playerId) throws SQLException {
+        return _delegate.replaysOf(playerId);
+    }
 }

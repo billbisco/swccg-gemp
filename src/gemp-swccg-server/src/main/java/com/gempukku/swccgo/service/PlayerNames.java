@@ -122,7 +122,8 @@ public final class PlayerNames {
         for (String p : RESERVED_PREFIXES)
             if (lower.startsWith(p) || squashed.startsWith(p))
                 return true;
-        return Player.isBot(name) || PlayNowSide.isSeatName(name);
+        // Close account placeholders (#524 R4) are never a chosen name.
+        return Player.isBot(name) || PlayNowSide.isSeatName(name) || AuthService.isPlaceholderShape(name);
     }
 
     /** What {@link #forDisplay} shows when nothing of a name would be left. */
