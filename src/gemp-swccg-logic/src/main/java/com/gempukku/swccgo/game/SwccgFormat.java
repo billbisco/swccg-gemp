@@ -47,4 +47,13 @@ public interface SwccgFormat {
     /** The largest deck size a table, league or tournament may choose in this format (#120; Anything Goes allows more). */
     default int getMaxDeckSizeOption() { return DeckSize.MAX_SUPPORTED; }
     List<SwccgCardBlueprint> getAllCardBlueprintsValidInFormat();
+
+    /**
+     * Occupancy date for Virtual Modern slot reuse (701/702). Null means today's ids: current Open,
+     * Classic, Jawa, Legacy, and Anything Goes do not rewrite.
+     */
+    default java.time.LocalDate getOccupancyDate() { return null; }
+
+    /** Rewrite former PC ids in a loaded deck for this format's occupancy date. Does not persist. */
+    default SwccgDeck applyOccupancy(SwccgDeck deck) { return deck; }
 }

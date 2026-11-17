@@ -35,6 +35,16 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
     SwccgFormat getInner() { return _inner; }
 
     @Override
+    public java.time.LocalDate getOccupancyDate() {
+        return _inner.getOccupancyDate();
+    }
+
+    @Override
+    public SwccgDeck applyOccupancy(SwccgDeck deck) {
+        return _inner.applyOccupancy(deck);
+    }
+
+    @Override
     public void validateDeck(SwccgDeck deck) throws DeckInvalidException {
         if (_inner instanceof DeckSizeSwccgFormat)
             ((DeckSizeSwccgFormat) _inner).validateDeck(deck, _rules);
