@@ -280406,6 +280406,84 @@
     "species": "CHEVIN"
   },
   {
+    "cardId": "701_109",
+    "title": "Imperial Justice",
+    "slug": "imperial-justice",
+    "slugWithSetName": "imperial-justice-virtual-modern-replaced",
+    "side": "DARK",
+    "uniqueness": "UNRESTRICTED",
+    "titleComponents": [
+      {
+        "name": "Imperial Justice",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_REPLACED",
+    "rarity": "C2",
+    "cardCategory": "EFFECT",
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "cardSubtype": "NORMAL",
+    "lore": "There's nothing you could have done Luke, had you been there. You'd have been killed too.",
+    "gameText": "Deploy on table; shuffle your Reserve Deck, peek at top three cards, and stack them face-up here. During battle, may take a card here into hand to prevent all battle destiny draws from being modified or canceled (each player may draw no more than one battle destiny). [Immune to Alter.]",
+    "destiny": 3.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "A_NEW_HOPE",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_0",
+        "count": 1
+      },
+      {
+        "icon": "EFFECT",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "701_39",
+    "title": "Evacuation Control",
+    "slug": "evacuation-control",
+    "slugWithSetName": "evacuation-control-virtual-modern-replaced",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "titleComponents": [
+      {
+        "name": "Evacuation Control",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_REPLACED",
+    "rarity": "C2",
+    "cardCategory": "EFFECT",
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "cardSubtype": "NORMAL",
+    "lore": "",
+    "gameText": "Deploy on table; shuffle your Reserve Deck, peek at top three cards, and stack them face-up here. During battle, may take a card here into hand to prevent all battle destiny draws from being modified or canceled (each player may draw no more than one battle destiny). [Immune to Alter.]",
+    "destiny": 3.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "A_NEW_HOPE",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_0",
+        "count": 1
+      },
+      {
+        "icon": "EFFECT",
+        "count": 1
+      }
+    ]
+  },
+  {
     "cardId": "7_1",
     "title": "Alderaan Operative",
     "slug": "alderaan-operative",
