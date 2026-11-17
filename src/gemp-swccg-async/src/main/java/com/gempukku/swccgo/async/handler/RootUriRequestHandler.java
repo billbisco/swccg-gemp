@@ -21,7 +21,6 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final String _webContextPath="/gemp-swccg/";
     private final HallRequestHandler _hallRequestHandler;
     private final WebRequestHandler _webRequestHandler;
-    private final LoginRequestHandler _loginRequestHandler;
     private final StatusRequestHandler _statusRequestHandler;
     private final DeckRequestHandler _deckRequestHandler;
     private final AdminRequestHandler _adminRequestHandler;
@@ -31,7 +30,6 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final GameRequestHandler _gameRequestHandler;
     private final LeagueRequestHandler _leagueRequestHandler;
     private final MerchantRequestHandler _merchantRequestHandler;
-    private final RegisterRequestHandler _registerRequestHandler;
     private final ReplayRequestHandler _replayRequestHandler;
     private final GameHistoryRequestHandler _gameHistoryRequestHandler;
     private final CalendarRequestHandler _calendarRequestHandler;
@@ -43,6 +41,11 @@ public class RootUriRequestHandler implements UriRequestHandler {
     private final GuestRequestHandler _guestRequestHandler;
 
     private final OriginPolicy _originPolicy;
+    /**
+     * Play's own password sign-in (#264): null, so /login answers 404, unless CLASSIC_SIGNIN_ENABLED=true.
+     * Only the CI integration test turns it on (it has no sign-in service); test and prod Play keep it off.
+     */
+    private final LoginRequestHandler _loginRequestHandler;
     /** Sign-in through swccg-login; null (404) unless SWCCG_LOGIN_ENABLED=true. */
     private final OidcRequestHandler _oidcRequestHandler;
 
@@ -53,7 +56,6 @@ public class RootUriRequestHandler implements UriRequestHandler {
 
         _hallRequestHandler = new HallRequestHandler(context, longPollingSystem);
         _deckRequestHandler = new DeckRequestHandler(context);
-        _loginRequestHandler = new LoginRequestHandler(context);
         _statusRequestHandler = new StatusRequestHandler(context);
         _adminRequestHandler = new AdminRequestHandler(context);
         _chatRequestHandler = new ChatRequestHandler(context, longPollingSystem);
@@ -62,7 +64,6 @@ public class RootUriRequestHandler implements UriRequestHandler {
         _gameRequestHandler = new GameRequestHandler(context, longPollingSystem);
         _leagueRequestHandler = new LeagueRequestHandler(context);
         _merchantRequestHandler = new MerchantRequestHandler(context);
-        _registerRequestHandler = new RegisterRequestHandler(context);
         _replayRequestHandler = new ReplayRequestHandler(context);
         _gameHistoryRequestHandler = new GameHistoryRequestHandler(context);
         _calendarRequestHandler = new CalendarRequestHandler(context);
@@ -73,6 +74,12 @@ public class RootUriRequestHandler implements UriRequestHandler {
         _soloDraftRequestHandler = new SoloDraftRequestHandler(context);
         _guestRequestHandler = new GuestRequestHandler(context);
         _oidcRequestHandler = createOidcHandler(context);
+        _loginRequestHandler = classicSignInEnabled() ? new LoginRequestHandler(context) : null;
+    }
+
+    static boolean classicSignInEnabled() {
+        String value = ApplicationConfiguration.getProperty("classicSignIn.enabled");
+        return value != null && Boolean.parseBoolean(value.trim());
     }
 
     private static OidcRequestHandler createOidcHandler(Map<Type, Object> context) {
@@ -130,12 +137,14 @@ public class RootUriRequestHandler implements UriRequestHandler {
             } else if (uri.startsWith(_serverContextPath + "deck")) {
                 _deckRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 4), request, context,
                         responseWriter, remoteIp);
-            } else if (uri.startsWith(_serverContextPath + "login")) {
+            } else if (_loginRequestHandler != null && uri.startsWith(_serverContextPath + "login")) {
+                // CI integration test only (CLASSIC_SIGNIN_ENABLED=true); see _loginRequestHandler.
                 _loginRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 5), request, context,
                         responseWriter, remoteIp);
-            } else if (uri.startsWith(_serverContextPath + "register")) {
-                _registerRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 8), request, context,
-                        responseWriter, remoteIp);
+            } else if (uri.startsWith(_serverContextPath + "login") || uri.startsWith(_serverContextPath + "register")) {
+                // #264: Play's own password sign-in and sign-up are closed. Everyone signs in and signs up at
+                // swccg.com/login (OIDC); the sign-in service checks passwords through the signed internal API.
+                throw new HttpProcessingException(404);
             } else if (uri.startsWith(_serverContextPath + "replay")) {
                 _replayRequestHandler.handleRequest(uri.substring(_serverContextPath.length() + 6), request, context,
                         responseWriter, remoteIp);

@@ -85,6 +85,9 @@ jobs:
         timeout-minutes: 15
         run: |
           set -euo pipefail
+          # The integration test signs in with a password and there is no sign-in service in CI, so
+          # turn Play's own sign-in back on here only (#264: test and prod Play keep it off).
+          printf "\nCLASSIC_SIGNIN_ENABLED=true\n" >> .env
           set -a
           source .env
           set +a

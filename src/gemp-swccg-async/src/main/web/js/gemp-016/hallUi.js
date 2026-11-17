@@ -525,6 +525,7 @@ var GempSwccgHallUI = Class.extend({
             swccgMarkSigningOut();
         });
         $("#signout-button").button();
+        $("#account-link").button();
 
         this.connection = new HallConnectionIndicator(this.connectionDiv);
         // Drag (or focus and arrow) the bar on top of the chat to make it taller or shorter.
