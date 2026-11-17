@@ -139128,6 +139128,293 @@
     ]
   },
   {
+    "cardId": "701_90",
+    "title": "Sith Probe Droid",
+    "slug": "sith-probe-droid",
+    "slugWithSetName": "sith-probe-droid-virtual-modern-replaced",
+    "side": "DARK",
+    "uniqueness": "UNRESTRICTED",
+    "titleComponents": [
+      {
+        "name": "Sith Probe Droid",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_REPLACED",
+    "rarity": "R",
+    "cardCategory": "CHARACTER",
+    "cardTypes": [
+      "DROID"
+    ],
+    "lore": "Patrol droids utilized by the Sith. Each droid has several multispectral imaging devices and a communications package. Used by Maul to track down Amidala.",
+    "gameText": "When drawn for destiny during a battle or duel involving a Dark Jedi, destiny +2. During your move phase, may use 2 Force to relocate a Dark Jedi (with any captives they are escorting) to same site; place this droid in Used Pile.",
+    "deployCost": 1.0,
+    "destiny": 3.0,
+    "credits": 0,
+    "power": 1.0,
+    "ability": 0.0,
+    "forfeit": 2.0,
+    "maneuver": 3.0,
+    "landspeed": 1.0,
+    "politics": 0.0,
+    "icons": [
+      {
+        "icon": "TATOOINE",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_0",
+        "count": 1
+      },
+      {
+        "icon": "DROID",
+        "count": 1
+      },
+      {
+        "icon": "EPISODE_I",
+        "count": 1
+      }
+    ],
+    "modelTypes": [
+      "PROBE",
+      "RECON"
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_200093",
+    "title": "A Useless Gesture",
+    "slug": "a-useless-gesture",
+    "slugWithSetName": "a-useless-gesture-virtual-modern-blanked",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "A Useless Gesture",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Imperial officers aboard the Death Star considered the Rebellion a minor threat.",
+    "gameText": "Plays on table. In order to play an Interrupt from Lost Pile, opponent must first stack it here (if possible) and use +1 Force for each card here, even if Interrupt is normally free. Revolution is canceled.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "GRABBER",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_200094",
+    "title": "Death Star Sentry",
+    "slug": "death-star-sentry",
+    "slugWithSetName": "death-star-sentry-virtual-modern-blanked",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Death Star Sentry",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Death Star troopers on sentry duty observe and direct incoming starships and monitor other critical sites. They perform sensor scans for life forms and weapons.",
+    "gameText": "Plays on table. Colo Claw Fish is canceled. Opponent must first use X Force to deploy a non-unique card (except a Jawa) to a location, where X = the number of copies of that card at that location.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_200097",
+    "title": "I Find Your Lack Of Faith Disturbing",
+    "slug": "i-find-your-lack-of-faith-disturbing",
+    "slugWithSetName": "i-find-your-lack-of-faith-disturbing-virtual-modern-blanked",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "I Find Your Lack Of Faith Disturbing",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Darth Vader ruthlessly used the Force to strike down enemies and soldiers who displeased him. He could choke victims from afar without touching them.",
+    "gameText": "Plays on table. Goo Nee Tay is canceled. Unless Deep Hatred on table, opponent may use only one combat card per turn. We'll Handle This may target only Undercover spies and 5D6-RA-7.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_200098",
+    "title": "Imperial Detention",
+    "slug": "imperial-detention",
+    "slugWithSetName": "imperial-detention-virtual-modern-blanked",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Imperial Detention",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "gameText": "Plays on table. For opponent to deploy a character, starship, or vehicle for free (except by that card's own game text), opponent must first use 2 Force. [Jabba's Palace] I Must Be Allowed To Speak may not target locations except Lars' Moisture Farm and Jabba's Palace sites.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "702_210042",
+    "title": "Ralltiir Operations",
+    "slug": "ralltiir-operations",
+    "slugWithSetName": "ralltiir-operations-virtual-modern-blanked",
+    "side": "DARK",
+    "titleComponents": [
+      {
+        "name": "Ralltiir Operations",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "OBJECTIVE",
+    "cardTypes": [
+      "OBJECTIVE"
+    ],
+    "gameText": "Deploy [Set 20] Ralltiir system. For remainder of game, spaceport sites are immune to Always Thinking With Your Stomach, He Hasn't Come Back Yet, and non-[Set 18] Ounee Ta. You may not play [Coruscant] Do They Have A Code Clearance?. Your Force generation is +1 at each Ralltiir site. While this side up, once per turn, may [download] a site (or non-unique Imperial) to Ralltiir. Flip this card if Imperials control at least three Ralltiir sites and opponent controls no Ralltiir locations.",
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "SPECIAL_EDITION",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_10",
+        "count": 1
+      },
+      {
+        "icon": "OBJECTIVE",
+        "count": 1
+      }
+    ],
+    "isFrontOfDoubleSidedCard": true,
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_210042_BACK",
+    "title": "In The Hands Of The Empire",
+    "slug": "in-the-hands-of-the-empire",
+    "slugWithSetName": "in-the-hands-of-the-empire-virtual-modern-blanked",
+    "side": "DARK",
+    "titleComponents": [
+      {
+        "name": "In The Hands Of The Empire",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "OBJECTIVE",
+    "cardTypes": [
+      "OBJECTIVE"
+    ],
+    "gameText": "While this side up, opponent's Force drains are -1 at their locations. Your total battle destiny is +X, where X = number of Ralltiir locations your Imperials occupy. Flip this card if opponent controls at least two Ralltiir locations.",
+    "destiny": 7.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "SPECIAL_EDITION",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_10",
+        "count": 1
+      },
+      {
+        "icon": "OBJECTIVE",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
     "cardId": "7_163",
     "title": "2X-7KPR (Tooex)",
     "slug": "2x-7kpr-tooex",

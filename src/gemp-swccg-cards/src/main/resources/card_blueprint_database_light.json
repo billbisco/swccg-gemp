@@ -141317,6 +141317,55 @@
     ]
   },
   {
+    "cardId": "701_16",
+    "title": "Jabba's Prize",
+    "slug": "jabbas-prize",
+    "slugWithSetName": "jabbas-prize-virtual-modern-replaced",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Jabba's Prize",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_REPLACED",
+    "rarity": "PM",
+    "cardCategory": "CHARACTER",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "gameText": "Jabba's Prize is a Light Side card and does not count towards your deck limit. Reveal to opponent when deploying your Starting Effect. For remainder of game, you may not deploy [Maintenance] Falcon. Deploys only at start of game if Jabba's Prize is at Security Tower (replaces opponent's Jabba's Prize imprisoned in Security Tower); otherwise place out of play. May not be placed in Reserve Deck. Jabba's Prize is a persona of Corran Horn only while on table. If Jabba's Prize was just released or leaves table, place it out of play. While Jabba's Prize is at Audience Chamber, opponent's battle destiny draws there are +1.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "power": 0.0,
+    "ability": 0.0,
+    "forfeit": 0.0,
+    "landspeed": 1.0,
+    "politics": 0.0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_II",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_0",
+        "count": 1
+      },
+      {
+        "icon": "REBEL",
+        "count": 1
+      }
+    ],
+    "personas": [
+      "CORRAN_HORN"
+    ],
+    "hasVirtualSuffix": true,
+    "doesNotCountTowardDeckLimit": true,
+    "mayNotBePlacedInReserveDeck": true
+  },
+  {
     "cardId": "701_39",
     "title": "Evacuation Control",
     "slug": "evacuation-control",
@@ -141354,6 +141403,270 @@
         "count": 1
       }
     ]
+  },
+  {
+    "cardId": "701_63",
+    "title": "Obi-Wan In Radiant VII",
+    "slug": "obi-wan-in-radiant-vii",
+    "slugWithSetName": "obi-wan-in-radiant-vii-virtual-modern-replaced",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Obi-Wan In Radiant VII",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_REPLACED",
+    "rarity": "R",
+    "cardCategory": "STARSHIP",
+    "cardTypes": [
+      "STARSHIP"
+    ],
+    "cardSubtype": "STARFIGHTER",
+    "lore": "Optimized for diplomatic missions with sensor-proof pods that have ejection capabilities. Easily identified by its red coloration.",
+    "gameText": "May add 1 pilot. Permanent pilot is •Obi-Wan, who provides ability of 6. Opponent's starships may not 'cloak.' Your total ability here may not be reduced.",
+    "deployCost": 5.0,
+    "destiny": 2.0,
+    "credits": 0,
+    "power": 4.0,
+    "forfeit": 6.0,
+    "armor": 4.0,
+    "hyperspeed": 4.0,
+    "pilotCapacity": 1,
+    "icons": [
+      {
+        "icon": "CORUSCANT",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_0",
+        "count": 1
+      },
+      {
+        "icon": "REPUBLIC",
+        "count": 1
+      },
+      {
+        "icon": "STARSHIP",
+        "count": 1
+      },
+      {
+        "icon": "NAV_COMPUTER",
+        "count": 1
+      },
+      {
+        "icon": "PILOT",
+        "count": 1
+      },
+      {
+        "icon": "EPISODE_I",
+        "count": 1
+      }
+    ],
+    "personas": [
+      "RADIANT_VII"
+    ],
+    "modelTypes": [
+      "CORELLIAN_REPUBLIC_CRUISER"
+    ]
+  },
+  {
+    "cardId": "702_200025",
+    "title": "Affect Mind",
+    "slug": "affect-mind",
+    "slugWithSetName": "affect-mind-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Affect Mind",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "'What was that?' The Jedi power known as 'affect mind' is often used to create minor distractions, allowing Jedi to elude enemies rather than engage them in battle.",
+    "gameText": "Plays on table. Bad Feeling Have I is canceled. Unless Inner Strength on table, opponent may use only one combat card per turn. Let Them Make The First Move may target only Undercover spies and R2-D2.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_200027",
+    "title": "Goldenrod",
+    "slug": "goldenrod",
+    "slugWithSetName": "goldenrod-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Goldenrod",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "gameText": "Plays on table. For opponent to deploy a character, starship, or vehicle for free (except by that card's own game text), opponent must first use 2 Force. They Must Never Again Leave This City is suspended during opponent's first turn.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "702_200031",
+    "title": "Yavin Sentry",
+    "slug": "yavin-sentry",
+    "slugWithSetName": "yavin-sentry-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Yavin Sentry",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Rebel sentries are stationed on raised sensor platforms. On watch for Imperial scouts and other hazards, they supplement data gathered by Yavin Base's main sensors.",
+    "gameText": "Plays on table. Colo Claw Fish is canceled. Opponent must first use X Force to deploy a non-unique card (except a Jawa or Tusken Raider) to a location, where X = the number of copies of that card at that location.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_213045",
+    "title": "Clumsy And Stupid",
+    "slug": "clumsy-and-stupid",
+    "slugWithSetName": "clumsy-and-stupid-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Clumsy And Stupid",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "'Lord Vader, the fleet has moved out of lightspeed and we're preparing to aah...ukh...uh...uuuuukkk!'",
+    "gameText": "Plays on table. Opponent's Undercover spies are immune to Nevar Yalnal. Field Promotion is canceled if on Ozzel or opponent's [Maintenance] card. If Monnok just revealed your hand, you may place up to two cards from hand in your Used Pile.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_SET_13",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ]
+  },
+  {
+    "cardId": "702_217043",
+    "title": "Ounee Ta",
+    "slug": "ounee-ta",
+    "slugWithSetName": "ounee-ta-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Ounee Ta",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Jabba's decadent behavior makes him susceptible to deception. Leia and Lando exploited this weakness, posing as Jabba's kind of scum.",
+    "gameText": "Plays on table. At each opponent's <> site, your Rebels are each deploy -2 and your Force generation is +1. May lose 3 Force to cancel an attempt by [Theed Palace] Sidious to place your Jedi out of play.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
   },
   {
     "cardId": "7_1",
