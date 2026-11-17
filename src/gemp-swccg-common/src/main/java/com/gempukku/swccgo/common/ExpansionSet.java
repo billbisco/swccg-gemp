@@ -63,6 +63,9 @@ public enum ExpansionSet {
     SET_26("Set 26", 226),
     SET_27("Set 27", 227),
 
+    VIRTUAL_MODERN_REPLACED("Virtual Modern replaced", 701),
+    VIRTUAL_MODERN_BLANKED("Virtual Modern blanked", 702),
+
     DEMO_DECK("Virtual Premium Set", 301),
 
     DREAM_CARDS("Dream Cards", 401),

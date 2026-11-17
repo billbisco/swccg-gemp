@@ -3023,6 +3023,8 @@ const fixedImages = {
 "200_107":"https://res.starwarsccg.org/cards/Virtual0-Dark/large/imageofthedarklord.gif",
 "200_108":"https://res.starwarsccg.org/cards/Virtual0-Dark/large/imperialdecree.gif",
 "200_109":"https://res.starwarsccg.org/cards/Virtual0-Dark/hires/coarseandroughandirritating.png",
+"701_109":"https://res.starwarsccg.org/cards/Images-HT/starwars/Virtual0-Dark/large/imperialjustice.gif",
+"701_39":"https://res.starwarsccg.org/cards/Images-HT/starwars/Virtual0-Light/large/evacuationcontrol.gif",
 "200_110":"https://res.starwarsccg.org/cards/Virtual0-Dark/large/knowledgeanddefense.gif",
 "200_111":"https://res.starwarsccg.org/cards/Virtual0-Dark/large/kuatdriveyards.gif",
 "200_112":"https://res.starwarsccg.org/cards/Virtual0-Dark/large/somethingspecialplannedforthem.gif",
