@@ -21,14 +21,24 @@ public class ClassicSignInClosedTests {
 
     @Test
     public void LoginAndRegisterRoutesAnswer404() throws IOException {
-        //test1: /login and /register are routed to a 404, and no handler for them is created any more.
+        //test1: /register always answers 404; /login answers 404 unless the CI-only switch built the handler.
         String root = read("java/com/gempukku/swccgo/async/handler/RootUriRequestHandler.java");
         int route = root.indexOf("uri.startsWith(_serverContextPath + \"login\") || uri.startsWith(_serverContextPath + \"register\")");
         assertTrue(route > 0, "login/register route missing");
         assertTrue(root.indexOf("throw new HttpProcessingException(404);", route) > route, "login/register must answer 404");
-        assertFalse(root.contains("new LoginRequestHandler("), "classic sign-in handler still created");
+        assertTrue(root.contains("_loginRequestHandler = classicSignInEnabled() ? new LoginRequestHandler(context) : null;"),
+                "classic sign-in handler must only be built when switched on");
+        assertTrue(root.contains("_loginRequestHandler != null && uri.startsWith(_serverContextPath + \"login\")"));
         assertFalse(root.contains("new RegisterRequestHandler("), "classic sign-up handler still created");
-        assertFalse(Files.exists(MAIN.resolve("java/com/gempukku/swccgo/async/handler/LoginRequestHandler.java")));
+    }
+
+    @Test
+    public void ClassicSignInIsOffByDefault() throws IOException {
+        //test3: the switch defaults to off, so test and prod Play (which never set it) answer 404.
+        String props = Files.readString(Paths.get("..", "gemp-swccg-common", "src", "main", "resources", "gemp-swccg.properties"),
+                StandardCharsets.UTF_8);
+        assertTrue(props.contains("classicSignIn.enabled=${CLASSIC_SIGNIN_ENABLED:-false}"));
+        assertFalse(RootUriRequestHandler.classicSignInEnabled());
     }
 
     @Test
