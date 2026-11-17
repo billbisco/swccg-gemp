@@ -1735,37 +1735,6 @@ var GempSwccgCommunication = Class.extend({
             dataType:"html"
         });
     },
-    login:function (login, password, callback, errorMap) {
-        $.ajax({
-            type:"POST",
-            url:this.url + "/login",
-            cache:false,
-            async:false,
-            data:{
-                login:login,
-                password:password,
-                participantId:getUrlParam("participantId")},
-            success:this.deliveryCheckStatus(callback),
-            error:this.errorCheck(errorMap),
-            dataType:"html"
-        });
-    },
-    register:function (login, password, callback, errorMap) {
-        $.ajax({
-            type:"POST",
-            url:this.url + "/register",
-            cache:false,
-            data:{
-                login:login,
-                password:password,
-                // Signup honeypot (hidden field in registrationForm.html); empty for real people.
-                hp_field:($("#hp_field").val() || ""),
-                participantId:getUrlParam("participantId")},
-            success:this.deliveryCheckStatus(callback),
-            error:this.errorCheck(errorMap),
-            dataType:"html"
-        });
-    },
     getRegistrationForm:function (callback, errorMap) {
         $.ajax({
             type:"POST",

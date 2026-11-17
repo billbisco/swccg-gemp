@@ -104,6 +104,9 @@
                         <span class="custom-icon icon-merchant"></span><span>Merchant</span>
                     </a>
 
+                    <!-- #587: the swccg.com account page (where you're signed in, Sign out everywhere, name, close), next to Sign out -->
+                    <a id="account-link" href="/login/account" class="toolbar-button" title="Your swccg.com account: where you're signed in, Sign out everywhere, your name"><span>Account</span></a>
+
                     <!-- #504/#508: Sign out of this device, one click (Play ends its session, then swccg.com with the ID-token hint) -->
                     <form id="signout-form" method="post" action="/play/gemp-swccg-server/oidc/logout" style="display:inline;margin:0">
                         <button id="signout-button" type="submit" class="toolbar-button" title="Sign out of Play, the forum and the wiki on this device"><span>Sign out</span></button>
