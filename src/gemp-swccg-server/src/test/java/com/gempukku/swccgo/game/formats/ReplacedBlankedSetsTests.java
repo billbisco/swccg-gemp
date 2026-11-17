@@ -65,6 +65,34 @@ public class ReplacedBlankedSetsTests {
     }
 
     @Test
+    public void RemainingReplacedCardsLoadWithoutStealingCurrentOccupants() {
+        assertTrue(library.getSwccgoCardBlueprint("701_16").getTitle().contains("Jabba's Prize"));
+        assertNotNull(library.getSwccgoCardBlueprint("200_16"));
+        assertFalse(library.getSwccgoCardBlueprint("701_16").getTitle().contains("Mythrol"));
+        assertEquals("Obi-Wan In Radiant VII", library.getSwccgoCardBlueprint("701_63").getTitle());
+        assertEquals("Madakor In Radiant VII", library.getSwccgoCardBlueprint("200_63").getTitle());
+        assertTrue(library.getSwccgoCardBlueprint("701_90").getTitle().contains("Sith Probe Droid"));
+        assertEquals("DRK-1 (Dark Eye Probe Droid)", library.getSwccgoCardBlueprint("200_90").getTitle());
+    }
+
+    @Test
+    public void ClumsyBlankedLoadsAs702_213045() {
+        assertNotNull(library.getSwccgoCardBlueprint("702_213045"));
+        assertEquals("Clumsy And Stupid", library.getSwccgoCardBlueprint("702_213045").getTitle());
+    }
+
+    @Test
+    public void OpenRejectsClumsy702AndAnythingGoesAllowsIt() throws Exception {
+        formats.getFormat("anything_goes").validateDeck(lightDeck("702_213045"));
+        try {
+            formats.getFormat("open").validateDeck(lightDeck("702_213045"));
+            fail("Open accepted Clumsy 702_213045");
+        } catch (DeckInvalidException expected) {
+            assertTrue(expected.getMessage(), expected.getMessage().contains("Clumsy"));
+        }
+    }
+
+    @Test
     public void AnythingGoesSetListIncludes701And702AndOpenDoesNot() throws Exception {
         JSONParser parser = new JSONParser();
         try (InputStreamReader reader = new InputStreamReader(
@@ -89,11 +117,19 @@ public class ReplacedBlankedSetsTests {
     }
 
     private static SwccgDeck deck(String... cards) {
+        return filledDeck("1_175", cards);
+    }
+
+    private static SwccgDeck lightDeck(String... cards) {
+        return filledDeck("1_28", cards);
+    }
+
+    private static SwccgDeck filledDeck(String filler, String... cards) {
         SwccgDeck deck = new SwccgDeck("replaced blanked");
         for (String card : cards)
             deck.addCard(card);
         while (deck.getCards().size() < 60)
-            deck.addCard("1_175");
+            deck.addCard(filler);
         return deck;
     }
 }
