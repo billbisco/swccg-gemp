@@ -62,4 +62,13 @@ class InternalAuthHttpHandlerTest {
         assertEquals(0, InternalAuthServer.parsePort("nope"));
         assertEquals(8090, InternalAuthServer.parsePort(" 8090 "));
     }
+
+    /** #563: the per-call line carries only validated hex ids. */
+    @Test
+    void trackLineKeepsOnlyHexIds() {
+        assertEquals("sso-call path=/internal/v2/status status=200 tid=0123456789abcdef0123456789abcdef rid=-",
+                InternalAuthHttpHandler.trackLine("/internal/v2/status", 200, "0123456789abcdef0123456789abcdef", null));
+        String bad = InternalAuthHttpHandler.trackLine("/internal/v2/verify", 401, "name@example.org", "abc\nforged line");
+        assertEquals("sso-call path=/internal/v2/verify status=401 tid=- rid=-", bad);
+    }
 }

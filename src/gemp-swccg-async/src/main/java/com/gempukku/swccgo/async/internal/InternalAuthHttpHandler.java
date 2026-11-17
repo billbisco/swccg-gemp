@@ -12,14 +12,21 @@ import io.netty.handler.codec.http.HttpHeaderNames;
 import io.netty.handler.codec.http.HttpResponseStatus;
 import io.netty.handler.codec.http.HttpVersion;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Netty glue for the internal listener: {@link WikiAuthService#PATH} (V1, the wiki) and
  * {@link SsoAuthService#PATHS} (V2, swccg-login). Either service may be off (null): its paths are 404.
  */
 public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHttpRequest> {
+    private static final Logger LOG = LogManager.getLogger(InternalAuthHttpHandler.class);
+    /** Tracking and request ids from swccg-login (#563): hex only, so a log line can't carry anything else. */
+    private static final Pattern TRACK_ID = Pattern.compile("^[0-9a-f]{16,64}$");
     private final WikiAuthService _service;
     private final SsoAuthService _sso;
 
@@ -50,6 +57,9 @@ public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHtt
         else
             result = _service != null ? _service.handle(request.method().name(), path, headers, body, now) : notFound();
 
+        if (SsoAuthService.PATHS.contains(path))
+            LOG.info(trackLine(path, result.status, headers.get("x-swccg-tracking-id"), headers.get("x-request-id")));
+
         FullHttpResponse response = new DefaultFullHttpResponse(HttpVersion.HTTP_1_1,
                 HttpResponseStatus.valueOf(result.status), Unpooled.wrappedBuffer(result.body));
         response.headers().set(HttpHeaderNames.CONTENT_TYPE, "application/json; charset=UTF-8");
@@ -58,6 +68,16 @@ public class InternalAuthHttpHandler extends SimpleChannelInboundHandler<FullHtt
         if (result.signature != null)
             response.headers().set("X-Gemp-Signature", result.signature);
         ctx.writeAndFlush(response).addListener(ChannelFutureListener.CLOSE);
+    }
+
+    /**
+     * One line per swccg-login call, so a sign-in can be followed from nginx through
+     * swccg-login to Play by its tracking id (#563). No names or addresses.
+     */
+    static String trackLine(String path, int status, String tid, String rid) {
+        return "sso-call path=" + path + " status=" + status
+                + " tid=" + (tid != null && TRACK_ID.matcher(tid).matches() ? tid : "-")
+                + " rid=" + (rid != null && TRACK_ID.matcher(rid).matches() ? rid : "-");
     }
 
     private static WikiAuthService.Result notFound() {
