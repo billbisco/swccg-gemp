@@ -1,0 +1,22 @@
+{
+  "comment": "Virtual Modern GEMP occupancy. Wiki source: GEMP occupancy (Virtual Modern). occupancyDate equal to until means the new occupant or blanking is in force that day.",
+  "replaced": [
+    {"formerId": "200_109", "until": "2021-03-18", "newId": "701_109"},
+    {"formerId": "200_39", "until": "2021-03-18", "newId": "701_39"},
+    {"formerId": "200_16", "until": "2022-04-20", "newId": "701_16"},
+    {"formerId": "200_90", "until": "2024-12-29", "newId": "701_90"},
+    {"formerId": "200_63", "until": "2024-12-29", "newId": "701_63"}
+  ],
+  "blanked": [
+    {"formerId": "200_25", "until": "2024-07-22", "newId": "702_200025"},
+    {"formerId": "200_27", "until": "2024-07-22", "newId": "702_200027"},
+    {"formerId": "200_31", "until": "2024-07-22", "newId": "702_200031"},
+    {"formerId": "200_93", "until": "2024-07-22", "newId": "702_200093"},
+    {"formerId": "200_94", "until": "2024-07-22", "newId": "702_200094"},
+    {"formerId": "200_97", "until": "2024-07-22", "newId": "702_200097"},
+    {"formerId": "200_98", "until": "2024-07-22", "newId": "702_200098"},
+    {"formerId": "210_42", "until": "2023-07-15", "newId": "702_210042"},
+    {"formerId": "213_45", "until": "2024-07-22", "newId": "702_213045"},
+    {"formerId": "217_43", "until": "2024-07-22", "newId": "702_217043"}
+  ]
+}

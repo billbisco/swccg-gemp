@@ -11,6 +11,7 @@ import com.gempukku.swccgo.game.SwccgFormat;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
+import java.time.LocalDate;
 import java.util.*;
 
 public class DefaultSwccgFormat implements SwccgFormat {
@@ -32,6 +33,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private boolean _multipleObjectives;
     private int _defaultGameTimerMinutes = 60;
     private boolean _startingCredits;
+    // Virtual Modern occupancy: former PC ids rewrite to 701/702 when this date is strictly before until
+    private LocalDate _occupancyDate;
 
     @Override
     public boolean supportsStartingCredits() { return _startingCredits; }
@@ -195,6 +198,20 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
     protected void setMultipleObjectives(boolean multipleObjectives) {
         _multipleObjectives = multipleObjectives;
+    }
+
+    protected void setOccupancyDate(LocalDate occupancyDate) {
+        _occupancyDate = occupancyDate;
+    }
+
+    @Override
+    public LocalDate getOccupancyDate() {
+        return _occupancyDate;
+    }
+
+    @Override
+    public SwccgDeck applyOccupancy(SwccgDeck deck) {
+        return OccupancyRewriter.applyDeck(deck, _occupancyDate);
     }
 
     @Override
@@ -366,6 +383,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
                 .append(_skipFormatPool).append('|')
                 .append(_textStates ? "textStates|" : "")
                 .append(_multipleObjectives ? "multipleObjectives|" : "")
+                .append(_occupancyDate != null ? _occupancyDate.toString() + "|" : "")
                 .append(_downloadBattlegroundRule).append('|')
                 .append(_loreHeroicRule).append('|')
                 .append(_jpSealedRule).append('|')
@@ -505,6 +523,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
      * (side, Objectives, Starting Effects, shields, restricted copies, deck size) is unchanged.
      */
     void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize, DeckRules rules, CardCheck cardCheck) throws DeckInvalidException {
+        // Occupancy rewrite before set membership: a dated format plays 701/702 for former PC ids
+        deck = OccupancyRewriter.applyDeck(deck, _occupancyDate);
         if (rules.isNoShields()) {
             // "Shields: none" (#144): as Open (no shields), which bans the Defensive Shield icon
             for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
@@ -542,6 +562,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
 
             for (String blueprintId : deck.getCards()) {
                 SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(blueprintId);
+                if (card == null)
+                    throw new DeckInvalidException("Deck contains unrecognizable card");
                 if (card.getSide() == Side.DARK)
                     dark++;
                 else if (card.getSide() == Side.LIGHT)

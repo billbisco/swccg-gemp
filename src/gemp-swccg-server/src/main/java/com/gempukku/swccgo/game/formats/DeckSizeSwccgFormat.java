@@ -79,6 +79,16 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
     }
 
     @Override
+    public java.time.LocalDate getOccupancyDate() {
+        return _base.getOccupancyDate();
+    }
+
+    @Override
+    public SwccgDeck applyOccupancy(SwccgDeck deck) {
+        return _base.applyOccupancy(deck);
+    }
+
+    @Override
     public void validateDeck(SwccgDeck deck) throws DeckInvalidException {
         _base.validateDeck(deck, _deckSize, _deckSize);
     }

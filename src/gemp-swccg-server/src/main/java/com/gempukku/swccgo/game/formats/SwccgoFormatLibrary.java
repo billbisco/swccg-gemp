@@ -76,6 +76,9 @@ public class SwccgoFormatLibrary {
                         format.setSkipFormatPool(true);
                     format.setMultipleObjectives(Boolean.TRUE.equals(formatDef.get("multipleObjectives")));
                     format.setTextStates(Boolean.TRUE.equals(formatDef.get("textStates")));
+                    String occupancyDate = (String) formatDef.get("occupancyDate");
+                    if (occupancyDate != null)
+                        format.setOccupancyDate(java.time.LocalDate.parse(occupancyDate));
 
                     Long minDeckSize = (Long) formatDef.get("minDeckSize");
                     Long maxDeckSize = (Long) formatDef.get("maxDeckSize");

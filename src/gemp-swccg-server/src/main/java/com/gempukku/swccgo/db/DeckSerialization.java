@@ -1,6 +1,7 @@
 package com.gempukku.swccgo.db;
 
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
+import com.gempukku.swccgo.game.formats.OccupancyRewriter;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
 public class DeckSerialization {
@@ -29,14 +30,14 @@ public class DeckSerialization {
         if (parts.length > 0 && !parts[0].isEmpty()) {
             for (String card : parts[0].split(",")) {
                 if (!card.equals("")
-                        && library.getSwccgoCardBlueprint(card) != null)
+                        && (library.getSwccgoCardBlueprint(card) != null || OccupancyRewriter.isFormerId(card)))
                     deck.addCard(card);
             }
         }
         if (parts.length > 1 && !parts[1].isEmpty()) {
             for (String card : parts[1].split(",")) {
                 if (!card.equals("")
-                        && library.getSwccgoCardBlueprint(card) != null)
+                        && (library.getSwccgoCardBlueprint(card) != null || OccupancyRewriter.isFormerId(card)))
                     deck.addCardOutsideDeck(card);
             }
         }
