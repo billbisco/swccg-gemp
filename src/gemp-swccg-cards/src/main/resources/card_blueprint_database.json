@@ -45252,6 +45252,46 @@
     "hasVirtualSuffix": true
   },
   {
+    "cardId": "1210_175",
+    "title": "Merc Sunlet",
+    "slug": "merc-sunlet",
+    "slugWithSetName": "merc-sunlet-virtual-block-1",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "titleComponents": [
+      {
+        "name": "Merc Sunlet",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_1",
+    "rarity": "V",
+    "cardCategory": "EFFECT",
+    "cardTypes": [
+      "EFFECT"
+    ],
+    "cardSubtype": "NORMAL",
+    "lore": "A crafty purloiner from Tirac Munda with a heart of gold. Often hired to advise the wealthy on how to protect their own property. Well traveled and skilled in many languages.",
+    "gameText": "Deploy on table. Out Of Commission is canceled. Unless opponent has more cards in Lost Pile than you, whenever you lose Force, may use X Force and place any X cards from your Lost Pile out of play to reduce the loss by X. (Immune to Alter.)",
+    "destiny": 4.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "A_NEW_HOPE",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_1",
+        "count": 1
+      },
+      {
+        "icon": "EFFECT",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
     "cardId": "1210_18",
     "title": "Reegesk",
     "slug": "reegesk",
@@ -56650,6 +56690,75 @@
     "hasVirtualSuffix": true
   },
   {
+    "cardId": "1230_119",
+    "title": "Medium Transport",
+    "slug": "medium-transport",
+    "slugWithSetName": "medium-transport-virtual-block-3",
+    "side": "LIGHT",
+    "uniqueness": "UNRESTRICTED",
+    "titleComponents": [
+      {
+        "name": "Medium Transport",
+        "uniqueness": "UNRESTRICTED"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_3",
+    "rarity": "V",
+    "cardCategory": "STARSHIP",
+    "cardTypes": [
+      "STARSHIP"
+    ],
+    "cardSubtype": "CAPITAL",
+    "lore": "Passenger and cargo transport built by Gallofree Yards. Enormous cargo bays can be outfitted to safely accommodate large numbers of troops, munitions or supplies.",
+    "gameText": "May add 1 pilot, 4 passengers and 1 vehicle. Deploys and moves like a starfighter. Permanent pilot provides no ability. During battle, may target an opponent's capital starship present. Draw destiny. Target and this starship are lost if destiny + 2 > target's defense value.",
+    "deployCost": 2.0,
+    "destiny": 3.0,
+    "credits": 0,
+    "power": 1.0,
+    "forfeit": 4.0,
+    "armor": 3.0,
+    "hyperspeed": 4.0,
+    "pilotCapacity": 1,
+    "passengerCapacity": 4,
+    "vehicleCapacity": 1,
+    "icons": [
+      {
+        "icon": "HOTH",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_3",
+        "count": 1
+      },
+      {
+        "icon": "STARSHIP",
+        "count": 1
+      },
+      {
+        "icon": "NAV_COMPUTER",
+        "count": 1
+      },
+      {
+        "icon": "PILOT",
+        "count": 1
+      },
+      {
+        "icon": "SCOMP_LINK",
+        "count": 1
+      }
+    ],
+    "keywords": [
+      "MEDIUM_TRANSPORT",
+      "SHIP_DOCKING_CAPABILITY"
+    ],
+    "modelTypes": [
+      "TRANSPORT"
+    ],
+    "hasVirtualSuffix": true,
+    "deploysLikeStarfighter": true,
+    "movesLikeStarfighter": true
+  },
+  {
     "cardId": "1230_12",
     "title": "Lieutenant Watts",
     "slug": "lieutenant-watts",
@@ -56700,6 +56809,60 @@
         "count": 1
       }
     ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "1230_120",
+    "title": "Captain Verrack",
+    "slug": "captain-verrack",
+    "slugWithSetName": "captain-verrack-virtual-block-3",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Captain Verrack",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_3",
+    "rarity": "V",
+    "cardCategory": "CHARACTER",
+    "cardTypes": [
+      "REBEL"
+    ],
+    "lore": "Mon Calamari computer technician. Expert in power systems. His skills are desperately needed by Rebel fleet. Gunner.",
+    "gameText": "Adds 1 to power of anything he pilots (2 if any Star Cruiser). While aboard a Star Cruiser or with Admiral Ackbar, opponent's weapon and battle destiny draws at same system are -2. Other Mon Calamari at same system are forfeit +2.",
+    "deployCost": 2.0,
+    "destiny": 3.0,
+    "credits": 0,
+    "power": 2.0,
+    "ability": 2.0,
+    "forfeit": 4.0,
+    "landspeed": 1.0,
+    "politics": 0.0,
+    "icons": [
+      {
+        "icon": "DEATH_STAR_II",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_3",
+        "count": 1
+      },
+      {
+        "icon": "REBEL",
+        "count": 1
+      },
+      {
+        "icon": "PILOT",
+        "count": 1
+      }
+    ],
+    "keywords": [
+      "CAPTAIN",
+      "GUNNER"
+    ],
+    "species": "MON_CALAMARI",
     "hasVirtualSuffix": true
   },
   {
@@ -68440,6 +68603,94 @@
         "count": 1
       }
     ]
+  },
+  {
+    "cardId": "1261_115",
+    "title": "Wipe Them Out, All Of Them",
+    "slug": "wipe-them-out-all-of-them",
+    "slugWithSetName": "wipe-them-out-all-of-them-virtual-block-6-1-reflections-iv",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Wipe Them Out, All Of Them",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_6_1",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Darth Sidious' command was merciless and direct. He left no room for misinterpretation.",
+    "gameText": "Plays on table. Oola's game text is canceled. While opponent has a non-unique alien, non-unique starfighter, or Jedi in battle, opponent may not draw more than two battle destiny. Any docking bay that Ketwol exchanges with a card in Lost Pile is placed out of play.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_6",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "EPISODE_I",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "1261_117",
+    "title": "Another Pathetic Lifeform",
+    "slug": "another-pathetic-lifeform",
+    "slugWithSetName": "another-pathetic-lifeform-virtual-block-6-1-reflections-iv",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Another Pathetic Lifeform",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_6_1",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Young Obi-Wan has much to learn about the living Force. Patience with others is also high on that list.",
+    "gameText": "Plays on table. M'iiyoom Onith's game text is canceled. Any docking bay Brangus exchanges with a card in Lost Pile is placed out of play. While opponent has a non-unique alien (or starfighter), or Dark Jedi in battle, opponent may not draw more than two battle destiny.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_6",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "EPISODE_I",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
   },
   {
     "cardId": "1261_12",
@@ -281045,6 +281296,46 @@
   },
   {
     "cardId": "702_217043",
+    "title": "Ounee Ta",
+    "slug": "ounee-ta",
+    "slugWithSetName": "ounee-ta-virtual-modern-blanked",
+    "side": "LIGHT",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Ounee Ta",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_MODERN_BLANKED",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Jabba's decadent behavior makes him susceptible to deception. Leia and Lando exploited this weakness, posing as Jabba's kind of scum.",
+    "gameText": "Plays on table. At each opponent's <> site, your Rebels are each deploy -2 and your Force generation is +1. May lose 3 Force to cancel an attempt by [Theed Palace] Sidious to place your Jedi out of play.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "VIRTUAL_DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
+    "cardId": "702_217044",
     "title": "Ounee Ta",
     "slug": "ounee-ta",
     "slugWithSetName": "ounee-ta-virtual-modern-blanked",

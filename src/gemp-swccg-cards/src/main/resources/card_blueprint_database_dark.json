@@ -33545,6 +33545,50 @@
     ]
   },
   {
+    "cardId": "1261_115",
+    "title": "Wipe Them Out, All Of Them",
+    "slug": "wipe-them-out-all-of-them",
+    "slugWithSetName": "wipe-them-out-all-of-them-virtual-block-6-1-reflections-iv",
+    "side": "DARK",
+    "uniqueness": "UNIQUE",
+    "titleComponents": [
+      {
+        "name": "Wipe Them Out, All Of Them",
+        "uniqueness": "UNIQUE"
+      }
+    ],
+    "expansionSet": "VIRTUAL_BLOCK_6_1",
+    "rarity": "V",
+    "cardCategory": "DEFENSIVE_SHIELD",
+    "cardTypes": [
+      "DEFENSIVE_SHIELD"
+    ],
+    "lore": "Darth Sidious' command was merciless and direct. He left no room for misinterpretation.",
+    "gameText": "Plays on table. Oola's game text is canceled. While opponent has a non-unique alien, non-unique starfighter, or Jedi in battle, opponent may not draw more than two battle destiny. Any docking bay that Ketwol exchanges with a card in Lost Pile is placed out of play.",
+    "deployCost": 0.0,
+    "destiny": 0.0,
+    "credits": 0,
+    "icons": [
+      {
+        "icon": "REFLECTIONS_III",
+        "count": 1
+      },
+      {
+        "icon": "LEGACY_BLOCK_6",
+        "count": 1
+      },
+      {
+        "icon": "DEFENSIVE_SHIELD",
+        "count": 1
+      },
+      {
+        "icon": "EPISODE_I",
+        "count": 1
+      }
+    ],
+    "hasVirtualSuffix": true
+  },
+  {
     "cardId": "1261_12",
     "title": "Massassi Warrior",
     "slug": "massassi-warrior",
