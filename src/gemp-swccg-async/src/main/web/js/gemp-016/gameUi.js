@@ -1009,6 +1009,7 @@ var GempSwccgGameUI = Class.extend({
         $("<span class='timer-control'> Timer: </span>").appendTo("#auto-zoom-li");
         $("<button type='button' id='timer-mute-toggle' class='timer-control' title='Mute timer sounds'>Mute timer sounds</button>").appendTo("#auto-zoom-li");
 
+        this.renderGameRulesButton();
         this.chatBoxDiv = $("#chatBox");
 
         /*
@@ -2336,11 +2337,45 @@ var GempSwccgGameUI = Class.extend({
         this.communication.getGameCardModifiers(cardId, func);
     },
 
+    // Setup is fixed by the host/event. Readers can inspect it, never change it here.
+    readGameRules: function (root) {
+        var value = root.getAttribute("rules");
+        if (!value) return;
+        try {
+            var rules = JSON.parse(value);
+            if (typeof rules.format !== "string" || !rules.options || typeof rules.options !== "object") return;
+            this.gameRules = rules;
+            this.renderGameRulesButton();
+        } catch (e) {
+            // Old recordings have no summary; malformed metadata must not stop a game.
+        }
+    },
+
+    renderGameRulesButton: function () {
+        var that = this;
+        var box = $("#gameOptionsBox");
+        if (!this.gameRules || !box.length || box.find(".gameRulesButton").length) return;
+        $("<button type='button' class='gameRulesButton'>Game rules</button>").button().click(function () {
+            var content = $("<div></div>");
+            $("<p></p>").text(that.gameRules.format).appendTo(content);
+            var list = $("<dl></dl>").appendTo(content);
+            $.each(that.gameRules.options, function (label, value) {
+                $("<dt></dt>").text(label).appendTo(list);
+                $("<dd></dd>").text(value).appendTo(list);
+            });
+            content.dialog({title: "Game rules", modal: true, width: 420,
+                close: function () { $(this).dialog("destroy").remove(); }});
+        }).prependTo(box);
+        $("<br/>").insertAfter(box.find(".gameRulesButton"));
+    },
+
     processXml: function (xml, animate) {
         log(xml);
         var root = xml.documentElement;
-        if (root.tagName == 'gameState' || root.tagName == 'update')
+        if (root.tagName == 'gameState' || root.tagName == 'update') {
+            this.readGameRules(root);
             this.processGameEventsXml(root, animate);
+        }
     },
 
     replayGameEventNextIndex: 0,
@@ -2351,6 +2386,7 @@ var GempSwccgGameUI = Class.extend({
         log(xml);
         var root = xml.documentElement;
         if (root.tagName == 'gameReplay') {
+            this.readGameRules(root);
             this.replayGameEvents = root.getElementsByTagName("ge");
             this.replayGameEventNextIndex = 0;
 

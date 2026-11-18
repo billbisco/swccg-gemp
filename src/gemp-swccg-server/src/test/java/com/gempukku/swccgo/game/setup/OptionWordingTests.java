@@ -14,7 +14,7 @@ import static org.junit.Assert.assertTrue;
  * by area.
  */
 public class OptionWordingTests {
-    private static final List<String> AREAS = List.of("Deck", "Shields", "Starting", "Objectives", "Timer");
+    private static final List<String> AREAS = List.of("Deck", "Shields", "Starting", "Objectives", "Rules", "Timer");
 
     private static String area(String text) {
         return text.substring(0, text.indexOf(": "));

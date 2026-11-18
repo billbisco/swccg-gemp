@@ -160,6 +160,14 @@ public final class GameSetup {
 
     private static final Gson GSON = new Gson();
 
+    /** Frozen, read-only rules labels for a game and its replay. */
+    public String summaryJson(SwccgFormat format) {
+        JsonObject root = new JsonObject();
+        root.addProperty("format", format.getName());
+        root.add("options", GSON.toJsonTree(describe(format)));
+        return GSON.toJson(root);
+    }
+
     public String toJson() {
         JsonObject root = new JsonObject();
         root.addProperty("v", VERSION);

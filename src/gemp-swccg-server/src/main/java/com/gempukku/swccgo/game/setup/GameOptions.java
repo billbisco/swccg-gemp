@@ -32,6 +32,7 @@ public final class GameOptions {
     public static final String OBJECTIVES_FROM_HAND = "objectivesFromHand";
     public static final String SAME_SIDE = "sameSide";
     public static final String FOUR_TWENTY = "fourTwenty";
+    public static final String OPERATIVE_RULE = "operativeRule";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -121,6 +122,11 @@ public final class GameOptions {
                 .help("During your deploy phase, deploy an Objective from hand for free when the cards its setup deploys are in your hand or already on the table; the setup takes them from hand.")
                 .defaultValue(f -> String.valueOf(f.allowsMultipleObjectives()))
                 .shortLabel(v -> "true".equals(v) ? "Objectives: from hand" : "Objectives: at start only")
+                .build());
+        register(GameOption.builder(OPERATIVE_RULE, Kind.PLAY_RULES, Type.BOOLEAN, "Rules: operative rule")
+                .help("Matching operatives are restricted in deployment, movement, control and battle destiny. Off removes those special restrictions; printed card text still applies.")
+                .defaultValue(f -> "true")
+                .shortLabel(v -> "true".equals(v) ? "Rules: operative rule" : "Rules: no operative rule")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Timer: game")
                 .help("Each player's time bank and the time per decision.")
