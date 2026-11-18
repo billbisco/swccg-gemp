@@ -97,6 +97,7 @@ public class ProjectiveTelepathyHallTests {
             s.hallServer.processHall(joiner, visitor);
             var row = mockingDetails(visitor).getInvocations().stream()
                     .filter(i -> i.getMethod().getName().equals("visitTable")).findFirst().orElseThrow();
+            assertTrue(((String) row.getArgument(20)).contains(preset.label()));
             s.hallServer.joinTableAsPlayer(row.getArgument(0), joiner, "dark", false, null);
             var game = s.swccgoServer.getGameById(table.getStartedGameId());
             assertNotNull(game);
