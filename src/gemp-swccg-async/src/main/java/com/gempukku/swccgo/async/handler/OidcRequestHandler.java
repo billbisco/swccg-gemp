@@ -160,30 +160,50 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
         return "failed";
     }
 
+    /**
+     * #630: one line per sign-in callback, so swccg-signin-trace can follow a Play sign-in: the result, the sign-in's
+     * tracking id (swccg_tid, from the verified ID token) and the state fingerprint (sfp, the first 16 hex of SHA-256
+     * of the state, as swccg-login logs it), for a refusal before the ID token. Ids only: no name, email, code or token.
+     */
+    static String callbackLine(String result, String tid, String state, Integer playerId) {
+        String r = result != null && result.matches("[a-z0-9_:]{1,64}") ? result : "other";
+        String t = tid != null && tid.matches("[0-9a-f]{16,64}") ? tid : "-";
+        String f = state != null && !state.isEmpty() ? sha256(state).substring(0, 16) : "-";
+        return "sso-callback result=" + r + " tid=" + t + " sfp=" + f + " player=" + (playerId != null ? playerId : "-");
+    }
+
     private void callback(HttpRequest request, ResponseWriter rw, String remoteIp) throws Exception {
         Map<String, List<String>> params = new QueryStringDecoder(request.uri()).parameters();
         String state = first(params, "state");
         Pending p = _pending.take(state, System.currentTimeMillis());
         String bind = getCookieValue(request, BIND_COOKIE);
         if (p == null || bind == null
-                || !MessageDigest.isEqual(p.bindHash.getBytes(StandardCharsets.US_ASCII), sha256(bind).getBytes(StandardCharsets.US_ASCII)))
+                || !MessageDigest.isEqual(p.bindHash.getBytes(StandardCharsets.US_ASCII), sha256(bind).getBytes(StandardCharsets.US_ASCII))) {
+            LOG.info(callbackLine("bad_state", null, state, null));
             throw new HttpProcessingException(400);
+        }
         String iss = first(params, "iss");
-        if (iss == null || !iss.equals(_client.config().issuer))
+        if (iss == null || !iss.equals(_client.config().issuer)) {
+            LOG.info(callbackLine("iss_mismatch", null, state, null));
             throw new HttpProcessingException(400);
+        }
         if (first(params, "error") != null) {
+            String err = first(params, "error");
+            LOG.info(callbackLine((p.silent ? "silent:" : "error:") + (err.matches("[a-z_]{1,40}") ? err : "other"), null, state, null));
             if (p.silent) {   // #518: not signed in at swccg.com either; back to the page, quietly signed out
                 redirect(rw, p.returnTo != null ? p.returnTo : playFrontPage(_client.config().redirectUri), null);
                 return;
             }
-            redirect(rw, "/gemp-swccg/?sso_error=" + ssoErrorReason(first(params, "error"), first(params, "error_description")), null);
+            redirect(rw, "/gemp-swccg/?sso_error=" + ssoErrorReason(err, first(params, "error_description")), null);
             return;
         }
         String code = first(params, "code");
-        if (code == null || code.length() > 512)
+        if (code == null || code.length() > 512) {
+            LOG.info(callbackLine("bad_code", null, state, null));
             throw new HttpProcessingException(400);
+        }
         int playerId;
-        String idToken, sid;
+        String idToken, sid, tid;
         try {
             idToken = _client.exchange(code, p.verifier);
             JSONObject claims = _client.verifier().verify(idToken, System.currentTimeMillis() / 1000, null);
@@ -191,16 +211,22 @@ public class OidcRequestHandler extends SwccgoServerRequestHandler implements Ur
                 throw new JwtVerifier.InvalidTokenException("nonce");
             playerId = JwtVerifier.playerId(claims);
             sid = claims.get("sid") instanceof String ? (String) claims.get("sid") : null;
+            tid = claims.get("swccg_tid") instanceof String ? (String) claims.get("swccg_tid") : null;
         } catch (JwtVerifier.InvalidTokenException e) {
             LOG.warn("swccg-login: ID token refused (" + e.getMessage() + ")");
+            LOG.info(callbackLine("id_token", null, state, null));
             throw new HttpProcessingException(403);
         } catch (Exception e) {
             LOG.warn("swccg-login: token exchange failed: " + e.getClass().getSimpleName());
+            LOG.info(callbackLine("token_exchange", null, state, null));
             throw new HttpProcessingException(503);
         }
         AuthService.AuthResult status = _authService.accountStatus(playerId);
-        if (status.getStatus() != AuthService.Status.OK || status.getPlayer() == null || Player.isBot(status.getPlayer().getName()))
+        if (status.getStatus() != AuthService.Status.OK || status.getPlayer() == null || Player.isBot(status.getPlayer().getName())) {
+            LOG.info(callbackLine("account:" + String.valueOf(status.getStatus()).toLowerCase(), tid, state, playerId));
             throw new HttpProcessingException(403);
+        }
+        LOG.info(callbackLine("ok", tid, state, playerId));
         completeSignIn(request, rw, remoteIp, status.getPlayer().getName(), playerId, idToken, sid, p.returnTo);
     }
 
