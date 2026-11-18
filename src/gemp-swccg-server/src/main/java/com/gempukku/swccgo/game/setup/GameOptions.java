@@ -126,6 +126,7 @@ public final class GameOptions {
         register(GameOption.builder(OPERATIVE_RULE, Kind.PLAY_RULES, Type.BOOLEAN, "Rules: operative rule")
                 .help("Matching operatives are restricted in deployment, movement, control and battle destiny. Off removes those special restrictions; printed card text still applies.")
                 .defaultValue(f -> "true")
+                .defaultLabel(f -> "On")
                 .shortLabel(v -> "true".equals(v) ? "Rules: operative rule" : "Rules: no operative rule")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Timer: game")

@@ -13,6 +13,8 @@ public class OperativeRuleSetupTests {
     public void OperativeRuleDefaultsPreserveExistingSetups() {
         var format = VirtualTableScenario._formatLibrary.getFormat("open");
         assertTrue(new GameState().isOperativeRuleEnabled());
+        for (var existing : VirtualTableScenario._formatLibrary.getAllFormats().values())
+            assertEquals("true", GameOptions.get(GameOptions.OPERATIVE_RULE).getDefault(existing));
         for (var scope : GameOption.Scope.values()) {
             var setup = GameSetup.of(format, Map.of(GameOptions.OPERATIVE_RULE, "on"), scope);
             assertTrue(setup.isDefault());

@@ -31,7 +31,7 @@ public class OperativeRuleGameplayTests {
         var scn = new VirtualTableScenario(new HashMap<>(Map.of(
                 "operative", "7_26", "second", "7_26", "han", "1_11",
                 "forest", "7_121", "city", "7_125", "system", matching ? "6_83" : "7_110")),
-                new HashMap<>(Map.of("trooper", "1_167", "operative", "7_185", "second", "7_185")));
+                new HashMap<>(Map.of("trooper", "1_167", "operative", "7_185", "second", "7_185", "droid", "11_64", "droid2", "11_64")));
         scn.gameState().setOperativeRuleEnabled(enabled);
         scn.StartGame();
         scn.MoveLocationToTable(scn.GetLSCard("system"));
@@ -59,6 +59,7 @@ public class OperativeRuleGameplayTests {
             scn.LSForceDrainAt(forest);
             scn.PassForceDrainStartResponses();
             int loss = scn.gameState().getForceDrainState().getForceTotal();
+            assertEquals(2, loss); // the operative's printed +1 remains in effect
             for (int i = 0; i < loss; i++) {
                 scn.DSChooseCard(scn.GetTopOfDSReserveDeck());
                 scn.PassForceDrainPendingResponses();
@@ -130,6 +131,47 @@ public class OperativeRuleGameplayTests {
     }
 
     @Test
+    public void OperativeRuleCleansUpMatchingDuplicatesIncludingInactiveCards() {
+        checkDuplicateCleanup(true);
+    }
+
+    @Test
+    public void OperativeRuleCleansUpActiveMatchingDuplicates() {
+        checkDuplicateCleanup(false);
+    }
+
+    private void checkDuplicateCleanup(boolean inactive) {
+        //test1: involuntary co-location is cleaned up even when one operative is inactive.
+        var scn = scenario(true);
+        var city = scn.GetLSCard("city");
+        var first = scn.GetLSCard("operative");
+        var second = scn.GetLSCard("second");
+        scn.MoveCardsToLSHand(scn.GetLSCard("han"));
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.MoveCardsToLocation(city, first, second);
+        if (inactive)
+            scn.MakeCardGoUndercover(second);
+        scn.EnsureLSForcePile(6);
+        scn.LSDeployCard(scn.GetLSCard("han"));
+        scn.LSChooseCard(scn.GetLSCard("forest"));
+        scn.PassAllResponses();
+
+        if (enabled) {
+            assertTrue(scn.LSDecisionAvailable("Required responses")); //test1
+            scn.LSChooseAction("operative lost");
+            assertTrue(scn.LSHasCardChoiceAvailable(second)); //test1
+            scn.LSChooseCard(second);
+            scn.PassAllResponses();
+            assertEquals(Zone.TOP_OF_LOST_PILE, second.getZone()); //test1
+            assertTrue(scn.GetLSLostPile().contains(second)); //test1
+        } else {
+            assertTrue(scn.AwaitingDSDeployPhaseActions()); //test1
+            assertEquals(Zone.AT_LOCATION, second.getZone()); //test1
+        }
+        assertEquals(Zone.AT_LOCATION, first.getZone()); //test1
+    }
+
+    @Test
     public void OperativeRuleControlsAbilityAtTheBattleDestinyThreshold() {
         //test1: Han's 3 plus an operative's 1 reaches four only when that ability is allowed to count.
         var scn = scenario(true);
@@ -145,7 +187,84 @@ public class OperativeRuleGameplayTests {
         if (!enabled) {
             scn.LSChooseYes();
             scn.PassDestinyDrawResponses();
+            scn.PassResponses("Just drew"); // Han may cancel/redraw; decline his optional response.
+            scn.PassDestinyDrawResponses();
         }
         assertEquals(enabled ? 0 : 3, scn.GetLSTotalDestiny()); //test1
     }
+
+    @Test
+    public void OperativeRuleAlsoControlsDarkSideForceDrainEligibility() {
+        //test1: the same matching-planet rule applies to Dark Side operatives.
+        var scn = scenario(true);
+        var forest = scn.GetLSCard("forest");
+        scn.MoveCardsToLocation(forest, scn.GetDSCard("operative"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertEquals(!enabled, scn.DSForceDrainAvailable(forest)); //test1
+    }
+
+    @Test
+    public void OperativeRuleOffDoesNotRemoveOpponentPresenceRestrictions() {
+        //test1: the rule switch never permits draining through opposing presence.
+        var scn = scenario(true);
+        var forest = scn.GetLSCard("forest");
+        scn.MoveCardsToLocation(forest, scn.GetLSCard("operative"), scn.GetDSCard("trooper"));
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertFalse(scn.LSForceDrainAvailable(forest)); //test1
+    }
+
+    @Test
+    public void OperativeRuleOffPreservesPrintedSithProbeDroidLocationLimit() {
+        //test1: the droid's printed limit is independent of the global operative rule.
+        var scn = scenario(true);
+        var forest = scn.GetLSCard("forest");
+        var city = scn.GetLSCard("city");
+        var second = scn.GetDSCard("droid2");
+        scn.MoveCardsToLocation(forest, scn.GetDSCard("trooper"));
+        scn.MoveCardsToLocation(city, scn.GetDSCard("operative"), scn.GetDSCard("droid"));
+        scn.MoveCardsToDSHand(second);
+        scn.SkipToDSTurn(Phase.DEPLOY);
+        scn.EnsureDSForcePile(6);
+        assertTrue(scn.DSDeployAvailable(second));
+        scn.DSDeployCard(second);
+        assertTrue(scn.DSHasCardChoiceAvailable(forest)); //test1
+        assertFalse(scn.DSHasCardChoiceAvailable(city)); //test1
+        scn.DSChooseCard(forest);
+        scn.PassAllResponses();
+        assertEquals(forest.getCardId(), second.getAtLocation().getCardId()); //test1
+    }
+
+
+    @Test
+    public void OperativeRuleDoesNotLoseOpposingMatchingOperativesTogether() {
+        //test1: two opposing operatives can meet; the duplicate restriction is per owner.
+        var scn = scenario(true);
+        var city = scn.GetLSCard("city");
+        var light = scn.GetLSCard("operative");
+        var dark = scn.GetDSCard("operative");
+        scn.MoveCardsToLocation(city, light, dark);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertEquals(Zone.AT_LOCATION, light.getZone()); //test1
+        assertEquals(Zone.AT_LOCATION, dark.getZone()); //test1
+        assertFalse(scn.LSForceDrainAvailable(city)); //test1
+    }
+
+    @Test
+    public void OperativeRuleDoesNotLoseDuplicatesOnANonMatchingPlanet() {
+        //test1: matching title alone is insufficient away from the operative's planet.
+        var scn = scenario(false);
+        var forest = scn.GetLSCard("forest");
+        var first = scn.GetLSCard("operative");
+        var second = scn.GetLSCard("second");
+        scn.MoveCardsToLocation(forest, first, second);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingLSControlPhaseActions());
+        assertTrue(scn.LSForceDrainAvailable(forest)); //test1
+        assertEquals(Zone.AT_LOCATION, first.getZone()); //test1
+        assertEquals(Zone.AT_LOCATION, second.getZone()); //test1
+    }
+
 }
