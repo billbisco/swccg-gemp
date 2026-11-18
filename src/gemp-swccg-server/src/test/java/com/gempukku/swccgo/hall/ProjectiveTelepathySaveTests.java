@@ -16,7 +16,7 @@ import static org.junit.Assert.*;
 
 public class ProjectiveTelepathySaveTests {
     @Test
-    public void ProjectiveTelepathySavedChoiceRebuildsAndSnapshotsTheSelectedPhysicalCard() {
+    public void ProjectiveTelepathySavedChoiceRebuildsAndSnapshotsTheSelectedPhysicalCard() throws Exception {
         var formats = VirtualTableScenario._formatLibrary;
         var library = VirtualTableScenario._cardLibrary;
         var codec = new GameSaveCodec(library, formats, SaveBuild.current());
@@ -35,7 +35,16 @@ public class ProjectiveTelepathySaveTests {
             var restoredHeader = GameSaveHeader.fromJson(header.toJson());
             var root = saves.newGame(restoredHeader);
             String expected = choice.equals("printed") ? "5_149o" : "5_149";
-            for (var game : List.of(root.game(), codec.read(codec.write(root)).game())) {
+            restoredHeader.kryoClassList = codec.getBuild().getClassListFingerprint();
+            var snapshotSave = new GameSave(restoredHeader, new DecisionLog(), codec.write(root), 0,
+                    codec.getBuild().getClassFingerprint());
+            var resumer = new GameResumer(codec, saves);
+            var snapshot = resumer.resume(snapshotSave);
+            assertEquals(GameResumer.Method.SNAPSHOT, snapshot.method());
+            var moves = resumer.resume(new GameSave(restoredHeader, new DecisionLog(), null, 0, null));
+            assertEquals(GameResumer.Method.MOVE_LOG, moves.method());
+            for (var game : List.of(root.game(), snapshot.root().game(), moves.root().game())) {
+                assertEquals(expected, game.getFormat().resolveCardId("5_149o"));
                 var card = game.getGameState().getAllPermanentCards().stream()
                         .filter(c -> c.getTitle().equals("Projective Telepathy")).findFirst().orElseThrow();
                 assertEquals(expected, card.getBlueprintId(true));
