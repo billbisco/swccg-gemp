@@ -1786,7 +1786,7 @@ public class HallServer extends AbstractServer {
             throw new HallException("You don't have a deck registered yet");
 
         // Format-time occupancy: former PC ids become 701/702 for a dated format; stored decks are unchanged
-        swccgDeck = format.applyOccupancy(swccgDeck);
+        swccgDeck = format.resolveDeck(swccgDeck);
 
         /*
          * Pull playtestingNoLimitDeckLength from properties file.
@@ -1827,7 +1827,7 @@ public class HallServer extends AbstractServer {
 
     private SwccgDeck validateUserAndDeck(SwccgFormat format, Player player, CollectionType collectionType,
             SwccgDeck swccgDeck) throws HallException, DeckInvalidException {
-        swccgDeck = format.applyOccupancy(swccgDeck);
+        swccgDeck = format.resolveDeck(swccgDeck);
         format.validateDeck(swccgDeck);
 
         // Now check if player owns all the cards

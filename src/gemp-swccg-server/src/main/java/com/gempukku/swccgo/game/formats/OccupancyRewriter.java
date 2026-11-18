@@ -100,31 +100,7 @@ public class OccupancyRewriter {
     static SwccgDeck applyDeck(SwccgDeck deck, LocalDate date, Map<String, Row> table) {
         if (deck == null || date == null)
             return deck;
-        boolean changed = false;
-        List<String> cards = new ArrayList<String>();
-        for (String id : deck.getCards()) {
-            String rewritten = apply(id, date, table);
-            if (!rewritten.equals(id))
-                changed = true;
-            cards.add(rewritten);
-        }
-        List<String> outside = new ArrayList<String>();
-        for (String id : deck.getCardsOutsideDeck()) {
-            String rewritten = apply(id, date, table);
-            if (!rewritten.equals(id))
-                changed = true;
-            outside.add(rewritten);
-        }
-        if (!changed)
-            return deck;
-        SwccgDeck rewritten = new SwccgDeck(deck.getDeckName());
-        rewritten.setFormatIndex(deck.getFormatIndex());
-        rewritten.setSourceCollection(deck.getSourceCollection());
-        for (String id : cards)
-            rewritten.addCard(id);
-        for (String id : outside)
-            rewritten.addCardOutsideDeck(id);
-        return rewritten;
+        return DeckCardResolver.apply(deck, id -> apply(id, date, table));
     }
 
     static String baseId(String id) {

@@ -36,6 +36,7 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
     private final SwccgCardBlueprintLibrary _library;
     private final Set<String> _allowedPrintings;
     private final Set<String> _bannedPrintings;
+    private final Set<String> _bannedFamilies = new HashSet<>();
     private List<SwccgCardBlueprint> _allCardBlueprints;
 
     CustomPoolSwccgFormat(SwccgFormat inner, CardPool pool, SwccgCardBlueprintLibrary library) {
@@ -52,6 +53,8 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
         _library = library;
         _allowedPrintings = printings(library, pool.getAllowed());
         _bannedPrintings = printings(library, pool.getBanned());
+        for (String id : _bannedPrintings)
+            _bannedFamilies.add(_base.sameCardBlueprintId(id));
     }
 
     public CardPool getPool() { return _pool; }
@@ -93,6 +96,7 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
 
     @Override
     public void validateCard(String blueprintId, boolean skipIfNotExists) throws DeckInvalidException {
+        blueprintId = resolveCardId(blueprintId);
         SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(_library.getBaseBlueprintId(blueprintId));
         if (blueprint == null) {
             if (skipIfNotExists)
@@ -112,7 +116,8 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
                 throw new DeckInvalidException("<span class=\"validate-invalid-card\">" + fullName
                         + "</span> not permitted at this table (Deck: 420): " + violation + ".");
         }
-        if (anyPrintingIn(blueprintId, _bannedPrintings))
+        if (anyPrintingIn(blueprintId, _bannedPrintings)
+                || _bannedFamilies.contains(_base.sameCardBlueprintId(blueprintId)))
             throw new DeckInvalidException("Deck contains <span class=\"validate-invalid-card\">" + fullName
                     + "</span> (" + blueprintId + "), banned in this tournament's custom card pool.");
         if (anyPrintingIn(blueprintId, _allowedPrintings))
@@ -135,6 +140,16 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
     @Override
     public SwccgDeck applyOccupancy(SwccgDeck deck) {
         return _base.applyOccupancy(deck);
+    }
+
+    @Override
+    public SwccgDeck resolveDeck(SwccgDeck deck) {
+        return _inner.resolveDeck(deck);
+    }
+
+    @Override
+    public String resolveCardId(String cardId) {
+        return _inner.resolveCardId(cardId);
     }
 
     @Override
@@ -186,7 +201,7 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
                 String id = (firstSet + i) + "_" + j;
                 try {
                     validateCard(id, true);
-                    SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(id);
+                    SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(resolveCardId(id));
                     if (blueprint != null)
                         all.add(blueprint);
                 } catch (DeckInvalidException | IllegalArgumentException exp) {

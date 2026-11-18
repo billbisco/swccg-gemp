@@ -35,6 +35,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
     private boolean _startingCredits;
     // Virtual Modern occupancy: former PC ids rewrite to 701/702 when this date is strictly before until
     private LocalDate _occupancyDate;
+    private CardTextSelection _cardTexts;
 
     @Override
     public boolean supportsStartingCredits() { return _startingCredits; }
@@ -214,6 +215,23 @@ public class DefaultSwccgFormat implements SwccgFormat {
         return OccupancyRewriter.applyDeck(deck, _occupancyDate);
     }
 
+    protected void setCardTextOverrides(Map<String, String> choices) {
+        _cardTexts = new CardTextSelection(_library, choices);
+        _allCardBlueprints = null;
+    }
+
+    @Override
+    public SwccgDeck resolveDeck(SwccgDeck deck) {
+        SwccgDeck occupied = applyOccupancy(deck);
+        return _cardTexts == null ? occupied : _cardTexts.apply(occupied);
+    }
+
+    @Override
+    public String resolveCardId(String cardId) {
+        String occupied = OccupancyRewriter.apply(cardId, _occupancyDate);
+        return _cardTexts == null ? occupied : _cardTexts.resolve(occupied);
+    }
+
     @Override
     public int getDefaultGameTimerMinutes() {
         return _defaultGameTimerMinutes;
@@ -298,6 +316,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
      * tournament's custom card pool, #222). Everything else is the format's: banned cards, icons and rarities.
      */
     void validateCard(String blueprintId, boolean skipIfNotExists, List<Integer> validSets) throws DeckInvalidException {
+        if (_cardTexts != null)
+            blueprintId = _cardTexts.resolve(blueprintId);
         String listedBlueprintId = blueprintId;
         blueprintId = _library.getBaseBlueprintId(blueprintId);
         SwccgCardBlueprint blueprint = _library.getSwccgoCardBlueprint(blueprintId);
@@ -314,7 +334,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
             throw new DeckInvalidException("Deck contains card type, from card <span class=\"validate-invalid-card-type\">" + fullName + "</span>, not permitted in this format.");
 
         // An older text state (2_45o, 2_45d) is legal only where the format allows text states (docs/legacy-versions.md)
-        if (TextState.isTextStateBlueprint(blueprintId) && !_textStates)
+        if (TextState.isTextStateBlueprint(blueprintId) && !_textStates
+                && (_cardTexts == null || !_cardTexts.selects(blueprintId)))
             throw new DeckInvalidException("Deck contains an older text of a card, <span class=\"validate-invalid-card-set\">" + fullName + "</span>, not permitted in this format.");
 
         if (_validCards.contains(blueprintId) || _validCards.contains(listedBlueprintId))
@@ -399,6 +420,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
         appendJoined(sb, _bannedRarity);
         sb.append('|');
         appendJoined(sb, _validCards);
+        if (_cardTexts != null && !_cardTexts.choices().isEmpty())
+            sb.append("|cardTextOverrides=").append(_cardTexts.choices());
         return sb.toString();
     }
 
@@ -524,7 +547,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
      */
     void validateDeck(SwccgDeck deck, int minDeckSize, int maxDeckSize, DeckRules rules, CardCheck cardCheck) throws DeckInvalidException {
         // Occupancy rewrite before set membership: a dated format plays 701/702 for former PC ids
-        deck = OccupancyRewriter.applyDeck(deck, _occupancyDate);
+        deck = resolveDeck(deck);
         if (rules.isNoShields()) {
             // "Shields: none" (#144): as Open (no shields), which bans the Defensive Shield icon
             for (java.util.List<String> cards : java.util.Arrays.asList(deck.getCards(), deck.getCardsOutsideDeck())) {
@@ -684,6 +707,26 @@ public class DefaultSwccgFormat implements SwccgFormat {
         addCardsToDefaultCollection(_library, CardCounts.PLAYTESTING_SETS_CARD_COUNTS, 501, _allCardBlueprints);
         LegacyCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
         com.gempukku.swccgo.collection.TextStateCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
+
+        if (_cardTexts != null) {
+            for (Map.Entry<String, String> choice : _cardTexts.choices().entrySet()) {
+                SwccgCardBlueprint current = _library.getSwccgoCardBlueprint(choice.getKey());
+                SwccgCardBlueprint selected = _library.getSwccgoCardBlueprint(choice.getValue());
+                boolean included = false;
+                for (java.util.Iterator<SwccgCardBlueprint> it = _allCardBlueprints.iterator(); it.hasNext();) {
+                    SwccgCardBlueprint card = it.next();
+                    if (card == current || card == selected) {
+                        if (included)
+                            it.remove();
+                        else
+                            included = true;
+                    }
+                }
+                int index = _allCardBlueprints.indexOf(current);
+                if (index >= 0)
+                    _allCardBlueprints.set(index, selected);
+            }
+        }
 
         return _allCardBlueprints;
     }

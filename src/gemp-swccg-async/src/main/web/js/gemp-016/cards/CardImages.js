@@ -6658,6 +6658,8 @@ const fixedImages = {
 "1292_10":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/majorhaashn.gif",
 "1292_11":"https://res.starwarsccg.org/cards/legacy/VirtualBlock9-Light/large/mandalorianmishapjedimindtrick.gif",
 // END legacy
+
+"5_149o":"https://wiki.swccg.com/images/f/f1/CC-D-projectivetelepathy-decipher-archive.gif",
 // Text states of one printing (docs/legacy-versions.md, "Text states"): 2_45o = Blast The Door, Kid! as printed (Decipher archive scan); 2_45d = the Decipher Glossary 2.0 text (Players Committee 2007 card-gallery image, which prints that wording).
 "2_45o":"https://wiki.swccg.com/images/c/c7/ANH-L-blastthedoorkid-decipher-archive.gif",
 "2_45d":"https://wiki.swccg.com/images/d/d9/ANH-L-blastthedoorkid-pc2007.gif",

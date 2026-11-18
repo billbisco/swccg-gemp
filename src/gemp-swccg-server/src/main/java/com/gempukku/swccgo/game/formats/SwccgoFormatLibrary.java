@@ -76,6 +76,16 @@ public class SwccgoFormatLibrary {
                         format.setSkipFormatPool(true);
                     format.setMultipleObjectives(Boolean.TRUE.equals(formatDef.get("multipleObjectives")));
                     format.setTextStates(Boolean.TRUE.equals(formatDef.get("textStates")));
+                    JSONObject cardTexts = (JSONObject) formatDef.get("cardTextOverrides");
+                    if (cardTexts != null) {
+                        Map<String, String> choices = new HashMap<>();
+                        for (Object key : cardTexts.keySet()) {
+                            if (!(key instanceof String) || !(cardTexts.get(key) instanceof String))
+                                throw new IllegalArgumentException("Card text selections must be string ids");
+                            choices.put((String) key, (String) cardTexts.get(key));
+                        }
+                        format.setCardTextOverrides(choices);
+                    }
                     String occupancyDate = (String) formatDef.get("occupancyDate");
                     if (occupancyDate != null)
                         format.setOccupancyDate(java.time.LocalDate.parse(occupancyDate));

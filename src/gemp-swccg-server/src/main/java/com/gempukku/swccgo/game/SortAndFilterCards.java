@@ -555,6 +555,8 @@ public class SortAndFilterCards {
         SwccgFormat format = formatLibrary.getFormat(formatCode);
         if (format != null) {
             try {
+                if (!blueprintId.equals(format.resolveCardId(blueprintId)))
+                    return false;
                 format.validateCard(blueprintId, false);
                 return true;
             } catch (DeckInvalidException exp) {
@@ -589,6 +591,8 @@ public class SortAndFilterCards {
             SwccgFormat format = formatLibrary.getFormat(set);
             if (format != null) {
                 try {
+                    if (!blueprintId.equals(format.resolveCardId(blueprintId)))
+                        return false;
                     format.validateCard(blueprintId, false);
                     return true;
                 } catch (DeckInvalidException exp) {
