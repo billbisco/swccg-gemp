@@ -56,4 +56,10 @@ public interface SwccgFormat {
 
     /** Rewrite former PC ids in a loaded deck for this format's occupancy date. Does not persist. */
     default SwccgDeck applyOccupancy(SwccgDeck deck) { return deck; }
+
+    /** Select the actual card texts used by this format without changing the saved deck. */
+    default SwccgDeck resolveDeck(SwccgDeck deck) { return applyOccupancy(deck); }
+
+    /** The selected text for one imported card id, retaining its display modifiers. */
+    default String resolveCardId(String cardId) { return cardId; }
 }

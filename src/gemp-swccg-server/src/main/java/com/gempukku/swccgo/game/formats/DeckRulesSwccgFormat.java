@@ -45,6 +45,16 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
     }
 
     @Override
+    public SwccgDeck resolveDeck(SwccgDeck deck) {
+        return _inner.resolveDeck(deck);
+    }
+
+    @Override
+    public String resolveCardId(String cardId) {
+        return _inner.resolveCardId(cardId);
+    }
+
+    @Override
     public void validateDeck(SwccgDeck deck) throws DeckInvalidException {
         if (_inner instanceof DeckSizeSwccgFormat)
             ((DeckSizeSwccgFormat) _inner).validateDeck(deck, _rules);
@@ -54,6 +64,7 @@ public class DeckRulesSwccgFormat implements SwccgFormat {
 
     @Override
     public void validateCard(String cardId, boolean skipIfNotExists) throws DeckInvalidException {
+        cardId = resolveCardId(cardId);
         _inner.validateCard(cardId, skipIfNotExists);
         // the deck builder's card filter checks cards one by one: "Shields: none" leaves shields out, as Open (no shields)
         if (_rules.isNoShields() && _library != null) {

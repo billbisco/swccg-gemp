@@ -437,7 +437,7 @@ public class SwccgGameMediator {
             com.gempukku.swccgo.common.TextState textState = card.getBlueprint().getTextState();
             if (textState != null) {
                 sb.append("<div>").append("Text: ").append(textState.label())
-                        .append(" (").append(textState.source()).append("; Anything Goes only)").append("</div>");
+                        .append(" (").append(textState.source()).append(")").append("</div>");
                 String displayTitle = card.getBlueprint().getDisplayTitle();
                 if (displayTitle != null) {
                     sb.append("<div>").append("Printed as ").append(displayTitle).append("; the same card as ")

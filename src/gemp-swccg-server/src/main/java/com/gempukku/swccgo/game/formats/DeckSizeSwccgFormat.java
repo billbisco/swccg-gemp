@@ -16,6 +16,16 @@ import java.util.List;
  * Built only by {@link SwccgoFormatLibrary}.
  */
 public class DeckSizeSwccgFormat implements SwccgFormat {
+    @Override
+    public SwccgDeck resolveDeck(SwccgDeck deck) {
+        return _base.resolveDeck(deck);
+    }
+
+    @Override
+    public String resolveCardId(String cardId) {
+        return _base.resolveCardId(cardId);
+    }
+
     private final DefaultSwccgFormat _base;
     private final int _deckSize;
     private final Integer _defaultGameTimerMinutes;
