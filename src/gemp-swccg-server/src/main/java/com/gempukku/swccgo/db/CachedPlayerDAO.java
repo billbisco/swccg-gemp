@@ -265,6 +265,18 @@ public class CachedPlayerDAO implements PlayerDAO, Cached {
     }
 
     @Override
+    public int gamesOf(int playerId) throws SQLException {
+        return _delegate.gamesOf(playerId);
+    }
+
+    @Override
+    public String mergePlayer(int fromId, int toId) throws SQLException {
+        String result = _delegate.mergePlayer(fromId, toId);
+        clearCache();
+        return result;
+    }
+
+    @Override
     public List<String[]> replaysOf(int playerId) throws SQLException {
         return _delegate.replaysOf(playerId);
     }

@@ -344,4 +344,54 @@ class SsoAuthServiceTest {
         assertEquals(400, probe.status); //test4
         assertTrue(probe.signature != null); //test4
     }
+
+    @Test
+    void historyCountsGames() throws Exception {
+        //test1: the answer carries the player and the games count
+        //test2: unknown players and bots are not found; a bad id is a signed 400
+        when(auth.getPlayerIncludingDeactivated(3907)).thenReturn(player(3907, "Rose", "u"));
+        when(auth.gamesOf(3907)).thenReturn(4);
+        JSONObject r = json(call(KEY, SsoAuthService.HISTORY, "{\"id\":3907}", NOW));
+        assertEquals(true, r.get("ok")); //test1
+        assertEquals(4L, r.get("games")); //test1
+        assertNotNull(r.get("user")); //test1
+        assertEquals("not_found", json(call(KEY, SsoAuthService.HISTORY, "{\"id\":3908}", NOW)).get("error")); //test2
+        assertEquals(400, call(KEY, SsoAuthService.HISTORY, "{}", NOW).status); //test2
+    }
+
+    @Test
+    void mergeCheckChangesNothingThenMergeEndsSessionsAndClearsCaches() throws Exception {
+        //test1: check mode answers ok with the target and changes nothing
+        //test2: the merge runs, ends both players' sessions and clears caches
+        java.util.List<String> ended = new java.util.ArrayList<>();
+        int[] cleared = {0};
+        service.setSessionEnder(ended::add);
+        service.setRenameHooks(name -> false, () -> cleared[0]++);
+        when(auth.getPlayerIncludingDeactivated(3907)).thenReturn(player(3907, "Rose", "u"));
+        when(auth.getPlayerIncludingDeactivated(3908)).thenReturn(player(3908, "Paige", "u"));
+        JSONObject r = json(call(KEY, SsoAuthService.MERGE, "{\"from\":3908,\"to\":3907,\"check\":true}", NOW));
+        assertEquals(true, r.get("ok")); //test1
+        verify(auth, never()).mergeAccounts(anyInt(), anyInt()); //test1
+        assertEquals(0, cleared[0]); //test1
+        when(auth.mergeAccounts(3908, 3907)).thenReturn(null);
+        r = json(call(KEY, SsoAuthService.MERGE, "{\"from\":3908,\"to\":3907}", NOW));
+        assertEquals(true, r.get("ok")); //test2
+        verify(auth).mergeAccounts(3908, 3907); //test2
+        assertEquals(java.util.List.of("Paige", "Rose"), ended); //test2
+        assertEquals(1, cleared[0]); //test2
+    }
+
+    @Test
+    void mergeRefusals() throws Exception {
+        //test1: the source at a table is busy and nothing changes
+        //test2: same id, missing ids and unknown players are refused
+        service.setRenameHooks(name -> name.equals("Paige"), null);
+        when(auth.getPlayerIncludingDeactivated(3907)).thenReturn(player(3907, "Rose", "u"));
+        when(auth.getPlayerIncludingDeactivated(3908)).thenReturn(player(3908, "Paige", "u"));
+        assertEquals("busy", json(call(KEY, SsoAuthService.MERGE, "{\"from\":3908,\"to\":3907}", NOW)).get("error")); //test1
+        verify(auth, never()).mergeAccounts(anyInt(), anyInt()); //test1
+        assertEquals(400, call(KEY, SsoAuthService.MERGE, "{\"from\":3907,\"to\":3907}", NOW).status); //test2
+        assertEquals(400, call(KEY, SsoAuthService.MERGE, "{\"from\":3907}", NOW).status); //test2
+        assertEquals("not_found", json(call(KEY, SsoAuthService.MERGE, "{\"from\":3909,\"to\":3907}", NOW)).get("error")); //test2
+    }
 }

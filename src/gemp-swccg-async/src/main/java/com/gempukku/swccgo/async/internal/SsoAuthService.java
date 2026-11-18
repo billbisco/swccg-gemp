@@ -40,7 +40,11 @@ public class SsoAuthService {
     public static final String RENAME = "/internal/v2/rename";
     /** Close account, Play's part (#524): rename to the placeholder and remove personal data; "check" changes nothing. */
     public static final String ERASE = "/internal/v2/erase";
-    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE, RENAME, ERASE);
+    /** #247: how many games a player sat in (fold-in needs "no history"). */
+    public static final String HISTORY = "/internal/v2/history";
+    /** #247 staff merge, Play's part: games and the rest move from one player to another; "check" changes nothing. */
+    public static final String MERGE = "/internal/v2/merge";
+    public static final Set<String> PATHS = Set.of(VERIFY, REGISTER, PLAYERS, STATUS, PASSWORD, CLOSE, RENAME, ERASE, HISTORY, MERGE);
 
     private static final Pattern NONCE = Pattern.compile("^[A-Za-z0-9_-]{16,64}$");
     private static final Pattern IP = Pattern.compile("^[0-9A-Fa-f:.]{2,45}$");
@@ -131,6 +135,8 @@ public class SsoAuthService {
                 case CLOSE: return close(json, keyId, nonce);
                 case RENAME: return rename(json, keyId, nonce, nowMillis);
                 case ERASE: return erase(json, keyId, nonce);
+                case HISTORY: return history(json, keyId, nonce);
+                case MERGE: return merge(json, keyId, nonce);
                 default: return status(json, keyId, nonce);
             }
         } catch (Exception e) {
@@ -296,6 +302,57 @@ public class SsoAuthService {
         LOG.info("sso-auth: erase id=" + playerId + " key=" + keyId);
         Player p = _authService.getPlayerIncludingDeactivated(playerId);
         return result(200, p != null ? okUser(p) : error("not_found"), keyId, nonce);
+    }
+
+    /** #247: {"id"} -> {"ok", "user", "games"}: games the player sat in. */
+    private WikiAuthService.Result history(JSONObject json, String keyId, String nonce) throws Exception {
+        Object id = json.get("id");
+        if (!(id instanceof Long) || (Long) id <= 0 || (Long) id > Integer.MAX_VALUE)
+            return result(400, error("bad_request"), keyId, nonce);
+        int playerId = ((Long) id).intValue();
+        Player p = _authService.getPlayerIncludingDeactivated(playerId);
+        if (p == null || Player.isBot(p.getName()))
+            return result(200, error("not_found"), keyId, nonce);
+        JSONObject r = okUser(p);
+        r.put("games", _authService.gamesOf(playerId));
+        return result(200, r, keyId, nonce);
+    }
+
+    /**
+     * #247 staff merge, Play's part. {"from", "to", "check"}: with check, answers whether the merge would go through
+     * (both players exist, the source is not at a table) and changes nothing. Without, moves the source's games,
+     * League and Tournament entries, transfers, saved games, decks and missing collections to the target, ends both
+     * players' sessions and drops cached copies. Safe to retry. Names are never logged.
+     */
+    private WikiAuthService.Result merge(JSONObject json, String keyId, String nonce) throws Exception {
+        Object from = json.get("from"), to = json.get("to"), check = json.get("check");
+        if (!(from instanceof Long) || !(to instanceof Long) || (Long) from <= 0 || (Long) to <= 0
+                || (Long) from > Integer.MAX_VALUE || (Long) to > Integer.MAX_VALUE || from.equals(to)
+                || (check != null && !(check instanceof Boolean)))
+            return result(400, error("bad_request"), keyId, nonce);
+        int fromId = ((Long) from).intValue(), toId = ((Long) to).intValue();
+        Player src = _authService.getPlayerIncludingDeactivated(fromId);
+        Player dst = _authService.getPlayerIncludingDeactivated(toId);
+        if (src == null || dst == null || Player.isBot(src.getName()) || Player.isBot(dst.getName()))
+            return result(200, error("not_found"), keyId, nonce);
+        java.util.function.Predicate<String> atTable = _atTable;
+        if (atTable != null && atTable.test(src.getName()))
+            return result(200, error("busy"), keyId, nonce);
+        if (Boolean.TRUE.equals(check))
+            return result(200, okUser(dst), keyId, nonce);
+        String refused = _authService.mergeAccounts(fromId, toId);
+        if (refused != null)
+            return result(200, error(refused), keyId, nonce);
+        java.util.function.Consumer<String> ender = _sessionEnder;
+        if (ender != null) {
+            ender.accept(src.getName());
+            ender.accept(dst.getName());
+        }
+        Runnable after = _afterRename;
+        if (after != null)
+            after.run();
+        LOG.info("sso-auth: merge from=" + fromId + " to=" + toId + " key=" + keyId);
+        return result(200, okUser(dst), keyId, nonce);
     }
 
     private WikiAuthService.Result rename(JSONObject json, String keyId, String nonce, long now) throws Exception {

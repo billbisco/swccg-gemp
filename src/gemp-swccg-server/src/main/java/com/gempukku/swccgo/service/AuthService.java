@@ -455,6 +455,36 @@ public class AuthService {
         return null;
     }
 
+    /** #247: games the player sat in (0 = no Play history). */
+    public int gamesOf(int playerId) throws SQLException {
+        return _playerDAO.gamesOf(playerId);
+    }
+
+    /**
+     * #247 staff merge, Play's part: the source player's replays get the target's name and move to the target's
+     * folder, then the games and the rest move in one transaction ({@link PlayerDAO#mergePlayer}). Safe to retry.
+     * @return null when done, else "not_found"
+     */
+    public String mergeAccounts(int fromId, int toId) throws Exception {
+        Player from = _playerDAO.getPlayerIncludingDeactivated(fromId);
+        Player to = _playerDAO.getPlayerIncludingDeactivated(toId);
+        if (fromId == toId || from == null || to == null || from.getId() != fromId || to.getId() != toId
+                || Player.isBot(from.getName()) || Player.isBot(to.getName()))
+            return "not_found";
+        java.io.File root = replayRoot();
+        for (String[] ref : _playerDAO.replaysOf(fromId)) {
+            java.io.File f = new java.io.File(new java.io.File(root, ref[0]), ref[1] + ".xml.gz");
+            com.gempukku.swccgo.game.ReplayNameRewriter.rewrite(f, from.getName(), to.getName());
+            if (ref[0].equals(String.valueOf(fromId)) && f.isFile()) {
+                java.io.File dir = new java.io.File(root, String.valueOf(toId));
+                java.io.File dest = new java.io.File(dir, f.getName());
+                if (!dest.exists() && (dir.isDirectory() || dir.mkdirs()))
+                    java.nio.file.Files.move(f.toPath(), dest.toPath());
+            }
+        }
+        return _playerDAO.mergePlayer(fromId, toId);
+    }
+
     /**
      * Whether an account may sign in right now (ban, temporary ban, deactivation), by id.
      * No password is checked: swccg-login calls this for passkey, social and silent sign-ins.
