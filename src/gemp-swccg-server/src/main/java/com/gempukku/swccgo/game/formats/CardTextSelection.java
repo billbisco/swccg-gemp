@@ -7,6 +7,8 @@ import com.gempukku.swccgo.logic.vo.SwccgDeck;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.List;
+import java.util.Iterator;
 import java.util.TreeMap;
 
 /** Explicit, source-reviewed choices, not a date inferred from publication bounds. */
@@ -53,7 +55,8 @@ final class CardTextSelection {
         if (TextState.isTextStateBlueprint(front))
             return id;
         String bare = _library.stripBlueprintModifiers(front);
-        String selected = _choices.get(_library.getBaseBlueprintId(bare));
+        String canonical = bare.replaceAll("(^|_)0+(?=\\d)", "$1");
+        String selected = _choices.get(_library.getBaseBlueprintId(canonical));
         if (selected == null)
             return id;
         String modifiers = front.replaceAll("[^*^]", "");
@@ -62,5 +65,25 @@ final class CardTextSelection {
 
     SwccgDeck apply(SwccgDeck deck) {
         return _choices.isEmpty() ? deck : DeckCardResolver.apply(deck, this::resolve);
+    }
+
+    void selectPool(List<SwccgCardBlueprint> cards) {
+        for (Map.Entry<String, String> choice : _choices.entrySet()) {
+            SwccgCardBlueprint current = _library.getSwccgoCardBlueprint(choice.getKey());
+            SwccgCardBlueprint selected = _library.getSwccgoCardBlueprint(choice.getValue());
+            boolean included = false;
+            for (Iterator<SwccgCardBlueprint> it = cards.iterator(); it.hasNext();) {
+                SwccgCardBlueprint card = it.next();
+                if (card == current || card == selected) {
+                    if (included)
+                        it.remove();
+                    else
+                        included = true;
+                }
+            }
+            int index = cards.indexOf(current);
+            if (index >= 0)
+                cards.set(index, selected);
+        }
     }
 }

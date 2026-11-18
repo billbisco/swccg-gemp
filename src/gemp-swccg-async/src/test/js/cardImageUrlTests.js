@@ -12,6 +12,8 @@ function load(origin) {
 const official = 'https://res.starwarsccg.org';
 const legacyPrefix = official + '/cards/legacy/';
 const defaults = load();
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('5_149o'), 'https://wiki.swccg.com/images/f/f1/CC-D-projectivetelepathy-decipher-archive.gif');
+assert.strictEqual(defaults.CardUnderTest.getImageUrl('5_149'), 'https://swccg.com/cards/CloudCity-Dark/large/projectivetelepathy.gif');
 const legacy = Object.entries(defaults.ImagesUnderTest).filter(([,url]) => url.startsWith(legacyPrefix));
 assert(legacy.length > 1000, 'Exercise the real published Legacy image mappings');
 const defaultMirror = 'https://swccg.com';

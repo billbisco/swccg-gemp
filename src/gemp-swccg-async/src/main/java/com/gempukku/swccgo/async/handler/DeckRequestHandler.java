@@ -34,6 +34,20 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
     private SwccgoFormatLibrary _formatLibrary;
     private SwccgoServer _swccgoServer;
 
+    private String selectedTextSummary(SwccgFormat format, SwccgDeck deck) {
+        SwccgDeck resolved = format.resolveDeck(deck);
+        Set<String> names = new LinkedHashSet<>();
+        for (List<String> cards : List.of(resolved.getCards(), resolved.getCardsOutsideDeck())) {
+            for (String id : cards) {
+                SwccgCardBlueprint card = _library.getSwccgoCardBlueprint(id);
+                if (card != null && card.getTextState() != null)
+                    names.add(StringEscapeUtils.escapeHtml4(GameUtils.getFullName(card)));
+            }
+        }
+        return names.isEmpty() ? "" : " <small class=\"deckstats-text-selection\">Card text: "
+                + String.join(", ", names) + "</small>";
+    }
+
     public DeckRequestHandler(Map<Type, Object> context) {
         super(context);
         _sortAndFilterCards = new SortAndFilterCards();
@@ -156,7 +170,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                     String formatCssId = format.getName().replace(" ", "-").replace("(", "").replace(")", "").replace("/", "").replace("'", "");
                     try {
                         format.validateDeck(deck);
-                        valid.append("<div id=\"deckstats-format-" + formatCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + formatCssId + "\" class=\"deckstats-format-name\">" + format.getName() + ":</span> <span id=\"deckstats-format-" + formatCssId + "-content\" class=\"deckstats-format-valid\">valid</span></div>");
+                        valid.append("<div id=\"deckstats-format-" + formatCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + formatCssId + "\" class=\"deckstats-format-name\">" + format.getName() + ":</span> <span id=\"deckstats-format-" + formatCssId + "-content\" class=\"deckstats-format-valid\">valid</span>" + selectedTextSummary(format, deck) + "</div>");
                     } catch (DeckInvalidException exp) {
                         invalid.append("<div id=\"deckstats-format-" + formatCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + formatCssId + "\" class=\"deckstats-format-name\">" + format.getName() + ":</span> <span id=\"deckstats-format-" + formatCssId + "-content\" class=\"deckstats-format-invalid\">" + exp.getMessage() + "</span></div>");
                         // #90: a deck that only misses the format's default size may still be legal at a chosen size
@@ -164,7 +178,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
                         if (sized != null) {
                             String sizedName = sized.getName() + " · " + sized.getRequiredDeckSize() + " cards";
                             String sizedCssId = formatCssId + "-" + sized.getRequiredDeckSize() + "-cards";
-                            valid.append("<div id=\"deckstats-format-" + sizedCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + sizedCssId + "\" class=\"deckstats-format-name\">" + sizedName + ":</span> <span id=\"deckstats-format-" + sizedCssId + "-content\" class=\"deckstats-format-valid\">valid (choose deck size " + sized.getRequiredDeckSize() + " at setup)</span></div>");
+                            valid.append("<div id=\"deckstats-format-" + sizedCssId + "-container\" class=\"deckstats-format-container\"></span><span id=\"deckstats-format-" + sizedCssId + "\" class=\"deckstats-format-name\">" + sizedName + ":</span> <span id=\"deckstats-format-" + sizedCssId + "-content\" class=\"deckstats-format-valid\">valid (choose deck size " + sized.getRequiredDeckSize() + " at setup)</span>" + selectedTextSummary(sized, deck) + "</div>");
                         }
                     }
                 }

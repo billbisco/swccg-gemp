@@ -708,25 +708,8 @@ public class DefaultSwccgFormat implements SwccgFormat {
         LegacyCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
         com.gempukku.swccgo.collection.TextStateCardPool.appendValidBlueprints(_library, this, _allCardBlueprints);
 
-        if (_cardTexts != null) {
-            for (Map.Entry<String, String> choice : _cardTexts.choices().entrySet()) {
-                SwccgCardBlueprint current = _library.getSwccgoCardBlueprint(choice.getKey());
-                SwccgCardBlueprint selected = _library.getSwccgoCardBlueprint(choice.getValue());
-                boolean included = false;
-                for (java.util.Iterator<SwccgCardBlueprint> it = _allCardBlueprints.iterator(); it.hasNext();) {
-                    SwccgCardBlueprint card = it.next();
-                    if (card == current || card == selected) {
-                        if (included)
-                            it.remove();
-                        else
-                            included = true;
-                    }
-                }
-                int index = _allCardBlueprints.indexOf(current);
-                if (index >= 0)
-                    _allCardBlueprints.set(index, selected);
-            }
-        }
+        if (_cardTexts != null)
+            _cardTexts.selectPool(_allCardBlueprints);
 
         return _allCardBlueprints;
     }

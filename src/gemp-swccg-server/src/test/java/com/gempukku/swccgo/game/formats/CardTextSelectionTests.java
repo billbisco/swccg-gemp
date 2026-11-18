@@ -3,6 +3,8 @@ package com.gempukku.swccgo.game.formats;
 import com.gempukku.swccgo.game.DeckInvalidException;
 import com.gempukku.swccgo.game.SwccgCardBlueprintLibrary;
 import com.gempukku.swccgo.game.SwccgFormat;
+import com.gempukku.swccgo.game.SortAndFilterCards;
+import com.gempukku.swccgo.collection.CollectionsManager;
 import com.gempukku.swccgo.game.setup.CardPool;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import org.junit.BeforeClass;
@@ -79,10 +81,12 @@ public class CardTextSelectionTests {
     @Test
     public void ExistingAliasesResolveAndAnEmptySelectionIsANoOp() {
         CardTextSelection empty = new CardTextSelection(library, Map.of());
-        SwccgDeck saved = deck("5_149", 60);
+        SwccgDeck saved = deck("601_100", 60);
         assertSame(saved, empty.apply(saved));
         CardTextSelection choice = new CardTextSelection(library, Map.of("2_45", "2_45o"));
+        assertSame(saved, choice.apply(saved));
         assertEquals("2_45o", choice.resolve("2_45"));
+        assertEquals("2_45o", choice.resolve("2_045"));
         assertEquals("2_45d", choice.resolve("2_45d"));
         assertThrows(UnsupportedOperationException.class, () -> choice.choices().put("5_149", "5_149o"));
     }
@@ -104,12 +108,42 @@ public class CardTextSelectionTests {
         SwccgFormat sized = new DeckSizeSwccgFormat(base, 80, null, null);
         sized.validateDeck(deck("5_149", 80));
         assertEquals("5_149o", sized.resolveDeck(deck("5_149", 80)).getCards().get(0));
+        SwccgFormat rules = new DeckRulesSwccgFormat(sized, new DeckRules(true, false, false, 1), library);
+        rules.validateDeck(deck("5_149", 80));
+        assertEquals("5_149o", rules.resolveCardId("5_149"));
+        SwccgFormat pool = new CustomPoolSwccgFormat(rules, CardPool.of(List.of(1, 5), List.of(), List.of()), library);
+        pool.validateDeck(deck("5_149", 80));
+        assertTrue(pool.getAllCardBlueprintsValidInFormat().contains(library.getSwccgoCardBlueprint("5_149o")));
+        assertFalse(pool.getAllCardBlueprintsValidInFormat().contains(library.getSwccgoCardBlueprint("5_149")));
         for (String ban : List.of("5_149", "5_149o")) {
             SwccgFormat custom = new CustomPoolSwccgFormat(sized,
                     CardPool.of(null, List.of(), List.of(ban)), library);
             assertEquals("5_149o", custom.resolveCardId("5_149"));
             assertThrows(DeckInvalidException.class, () -> custom.validateDeck(deck("5_149", 80)));
         }
+    }
+
+    @Test
+    public void DeckBuilderFormatAndNamedSetFiltersOfferTheSelectedImageId() {
+        var all = new CollectionsManager(null, null, null, library).getDefaultCollection(false).getAll().values();
+        for (String filter : List.of("format:premiere_ds2", "set:premiere_ds2")) {
+            var cards = new SortAndFilterCards().process(filter, all, library, formats, Map.of());
+            assertTrue(cards.stream().anyMatch(card -> card.getBlueprintId().equals("5_149o")));
+            assertFalse(cards.stream().anyMatch(card -> card.getBlueprintId().equals("5_149")));
+        }
+    }
+
+    @Test
+    public void CustomPoolAllowanceFollowsOnlyTheFormatsSelectedState() throws Exception {
+        SwccgFormat historical = new CustomPoolSwccgFormat(formats.getFormat("premiere_ds2"),
+                CardPool.of(List.of(1), List.of("5_149"), List.of()), library);
+        historical.validateDeck(deck("5_149", 60));
+        historical.validateDeck(deck("5_149o", 60));
+        SwccgFormat current = new CustomPoolSwccgFormat(formats.getFormat("open"),
+                CardPool.of(List.of(1), List.of("5_149"), List.of()), library);
+        current.validateDeck(deck("5_149", 60));
+        assertThrows(DeckInvalidException.class, () -> current.validateDeck(deck("5_149o", 60)));
+        assertEquals("5_149o", historical.resolveCardId("5_0149"));
     }
 
     @Test

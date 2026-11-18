@@ -3,6 +3,7 @@ package com.gempukku.swccgo.cards.set5.dark;
 import com.gempukku.swccgo.common.*;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
+import com.gempukku.swccgo.game.PhysicalCardImpl;
 import org.junit.Test;
 
 import java.util.HashMap;
@@ -53,8 +54,7 @@ public class Card_5_149_TextStates_Tests {
             scn.SkipToDSTurn(Phase.BATTLE);
         else
             scn.SkipToLSTurn(Phase.BATTLE);
-        scn.EnsureDSForcePile(own ? remaining + 1 : 0);
-        scn.EnsureLSForcePile(own ? 0 : remaining + 1);
+        force(scn, own ? remaining + 1 : 0, own ? 0 : remaining + 1);
         if (own)
             scn.DSInitiateBattle(site);
         else
@@ -64,7 +64,7 @@ public class Card_5_149_TextStates_Tests {
 
     private void play(VirtualTableScenario scn) {
         var card = scn.GetDSCard("telepathy");
-        if (!scn.DSCardPlayAvailable(card) && scn.LSGetDecision() != null)
+        if (scn.DSGetDecision() == null && scn.LSGetDecision() != null)
             scn.LSPass();
         assertTrue(scn.DSCardPlayAvailable(card));
         scn.DSPlayCard(card);
@@ -73,6 +73,13 @@ public class Card_5_149_TextStates_Tests {
 
     private void assertUsed(VirtualTableScenario scn) {
         assertTrue(scn.GetDSUsedPile().contains(scn.GetDSCard("telepathy")));
+    }
+
+    private void force(VirtualTableScenario scn, int dark, int light) {
+        scn.EnsureDSForcePile(dark);
+        scn.EnsureLSForcePile(light);
+        scn.DSUseForceCheat(scn.GetDSForcePileCount() - dark);
+        scn.LSUseForceCheat(scn.GetLSForcePileCount() - light);
     }
 
     @Test
@@ -157,8 +164,7 @@ public class Card_5_149_TextStates_Tests {
             scn.MoveCardsToLocation(scn.GetDSStartingLocation(), scn.GetLSCard("rebel"));
             scn.SkipToLSTurn(Phase.CONTROL);
         }
-        scn.EnsureDSForcePile(own ? force : 0);
-        scn.EnsureLSForcePile(own ? 0 : force);
+        force(scn, own ? force : 0, own ? 0 : force);
         if (own)
             scn.DSForceDrainAt(scn.GetLSStartingLocation());
         else
@@ -203,5 +209,76 @@ public class Card_5_149_TextStates_Tests {
         assertTrue(scn.GetLSLostPile().contains(anger));
         assertFalse(scn.GetDSReserveDeck().contains(anger));
         assertUsed(scn);
+    }
+
+    @Test
+    public void ProjectiveTelepathyOriginalMayPayToKeepOwnForceDrain() {
+        var scn = drain(true, 2);
+        int lost = scn.GetLSLostPileCount();
+        play(scn);
+        scn.DSChoose("Use 2 Force");
+        scn.PassAllResponses();
+        scn.PassForceDrainStartResponses();
+        assertEquals(0, scn.GetDSForcePileCount());
+        assertTrue(scn.IsActiveForceDrain());
+        scn.LSChooseCard(scn.GetTopOfLSReserveDeck());
+        scn.PassForceDrainEndResponses();
+        assertEquals(lost + 1, scn.GetLSLostPileCount());
+        assertFalse(scn.IsActiveForceDrain());
+        assertUsed(scn);
+    }
+
+    @Test
+    public void ProjectiveTelepathyOriginalMayDeclinePaymentForOwnForceDrain() {
+        var scn = drain(true, 2);
+        play(scn);
+        scn.DSChoose("Cancel Force drain");
+        scn.PassAllResponses();
+        assertFalse(scn.IsActiveForceDrain());
+        assertEquals(2, scn.GetDSForcePileCount());
+        assertUsed(scn);
+    }
+
+    @Test
+    public void ProjectiveTelepathyOriginalIsUnavailableOutsideItsResponseWindows() {
+        var scn = scenario("5_149o");
+        scn.StartGame();
+        scn.MoveCardsToDSHand(scn.GetDSCard("telepathy"));
+        scn.SkipToDSTurn(Phase.CONTROL);
+        assertTrue(scn.AwaitingDSControlPhaseActions());
+        assertFalse(scn.DSCardPlayAvailable(scn.GetDSCard("telepathy")));
+    }
+
+    @Test
+    public void ProjectiveTelepathyOriginalCancelsAngerFearAggressionWhenRevealed() {
+        var scn = scenario("5_149o");
+        var anger = scn.GetLSCard("anger");
+        scn.StartGame();
+        scn.MoveCardsToLSHand(anger);
+        scn.SkipToLSTurn(Phase.DEPLOY);
+        scn.LSPlayCard(anger);
+        scn.PassAllResponses();
+        assertTrue(scn.gameState().getReserveDeck(scn.DS, false).contains(anger));
+        assertTrue(anger.isInserted());
+        scn.SkipToDSTurn(Phase.ACTIVATE);
+        scn.MoveCardsToDSHand(scn.GetDSCard("telepathy"));
+        // Leave one ordinary card above the untouched insert; activating it reveals the insert normally.
+        while (scn.gameState().getReserveDeck(scn.DS, false).indexOf(anger) > 1)
+            scn.MoveCardsToBottomOfOwnReserveDeck((PhysicalCardImpl)
+                    scn.gameState().getReserveDeck(scn.DS, false).getFirst());
+        assertEquals(1, scn.gameState().getReserveDeck(scn.DS, false).indexOf(anger));
+        assertTrue(anger.isInserted());
+        scn.DSChooseAction("Activate Force");
+        scn.DSDecided(1);
+        if (scn.LSDecisionAvailable("Choose amount of Force"))
+            scn.LSDecided(1);
+        play(scn);
+        scn.PassAllResponses();
+        assertTrue(scn.GetLSLostPile().contains(anger));
+        assertUsed(scn);
+        int lost = scn.GetDSLostPileCount();
+        scn.PassActivateActions();
+        scn.SkipToPhase(Phase.MOVE);
+        assertEquals(lost, scn.GetDSLostPileCount());
     }
 }

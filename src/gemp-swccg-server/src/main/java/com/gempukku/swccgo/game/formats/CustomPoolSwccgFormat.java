@@ -51,7 +51,10 @@ public class CustomPoolSwccgFormat implements SwccgFormat {
         _rules = inner instanceof DeckRulesSwccgFormat ? ((DeckRulesSwccgFormat) inner).getDeckRules() : DeckRules.NONE;
         _pool = pool;
         _library = library;
-        _allowedPrintings = printings(library, pool.getAllowed());
+        List<String> allowed = new ArrayList<>(pool.getAllowed());
+        for (String id : pool.getAllowed())
+            allowed.add(_inner.resolveCardId(id));
+        _allowedPrintings = printings(library, allowed);
         _bannedPrintings = printings(library, pool.getBanned());
         for (String id : _bannedPrintings)
             _bannedFamilies.add(_base.sameCardBlueprintId(id));
