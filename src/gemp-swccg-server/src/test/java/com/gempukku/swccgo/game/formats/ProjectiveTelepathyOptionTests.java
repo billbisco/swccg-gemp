@@ -168,4 +168,21 @@ public class ProjectiveTelepathyOptionTests {
         for (String invalid : List.of("before-2000", "both", "5_149o", "true"))
             assertThrows(IllegalArgumentException.class, () -> setup("open", invalid));
     }
+
+    @Test
+    public void ProjectiveTelepathyOptionStillEnforcesSideAndPrintedDestinyDeckRules() {
+        for (String choice : List.of("printed", "current")) {
+            var selected = chosen("open", choice);
+            var mixed = deck("5_149o", 59); mixed.addCard("1_28");
+            assertThrows(DeckInvalidException.class, () -> selected.validateDeck(mixed));
+            var fourTwenty = FORMATS.effectiveFormat(GameSetup.of(FORMATS.getFormat("open"),
+                    Map.of(OPTION, choice, "fourTwenty", "true"), GameOption.Scope.CASUAL));
+            var deck = new SwccgDeck("Destiny boundary"); deck.addCard("5_149o");
+            while (deck.getCards().size() < 60) deck.addCard("1_193");
+            var error = assertThrows(DeckInvalidException.class, () -> fourTwenty.validateDeck(deck));
+            assertTrue(error.getMessage().contains("Projective Telepathy"));
+            assertTrue(error.getMessage().contains("printed destiny 3"));
+        }
+    }
+
 }

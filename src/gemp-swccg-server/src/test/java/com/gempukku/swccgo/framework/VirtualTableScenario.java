@@ -152,8 +152,11 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
 
         if (selectedFormat == null)
             InitializeGameWithDecks(decks, format);
-        else
+        else {
+            // Match Hall deck loading: resolve for this game without editing the saved decks.
+            decks.replaceAll((player, deck) -> selectedFormat.resolveDeck(deck));
             InitializeGameWithDecks(decks, selectedFormat);
+        }
 
         LSCards.putAll(lshields);
         DSCards.putAll(dshields);

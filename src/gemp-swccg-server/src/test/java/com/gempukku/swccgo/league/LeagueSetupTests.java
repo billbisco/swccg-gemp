@@ -110,4 +110,23 @@ public class LeagueSetupTests {
         assertEquals("Open", LIBRARY.effectiveFormat(chosen).getName());
     }
 
+
+    @Test
+    public void LeagueSetupTelepathyChoiceSurvivesStoredSeriesAndKeepsFormatDefaultsSeparate() throws Exception {
+        for (String choice : List.of("printed", "current")) {
+            var prepared = _factory.prepare(LeagueFactoryTests.constructed("Telepathy choices", 20261118,
+                    new LeagueFactory.Serie("open", 7, 10, Map.of("projectiveTelepathy", choice)),
+                    new LeagueFactory.Serie("premiere_ds2", 7, 10)), "c");
+            var league = new League(null, 0, prepared.name(), prepared.code(), prepared.leagueClass(), prepared.parameters(),
+                    0, true, false, true, false, "", 300, 50, null);
+            league.setGameSetup(prepared.gameSetup());
+            var chosen = LeagueSetups.forSerie(LIBRARY, league, prepared.series().get(0), 0);
+            var ordinary = LeagueSetups.forSerie(LIBRARY, league, prepared.series().get(1), 1);
+            assertEquals(choice, chosen.getChosen("projectiveTelepathy"));
+            assertEquals(choice.equals("printed") ? "5_149o" : "5_149", LIBRARY.effectiveFormat(chosen).resolveCardId("5_149o"));
+            assertTrue(ordinary.isDefault());
+            assertEquals("5_149o", LIBRARY.effectiveFormat(ordinary).resolveCardId("5_149"));
+        }
+    }
+
 }

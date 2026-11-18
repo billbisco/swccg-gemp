@@ -212,7 +212,7 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
         Map<String, Integer> clocks = new HashMap<>();
         Map<String, SwccgAiController> bots = new HashMap<>();
         for (GameSaveHeader.Seat seat : header.seats) {
-            decks.put(seat.playerId, seat.toDeck());
+            decks.put(seat.playerId, format.resolveDeck(seat.toDeck()));
             clocks.put(seat.playerId, 0);
             if (seat.bot != null) {
                 bots.put(seat.playerId, PlayNowBot.fromCode(seat.bot).newController());
