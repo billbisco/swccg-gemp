@@ -1122,6 +1122,11 @@ public class HallServer extends AbstractServer {
             String chips = setupChips(setup);
             if (!chips.isEmpty())
                 lines.add("Options: " + chips);
+            if (format != null) {
+                var preset = com.gempukku.swccgo.game.setup.GameRulePresets.matching(setup, format);
+                if (preset != null)
+                    lines.add(preset.label() + ": " + com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION);
+            }
             lines.addAll(_formatLibrary.describePool(setup));
             return lines;
         } finally {

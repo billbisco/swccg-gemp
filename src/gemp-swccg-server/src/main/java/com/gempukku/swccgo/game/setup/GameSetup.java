@@ -149,6 +149,9 @@ public final class GameSetup {
     /** Every option that applies to the format, with its value in effect, for the full setup view. */
     public Map<String, String> describe(SwccgFormat format) {
         Map<String, String> result = new LinkedHashMap<>();
+        GameRulePresets.Preset preset = GameRulePresets.matching(this, format);
+        if (preset != null)
+            result.put("Partial rules bundle", preset.label() + " — " + GameRulePresets.LIMITATION);
         for (GameOption option : GameOptions.all()) {
             if (!option.isAvailable(format))
                 continue;

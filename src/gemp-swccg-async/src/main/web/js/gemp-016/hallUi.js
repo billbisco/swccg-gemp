@@ -886,7 +886,8 @@ var GempSwccgHallUI = Class.extend({
                 if (fmt)
                     that.updateDecks(fmt, "default");
             }
-        }, {saveKey: "play", userName: accountName, accountStore: accountStore});
+        }, {saveKey: "play", userName: accountName, accountStore: accountStore,
+            formatSelect: function () { return that.supportedFormatsSelect; }});
 
         this.inviteRow = $("<div class='play-form-row play-form-row-check'></div>");
         this.inviteRow.append(this.isInviteOnlyCheckbox);
@@ -1061,7 +1062,8 @@ var GempSwccgHallUI = Class.extend({
                 if (fmt)
                     thatSize.updateDecks(fmt, "default");
             }
-        }, {saveKey: "tournament", userName: function () {
+        }, {saveKey: "tournament", formatSelect: function () { return thatSize.tournamentFormatSelect; },
+            hasCustomPool: function () { return thatSize.tournamentCardPoolForm != null && thatSize.tournamentCardPoolForm.toggle.prop("checked"); }, userName: function () {
             return (thatSize.userInfo && thatSize.userInfo.name) ? thatSize.userInfo.name : "";
         }, accountStore: {
             get: function (form, format) {
@@ -1078,10 +1080,12 @@ var GempSwccgHallUI = Class.extend({
             this.tournamentOptionsForm.setRegistry(this.gameOptionsRoot);
         tFields.append(this.tournamentDeckSizeRow);
         // #222: an optional custom card pool on top of the format (Constructed only); locked once the event opens
-        if (typeof CardPoolForm !== "undefined")
+        if (typeof CardPoolForm !== "undefined") {
             this.tournamentCardPoolForm = new CardPoolForm.Form(this.comm, tFields, function () {
                 return thatSize.tournamentFormatCode();
             });
+            this.tournamentCardPoolForm.root.on("change input", function () { thatSize.tournamentOptionsForm.syncPreset(); });
+        }
 
         this.tournamentProductRow = $("<div class='play-form-row' style='display:none'></div>");
         this.tournamentProductRow.append("<span class='play-form-label'>Product</span>");
