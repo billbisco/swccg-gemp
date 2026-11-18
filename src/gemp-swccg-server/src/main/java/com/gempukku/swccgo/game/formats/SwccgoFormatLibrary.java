@@ -313,6 +313,16 @@ public class SwccgoFormatLibrary {
         SwccgFormat sized = deckSize == null ? format : getFormat(DeckSize.code(format.getBaseCode(), Integer.parseInt(deckSize)));
         if (sized == null)
             return null;
+        String telepathy = setup.get(GameOptions.PROJECTIVE_TELEPATHY, format);
+        if ("printed".equals(telepathy) || "current".equals(telepathy)) {
+            String selected = "printed".equals(telepathy) ? "5_149o" : "5_149";
+            if (sized instanceof DeckSizeSwccgFormat chosenSize)
+                sized = chosenSize.withCardTextChoice("5_149", selected);
+            else if (sized instanceof DefaultSwccgFormat base)
+                sized = base.withCardTextChoice("5_149", selected);
+            else
+                throw new IllegalArgumentException("Text choices require a library format");
+        }
         // deck rules the table's options add (#142/#144)
         DeckRules rules = new DeckRules(
                 "true".equals(setup.get(GameOptions.NO_SHIELDS, format)),

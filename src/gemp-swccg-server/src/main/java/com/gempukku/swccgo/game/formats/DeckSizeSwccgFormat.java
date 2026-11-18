@@ -38,6 +38,11 @@ public class DeckSizeSwccgFormat implements SwccgFormat {
         _tenetsLink = tenetsLink;
     }
 
+    DeckSizeSwccgFormat withCardTextChoice(String family, String selected) {
+        return new DeckSizeSwccgFormat(_base.withCardTextChoice(family, selected), _deckSize,
+                _defaultGameTimerMinutes, _tenetsLink);
+    }
+
     DefaultSwccgFormat getBase() {
         return _base;
     }

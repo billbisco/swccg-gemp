@@ -14,7 +14,7 @@ import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import java.time.LocalDate;
 import java.util.*;
 
-public class DefaultSwccgFormat implements SwccgFormat {
+public class DefaultSwccgFormat implements SwccgFormat, Cloneable {
     private SwccgCardBlueprintLibrary _library;
     private String _code;
     private String _name;
@@ -220,6 +220,22 @@ public class DefaultSwccgFormat implements SwccgFormat {
         _allCardBlueprints = null;
     }
 
+    /**
+     * Per-game snapshot of the loaded metadata, replacing only immutable text selection and its derived pool cache.
+     * Loaded format metadata is read-only during play; the library format is never changed by a table's option.
+     */
+    DefaultSwccgFormat withCardTextChoice(String family, String selected) {
+        try {
+            DefaultSwccgFormat copy = (DefaultSwccgFormat) super.clone();
+            CardTextSelection previous = _cardTexts != null ? _cardTexts : new CardTextSelection(_library, Map.of());
+            copy._cardTexts = previous.withForcedChoice(family, selected);
+            copy._allCardBlueprints = null;
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError(e);
+        }
+    }
+
     @Override
     public SwccgDeck resolveDeck(SwccgDeck deck) {
         SwccgDeck occupied = applyOccupancy(deck);
@@ -421,7 +437,7 @@ public class DefaultSwccgFormat implements SwccgFormat {
         sb.append('|');
         appendJoined(sb, _validCards);
         if (_cardTexts != null && !_cardTexts.choices().isEmpty())
-            sb.append("|cardTextOverrides=").append(_cardTexts.choices());
+            sb.append("|cardTextOverrides=").append(_cardTexts.choices()).append("|forcedTextFamilies=").append(_cardTexts.forcedFamilies());
         return sb.toString();
     }
 

@@ -55,6 +55,13 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
                 StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts, StartingSetup.NoLSShields, StartingSetup.NoDSShields, Open);
     }
 
+    /** Uses an effective table/event format through the real deck-loading path. */
+    public VirtualTableScenario(HashMap<String, String> LSCards, HashMap<String, String> DSCards, SwccgFormat format) {
+        this(LSCards, DSCards, 20, 20, StartingSetup.DefaultLSGroundLocation, StartingSetup.DefaultDSGroundLocation,
+                StartingSetup.NoLSStartingInterrupts, StartingSetup.NoDSStartingInterrupts,
+                StartingSetup.NoLSShields, StartingSetup.NoDSShields, format.getCode(), format);
+    }
+
     /**
      * Constructs a Virtual Table with decks that are populated with the provided parameters.
      * @param LSCards The important Light-side cards to include in your testing deck.
@@ -77,6 +84,15 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
             StartingSetup LSStartingInterrupts, StartingSetup DSStartingInterrupts,
             StartingSetup LSShields, StartingSetup DSShields,
             String format) {
+        this(LSCards, DSCards, LSFillerCount, DSFillerCount, LSObjectiveOrLocation, DSObjectiveOrLocation,
+                LSStartingInterrupts, DSStartingInterrupts, LSShields, DSShields, format, null);
+    }
+
+    private VirtualTableScenario(HashMap<String, String> LSCards, HashMap<String, String> DSCards,
+            int LSFillerCount, int DSFillerCount,
+            StartingSetup LSObjectiveOrLocation, StartingSetup DSObjectiveOrLocation,
+            StartingSetup LSStartingInterrupts, StartingSetup DSStartingInterrupts,
+            StartingSetup LSShields, StartingSetup DSShields, String format, SwccgFormat selectedFormat) {
         super();
 
         this.LSObjectiveOrLocation = LSObjectiveOrLocation;
@@ -134,10 +150,17 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
             decks.get(DS).addCardOutsideDeck(id);
         }
 
-        InitializeGameWithDecks(decks, format);
+        if (selectedFormat == null)
+            InitializeGameWithDecks(decks, format);
+        else
+            InitializeGameWithDecks(decks, selectedFormat);
 
         LSCards.putAll(lshields);
         DSCards.putAll(dshields);
+        if (selectedFormat != null) {
+            LSCards.replaceAll((name, id) -> selectedFormat.resolveCardId(id));
+            DSCards.replaceAll((name, id) -> selectedFormat.resolveCardId(id));
+        }
         ResetGameState(LSCards, DSCards);
 
 
@@ -188,9 +211,11 @@ public class VirtualTableScenario implements TestBase, Actions, AdHocEffects, Ba
      * @param formatName Name of the format this table should be following.
      */
     public void InitializeGameWithDecks(Map<String, SwccgDeck> decks, String formatName) {
-        _userFeedback = new DefaultUserFeedback();
+        InitializeGameWithDecks(decks, _formatLibrary.getFormat(formatName));
+    }
 
-        var format = _formatLibrary.getFormat(formatName);
+    public void InitializeGameWithDecks(Map<String, SwccgDeck> decks, SwccgFormat format) {
+        _userFeedback = new DefaultUserFeedback();
 
         var clocks = new HashMap<String, Integer>() {{
             put(DS, 0);

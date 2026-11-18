@@ -33,6 +33,7 @@ public final class GameOptions {
     public static final String SAME_SIDE = "sameSide";
     public static final String FOUR_TWENTY = "fourTwenty";
     public static final String OPERATIVE_RULE = "operativeRule";
+    public static final String PROJECTIVE_TELEPATHY = "projectiveTelepathy";
     /** Most starting locations and Objectives a player may choose (#142 R2a). */
     public static final int STARTING_CARDS_MAX = 10;
 
@@ -128,6 +129,13 @@ public final class GameOptions {
                 .defaultValue(f -> "true")
                 .defaultLabel(f -> "On")
                 .shortLabel(v -> "true".equals(v) ? "Rules: operative rule" : "Rules: no operative rule")
+                .build());
+        register(GameOption.builder(PROJECTIVE_TELEPATHY, Kind.PLAY_RULES, Type.CHOICE, "Rules: Projective Telepathy")
+                .help("Choose the Cloud City card's printed or current errata text for both players, including imported text states. Format default keeps the format's normal choice.")
+                .defaultValue(f -> "format")
+                .choice("format", "Format default", "Rules: format-default Telepathy")
+                .choice("printed", "Printed text", "Rules: printed Telepathy")
+                .choice("current", "Current errata", "Rules: current Telepathy")
                 .build());
         GameOption.Builder timer = GameOption.builder(TIMER, Kind.TABLE, Type.CHOICE, "Timer: game")
                 .help("Each player's time bank and the time per decision.")
