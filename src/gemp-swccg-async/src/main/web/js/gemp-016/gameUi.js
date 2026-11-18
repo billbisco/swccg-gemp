@@ -2363,7 +2363,9 @@ var GempSwccgGameUI = Class.extend({
                 $("<dt></dt>").text(label).appendTo(list);
                 $("<dd></dd>").text(value).appendTo(list);
             });
-            content.dialog({title: "Game rules", modal: true, width: 420,
+            content.dialog({title: "Game rules", modal: true,
+                width: Math.min(420, $(window).width() - 32),
+                maxHeight: Math.max(160, $(window).height() - 64),
                 close: function () { $(this).dialog("destroy").remove(); }});
         }).prependTo(box);
         $("<br/>").insertAfter(box.find(".gameRulesButton"));
