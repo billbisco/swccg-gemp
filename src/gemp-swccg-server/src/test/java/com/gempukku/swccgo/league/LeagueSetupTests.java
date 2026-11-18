@@ -92,4 +92,22 @@ public class LeagueSetupTests {
         old.setGameSetup("not json");
         assertTrue(LeagueSetups.forSerie(LIBRARY, old, series.get(1), 1).isDefault());
     }
+
+    @Test
+    public void LeagueSetupOperativeChoiceSurvivesStoredSeriesWithoutChangingOtherSeries() throws Exception {
+        var prepared = _factory.prepare(LeagueFactoryTests.constructed("Operative choices", 20261118,
+                new LeagueFactory.Serie("open", 7, 10, Map.of("operativeRule", "false")),
+                new LeagueFactory.Serie("open", 7, 10)), "c");
+        var league = new League(null, 0, prepared.name(), prepared.code(), prepared.leagueClass(), prepared.parameters(),
+                0, true, false, true, false, "", 300, 50, null);
+        league.setGameSetup(prepared.gameSetup());
+        var chosen = LeagueSetups.forSerie(LIBRARY, league, prepared.series().get(0), 0);
+        var ordinary = LeagueSetups.forSerie(LIBRARY, league, prepared.series().get(1), 1);
+        assertEquals("false", chosen.get("operativeRule", LIBRARY.getFormat("open")));
+        assertEquals("Rules: no operative rule", chosen.chipsText());
+        assertEquals("true", ordinary.get("operativeRule", LIBRARY.getFormat("open")));
+        assertTrue(ordinary.isDefault());
+        assertEquals("Open", LIBRARY.effectiveFormat(chosen).getName());
+    }
+
 }

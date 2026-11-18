@@ -17,6 +17,7 @@ import java.time.Clock;
 import java.util.Map;
 
 import static org.junit.Assert.*;
+import static org.mockito.Mockito.*;
 
 public class OperativeRuleSaveTests {
     private GameSaveCodec codec() {
@@ -60,4 +61,24 @@ public class OperativeRuleSaveTests {
         var restored = codec.read(codec.write(root));
         assertFalse(restored.game().getGameState().isOperativeRuleEnabled());
     }
+
+    @Test
+    public void OperativeRuleStartHookPersistsTheActualGameChoice() {
+        var codec = codec();
+        var saves = saves(codec);
+        var header = header(false);
+        var chosenHeader = header(true);
+        var setup = GameSetup.fromJson(chosenHeader.gameSetup, chosenHeader.formatCode);
+        var root = saves.newGame(chosenHeader);
+        var mediator = mock(com.gempukku.swccgo.game.SwccgGameMediator.class);
+        when(mediator.getGameId()).thenReturn(header.gameId);
+        when(mediator.getGameSetup()).thenReturn(setup);
+        when(mediator.getSaveRoot()).thenReturn(root);
+        saves.hooksFor(mediator, "player", header).started();
+        var stored = saves.getManager().getSavedHeader(header.gameId);
+        assertNotNull(stored);
+        assertEquals(setup, GameSetup.fromJson(stored.gameSetup, stored.formatCode));
+        assertFalse(saves.newGame(stored).game().getGameState().isOperativeRuleEnabled());
+    }
+
 }

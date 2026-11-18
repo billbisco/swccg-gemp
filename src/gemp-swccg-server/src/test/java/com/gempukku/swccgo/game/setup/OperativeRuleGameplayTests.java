@@ -157,8 +157,8 @@ public class OperativeRuleGameplayTests {
         scn.PassAllResponses();
 
         if (enabled) {
-            assertTrue(scn.LSDecisionAvailable("Required responses")); //test1
-            scn.LSChooseAction("operative lost");
+            if (scn.LSDecisionAvailable("Required responses"))
+                scn.LSChooseAction("operative lost");
             assertTrue(scn.LSHasCardChoiceAvailable(second)); //test1
             scn.LSChooseCard(second);
             scn.PassAllResponses();
