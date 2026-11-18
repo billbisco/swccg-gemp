@@ -17,6 +17,8 @@ import com.gempukku.swccgo.game.save.GameSaveHeader;
 import com.gempukku.swccgo.game.save.SaveBuild;
 import com.gempukku.swccgo.game.save.SaveRoot;
 import com.gempukku.swccgo.game.save.SavedGameManager;
+import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.GameSetup;
 import com.gempukku.swccgo.guest.GuestDecks;
 import com.gempukku.swccgo.guest.GuestIdentity;
 import com.gempukku.swccgo.guest.PlayNowBot;
@@ -128,6 +130,8 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
             @Override
             public void started() {
                 try {
+                    GameSetup setup = mediator.getGameSetup();
+                    newGameHeader.gameSetup = setup != null && !setup.isDefault() ? setup.toJson() : null;
                     _manager.start(gameId, owner, newGameHeader, mediator.getSaveRoot());
                 } catch (SavedGameManager.BusyException e) {
                     // The hall made room first, so this only happens if the limits were changed; play on unsaved.
@@ -202,7 +206,8 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
     // GameResumer.GameFactory: rebuild a game from its header, when the snapshot can't be used (another build).
     @Override
     public SaveRoot newGame(GameSaveHeader header) {
-        SwccgFormat format = _formats.getFormat(header.formatCode);
+        GameSetup setup = _formats.storedSetup(header.formatCode, header.gameSetup);
+        SwccgFormat format = _formats.effectiveFormat(setup);
         Map<String, SwccgDeck> decks = new HashMap<>();
         Map<String, Integer> clocks = new HashMap<>();
         Map<String, SwccgAiController> bots = new HashMap<>();
@@ -218,6 +223,7 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
         feedback.setGame(game);
         game.getGameState().setRandomSeed(header.seed);
         game.getGameState().setStartingCredits(header.startingCredits);
+        game.getGameState().setOperativeRuleEnabled(!"false".equals(setup.get(GameOptions.OPERATIVE_RULE, format)));
         game.startGame();
         return new SaveRoot(game, feedback, bots);
     }

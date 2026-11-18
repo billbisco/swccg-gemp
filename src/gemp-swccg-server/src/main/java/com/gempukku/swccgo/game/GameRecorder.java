@@ -132,7 +132,7 @@ public class GameRecorder {
                 Map<String, GameCommunicationChannel> byAccount = new HashMap<String, GameCommunicationChannel>();
                 for (Map.Entry<String, GameCommunicationChannel> e : recordingChannels.entrySet())
                     byAccount.put(accountName(e.getKey()), e.getValue());
-                Map<String, String> playerRecordingId = saveRecordedChannels(byAccount);
+                Map<String, String> playerRecordingId = saveRecordedChannels(byAccount, mediator.getGameRulesSummary());
                 String winnerName = accountName(winner);
                 String loserName = accountName(loser);
                 _gameHistoryService.addGameHistory(winnerName, loserName, winReason, loseReason, playerRecordingId.get(winnerName), playerRecordingId.get(loserName), formatName, tournament, deckNames.get(winner), deckNames.get(loser), mediator.getDeckArchetypeLabel(winner), mediator.getDeckArchetypeLabel(loser), mediator.getWinningSideString(), mediator.getDeckString(Side.DARK), mediator.getDeckString(Side.LIGHT), leagueType, sealedLeagueType, startData, new Date(),
@@ -165,7 +165,7 @@ public class GameRecorder {
         return new DeflaterOutputStream(new FileOutputStream(recordingFile), deflater);
     }
 
-    private Map<String, String> saveRecordedChannels(Map<String, GameCommunicationChannel> gameProgress) {
+    private Map<String, String> saveRecordedChannels(Map<String, GameCommunicationChannel> gameProgress, String rulesSummary) {
         Map<String, String> result = new HashMap<String, String>();
         for (Map.Entry<String, GameCommunicationChannel> playerRecordings : gameProgress.entrySet()) {
             String playerId = playerRecordings.getKey();
@@ -181,6 +181,8 @@ public class GameRecorder {
                     DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
                     Document doc = documentBuilder.newDocument();
                     Element gameReplay = doc.createElement("gameReplay");
+                    if (rulesSummary != null)
+                        gameReplay.setAttribute("rules", rulesSummary);
                     EventSerializer serializer = new EventSerializer();
                     for (GameEvent gameEvent : gameEvents) {
                         gameReplay.appendChild(serializer.serializeEvent(doc, gameEvent));

@@ -727,7 +727,8 @@ public class HallServer extends AbstractServer {
         PlayNowSide side = PlayNowSide.fromDeckName(humanSeat.deckName);
         PlayNowBot bot = PlayNowBot.fromCode(botSeat.bot);
         boolean member = !GuestIdentity.isGuestId(owner);
-        SwccgFormat format = _formatLibrary.getFormat(header.formatCode);
+        GameSetup savedSetup = _formatLibrary.storedSetup(header.formatCode, header.gameSetup);
+        SwccgFormat format = _formatLibrary.effectiveFormat(savedSetup);
 
         // A table left over from before the game was unloaded
         for (Map.Entry<String, RunningTable> table : new HashMap<String, RunningTable>(_runningTables).entrySet()) {
@@ -740,6 +741,8 @@ public class HallServer extends AbstractServer {
                 new SwccgGameParticipant(botSeat.playerId, botSeat.toDeck())};
         SwccgGameMediator mediator = _swccgoServer.resumeGame(gameId, format, participants, root, true, member, true,
                 300, 60 * format.getDefaultGameTimerMinutes());
+        mediator.setGameSetup(savedSetup);
+        mediator.setGameRulesSummary(savedSetup.summaryJson(_formatLibrary.getFormat(savedSetup.getFormatCode())));
         SwccgAiController ai = root.bots().get(botSeat.playerId);
         AiRegistry.register(gameId, botSeat.playerId, ai != null ? ai : bot.newController());
         ChatRoomMediator chatRoom = _swccgoServer.getGameChatRoom(gameId);
@@ -2108,6 +2111,7 @@ public class HallServer extends AbstractServer {
         // several Objectives, would change them)
         SwccgFormat optionFormat = swccgFormat.getBaseCode() != null && _formatLibrary.getFormat(swccgFormat.getBaseCode()) != null
                 ? _formatLibrary.getFormat(swccgFormat.getBaseCode()) : swccgFormat;
+        swccgGameMediator.setGameRulesSummary(gameSetup.summaryJson(optionFormat));
         // #142: "Starting: Objective optional" (default on where a deck may hold several Objectives)
         String objectiveOptional = gameSetup != null ? gameSetup.get(GameOptions.OBJECTIVE_OPTIONAL, optionFormat)
                 : String.valueOf(swccgFormat.allowsMultipleObjectives());
@@ -2134,6 +2138,8 @@ public class HallServer extends AbstractServer {
         // #145: "Shields: no play limit"
         swccgGameMediator.getGameState().setShieldsNoPlayLimit(gameSetup != null
                 && "true".equals(gameSetup.get(GameOptions.SHIELDS_NO_PLAY_LIMIT, optionFormat)));
+        swccgGameMediator.getGameState().setOperativeRuleEnabled(gameSetup == null
+                || !"false".equals(gameSetup.get(GameOptions.OPERATIVE_RULE, optionFormat)));
         if (gameSetup != null && !gameSetup.chips().isEmpty())
             swccgGameMediator.sendMessageToPlayers("Game options: " + gameSetup.chipsText());
         swccgGameMediator.startGame();

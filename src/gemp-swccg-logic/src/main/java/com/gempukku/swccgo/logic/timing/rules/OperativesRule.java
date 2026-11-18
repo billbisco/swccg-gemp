@@ -8,6 +8,8 @@ import com.gempukku.swccgo.game.ActionsEnvironment;
 import com.gempukku.swccgo.game.PhysicalCard;
 import com.gempukku.swccgo.game.SwccgGame;
 import com.gempukku.swccgo.logic.TriggerConditions;
+import com.gempukku.swccgo.logic.conditions.Condition;
+import com.gempukku.swccgo.logic.conditions.OperativeRuleEnabledCondition;
 import com.gempukku.swccgo.logic.actions.RequiredRuleTriggerAction;
 import com.gempukku.swccgo.logic.actions.TriggerAction;
 import com.gempukku.swccgo.logic.effects.choose.ChooseCardToLoseFromTableEffect;
@@ -40,14 +42,15 @@ public class OperativesRule implements Rule {
     }
 
     public void applyRule() {
-        _modifiersEnvironment.addAlwaysOnModifier(new MayNotDeployOrMoveOperativeToLocationsRuleModifier(null));
-        _modifiersEnvironment.addAlwaysOnModifier(new MayNotApplyAbilityForBattleDestinyModifier(null, Filters.operativeOnMatchingPlanet));
+        Condition enabled = new OperativeRuleEnabledCondition();
+        _modifiersEnvironment.addAlwaysOnModifier(new MayNotDeployOrMoveOperativeToLocationsRuleModifier(null, enabled));
+        _modifiersEnvironment.addAlwaysOnModifier(new MayNotApplyAbilityForBattleDestinyModifier(null, Filters.operativeOnMatchingPlanet, enabled));
         _actionsEnvironment.addUntilEndOfGameActionProxy(
                 new AbstractActionProxy() {
                     @Override
                     public List<TriggerAction> getRequiredAfterTriggers(SwccgGame game, EffectResult effectResult) {
                         // Check condition(s)
-                        if (TriggerConditions.isTableChanged(game, effectResult)) {
+                        if (game.getGameState().isOperativeRuleEnabled() && TriggerConditions.isTableChanged(game, effectResult)) {
 
                             List<TriggerAction> triggerActions = new LinkedList<TriggerAction>();
 

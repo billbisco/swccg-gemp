@@ -45,7 +45,7 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
 
         Filter cardsPresentFilter = Filters.and(Filters.owner(player), Filters.present(physicalCard));
         // If checking if control location, skip matching operatives
-        if (forControl) {
+        if (forControl && gameState.isOperativeRuleEnabled()) {
             cardsPresentFilter = Filters.and(cardsPresentFilter, Filters.not(Filters.operativeOnMatchingPlanet));
         }
         Collection<PhysicalCard> cardsPresentAt = Filters.filterActive(gameState.getGame(), null, spotOverrides, cardsPresentFilter);
@@ -80,7 +80,7 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
 
                 Filter cardsPresentAboardFilter = Filters.and(Filters.owner(player), Filters.aboardExceptRelatedSites(presentCard));
                 // If checking if control location, skip matching operatives
-                if (forControl) {
+                if (forControl && gameState.isOperativeRuleEnabled()) {
                     cardsPresentAboardFilter = Filters.and(cardsPresentAboardFilter, Filters.not(Filters.operativeOnMatchingPlanet));
                 }
                 Collection<PhysicalCard> cardsPresentAboard = Filters.filterActive(gameState.getGame(), null, spotOverrides, cardsPresentAboardFilter);
@@ -402,7 +402,7 @@ public interface LocationControl extends BaseQuery, Ability, Battle, Ferocity, F
         }
 
         // Check for operative on matching planet (there needs to be a [Presence] Icon or ability>=1 from other cards)
-        if (Filters.canSpot(gameState.getGame(), null, spotOverrides, Filters.and(Filters.owner(player), Filters.operativeOnMatchingPlanet, Filters.at(location)))) {
+        if (gameState.isOperativeRuleEnabled() && Filters.canSpot(gameState.getGame(), null, spotOverrides, Filters.and(Filters.owner(player), Filters.operativeOnMatchingPlanet, Filters.at(location)))) {
             // Check for [Presence icon] character that is not a operative on matching planet
             if (Filters.canSpot(gameState.getGame(), null, spotOverrides, Filters.and(Filters.owner(player), Icon.PRESENCE, Filters.not(Filters.operativeOnMatchingPlanet), Filters.at(location)))) {
                 return true;

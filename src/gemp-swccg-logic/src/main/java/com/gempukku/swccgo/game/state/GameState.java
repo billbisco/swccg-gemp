@@ -176,6 +176,14 @@ public class GameState implements Snapshotable<GameState> {
 
     public void setShieldsNoPlayLimit(boolean shieldsNoPlayLimit) { _shieldsNoPlayLimit = shieldsNoPlayLimit; }
 
+    // A missing flag in an older game state retains the operative rule.
+    private boolean _noOperativeRule;
+
+    public boolean isOperativeRuleEnabled() { return !_noOperativeRule; }
+
+    /** Fixed from the game's saved setup before play starts. */
+    public void setOperativeRuleEnabled(boolean enabled) { _noOperativeRule = !enabled; }
+
     // swccg-guild/work#142 R2a (game option "Starting: locations/Objectives"): how many starting locations and
     // Objectives each player may choose at game start. 1 is the rules. Set at game setup only.
     private int _startingCardsCount = 1;
@@ -239,6 +247,7 @@ public class GameState implements Snapshotable<GameState> {
         snapshot._startingCredits = _startingCredits;
         snapshot._objectiveOptional = _objectiveOptional;
         snapshot._shieldsNoPlayLimit = _shieldsNoPlayLimit;
+        snapshot._noOperativeRule = _noOperativeRule;
         snapshot._startingCardsCount = _startingCardsCount;
         snapshot._startingInterruptsCount = _startingInterruptsCount;
         snapshot._startingEffectsCount = _startingEffectsCount;

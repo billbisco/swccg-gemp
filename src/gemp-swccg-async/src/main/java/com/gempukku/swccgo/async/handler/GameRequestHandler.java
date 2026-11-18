@@ -296,6 +296,8 @@ public class GameRequestHandler extends SwccgoServerRequestHandler implements Ur
             throw new HttpProcessingException(403);
         }
 
+        if (gameMediator.getGameRulesSummary() != null)
+            gameState.setAttribute("rules", gameMediator.getGameRulesSummary());
         doc.appendChild(gameState);
 
         responseWriter.writeXmlResponse(doc);

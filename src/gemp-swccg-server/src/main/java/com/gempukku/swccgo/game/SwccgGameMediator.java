@@ -68,6 +68,7 @@ public class SwccgGameMediator {
     private SwccgGame _swccgoGame;
     /** The setup the game was created with (#116), recorded with its history. */
     private volatile com.gempukku.swccgo.game.setup.GameSetup _gameSetup;
+    private volatile String _gameRulesSummary;
     private Map<String, Integer> _playerClocks = new HashMap<String, Integer>();
     private Map<String, Long> _decisionQuerySentTimes = new HashMap<String, Long>();
     private Set<SwccgGameParticipant> _playersPlaying = new HashSet<SwccgGameParticipant>();
@@ -207,6 +208,14 @@ public class SwccgGameMediator {
 
     public boolean isAllowSpectators() {
         return _allowSpectators;
+    }
+
+    public String getGameRulesSummary() {
+        return _gameRulesSummary;
+    }
+
+    public void setGameRulesSummary(String summary) {
+        _gameRulesSummary = summary;
     }
 
     public com.gempukku.swccgo.game.setup.GameSetup getGameSetup() {
