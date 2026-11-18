@@ -1076,6 +1076,24 @@ public class HallServer extends AbstractServer {
         }
     }
 
+    /** Authoritative setup for deck pickers; participants cannot substitute their own event/table rules. */
+    public GameSetup getDeckPickerSetup(String tableId, String eventId) {
+        _hallDataAccessLock.readLock().lock();
+        try {
+            if (tableId != null) {
+                AwaitingTable table = _awaitingTables.get(tableId);
+                return table != null ? table.getGameSetup() : null;
+            }
+            TournamentQueue queue = _tournamentQueues.get(eventId);
+            if (queue != null)
+                return queue.getGameSetup(_formatLibrary);
+            Tournament tournament = _runningTournaments.get(eventId);
+            return tournament != null ? tournament.getGameSetup(_formatLibrary) : null;
+        } finally {
+            _hallDataAccessLock.readLock().unlock();
+        }
+    }
+
     /**
      * The public rules summary of a player-made event's card pool (#222), for a waiting queue (before a player joins)
      * or a running tournament: the setup's chips first, then one line per set list, allow and ban. It is read from the

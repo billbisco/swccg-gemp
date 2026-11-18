@@ -46,6 +46,7 @@ public class ProjectiveTelepathyHallTests {
             var row = mockingDetails(visitor).getInvocations().stream()
                     .filter(i -> i.getMethod().getName().equals("visitTable")).findFirst().orElseThrow();
             assertEquals("Rules: " + choice + " Telepathy", row.getArgument(20));
+            assertEquals(table.getGameSetup(), s.hallServer.getDeckPickerSetup(row.getArgument(0), null));
             s.hallServer.joinTableAsPlayer(row.getArgument(0), joiner, "dark", false, null);
             var game = s.swccgoServer.getGameById(table.getStartedGameId());
             assertNotNull(game);
@@ -75,6 +76,8 @@ public class ProjectiveTelepathyHallTests {
                 .filter(q -> q instanceof PlayerMadeQueue).map(q -> (PlayerMadeQueue) q).findFirst().orElseThrow();
         var formats = VirtualTableScenario._formatLibrary;
         var chosen = queue.getGameSetup(formats);
+        assertEquals(chosen, s.hallServer.getDeckPickerSetup(null, queue.getQueueId()));
+        assertNull(s.hallServer.getDeckPickerSetup("missing", null));
         assertEquals("printed", chosen.get(GameOptions.PROJECTIVE_TELEPATHY, formats.getFormat("open")));
         assertTrue(s.hallServer.getEventRulesSummary(queue.getQueueId()).contains("Options: Rules: printed Telepathy"));
         assertTrue(s.hallServer.joinPlayerMadeQueue(queue.getQueueId(), s.member(2, "telepathyEntrant"),

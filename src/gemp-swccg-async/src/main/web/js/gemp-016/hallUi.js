@@ -881,7 +881,7 @@ var GempSwccgHallUI = Class.extend({
             // #177: "Deck: same side allowed" widens the bot deck list
             if (optionId === "sameSide")
                 that.updateAiDecksForSelection();
-            if (optionId === "deckSize") {
+            if (optionId === "deckSize" || optionId === "projectiveTelepathy") {
                 var fmt = that.playFormatCode();
                 if (fmt)
                     that.updateDecks(fmt, "default");
@@ -1056,7 +1056,7 @@ var GempSwccgHallUI = Class.extend({
         var thatSize = this;
         this.tournamentDeckSizeRow = $("<div class='game-options-rows tournament-game-options'></div>");
         this.tournamentOptionsForm = new GameOptionsForm(this.tournamentDeckSizeRow, function (optionId) {
-            if (optionId === "deckSize") {
+            if (optionId === "deckSize" || optionId === "projectiveTelepathy") {
                 var fmt = thatSize.tournamentFormatCode();
                 if (fmt)
                     thatSize.updateDecks(fmt, "default");
@@ -1529,6 +1529,10 @@ var GempSwccgHallUI = Class.extend({
 
     loadJoinDecks:function(format, collection, requiredSide) {
         var that = this;
+        var pending = this.joinPending;
+        var setupContext = pending && pending.kind === "table" ? {tableId: pending.id}
+                : pending && (pending.kind === "queue" || pending.kind === "playerTournament" || pending.kind === "lockDecks")
+                ? {eventId: pending.id} : null;
         // work#221: no format filter on the player's own decks when asked to list ones that are not legal here
         var playerFormat = (this.joinShowAllDecksBox != null && this.joinShowAllDecksBox.is(":checked")) ? null : format;
         var gen = (this.joinDeckLoadGen || 0) + 1;
@@ -1555,8 +1559,8 @@ var GempSwccgHallUI = Class.extend({
                     if (gen !== that.joinDeckLoadGen)
                         return;
                     that.applyJoinDeckXml(xml, xml2, requiredSide, true);
-                }, errorMap, format, collection);
-            }, errorMap, playerFormat, collection);
+                }, errorMap, format, collection, false, setupContext);
+            }, errorMap, playerFormat, collection, false, playerFormat ? setupContext : null);
         };
         this.resolveJoinLibraryVisible(format, fetchDecks);
     },
@@ -3877,6 +3881,9 @@ var GempSwccgHallUI = Class.extend({
     // skipLibrary: sealed / draft / cube league tables do not offer sample decks.
     updateDecks:function (format, collection, skipLibrary) {
         var that = this;
+        var form = this.playTournamentPanel != null && this.playTournamentPanel.is(":visible")
+                ? this.tournamentOptionsForm : this.gameOptionsForm;
+        var setupContext = form && !form.locked ? {gameOptions: form.values()} : null;
         // #120: at a format's own deck size, also offer decks legal at another size it allows (labelled with it)
         var anySize = format && String(format).indexOf("@") < 0 && collection === "default" && this.playMode !== "league";
         var gen = (this.deckLoadGen || 0) + 1;
@@ -3901,8 +3908,8 @@ var GempSwccgHallUI = Class.extend({
                     return;
                 that.processLibraryDecks(xml2);
                 that.updateAiDecksForSelection();
-            }, null, format, collection, anySize);
-        }, null, format, collection, anySize);
+            }, null, format, collection, anySize, setupContext);
+        }, null, format, collection, anySize, setupContext);
     },
 
     currentDateYyyymmdd:function() {

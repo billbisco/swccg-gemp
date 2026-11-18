@@ -389,7 +389,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getDecks:function (callback, errorMap, format, collection, anySize) {
+    getDecks:function (callback, errorMap, format, collection, anySize, setupContext) {
         var data = {
             participantId:getUrlParam("participantId")
         };
@@ -399,6 +399,11 @@ var GempSwccgCommunication = Class.extend({
             data.collection = collection;
         if (anySize)
             data.anySize = "true";
+        if (setupContext) {
+            if (setupContext.gameOptions) data.gameOptions = JSON.stringify(setupContext.gameOptions);
+            if (setupContext.tableId) data.tableId = setupContext.tableId;
+            if (setupContext.eventId) data.eventId = setupContext.eventId;
+        }
         $.ajax({
             type:"GET",
             url:this.url + "/deck/list",
@@ -426,7 +431,7 @@ var GempSwccgCommunication = Class.extend({
             dataType:"xml"
         });
     },
-    getLibraryDecks:function (callback, errorMap, format, collection, anySize) {
+    getLibraryDecks:function (callback, errorMap, format, collection, anySize, setupContext) {
         var data = {
             participantId:getUrlParam("participantId")
         };
@@ -436,6 +441,11 @@ var GempSwccgCommunication = Class.extend({
             data.collection = collection;
         if (anySize)
             data.anySize = "true";
+        if (setupContext) {
+            if (setupContext.gameOptions) data.gameOptions = JSON.stringify(setupContext.gameOptions);
+            if (setupContext.tableId) data.tableId = setupContext.tableId;
+            if (setupContext.eventId) data.eventId = setupContext.eventId;
+        }
         $.ajax({
             type:"GET",
             url:this.url + "/deck/libraryList",
