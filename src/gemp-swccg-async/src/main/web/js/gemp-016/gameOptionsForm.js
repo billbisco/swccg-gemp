@@ -30,6 +30,9 @@ var GameOptionsForm = Class.extend({
         this.saveKey = settings && settings.saveKey ? settings.saveKey : null;
         this.userName = settings && settings.userName ? settings.userName : null;
         this.accountStore = settings && settings.accountStore ? settings.accountStore : null;
+        this.formatSelect = settings && settings.formatSelect ? settings.formatSelect : null;
+        this.hasCustomPool = settings && settings.hasCustomPool ? settings.hasCustomPool : function () { return false; };
+        this.presets = [];
     },
 
     formatCode: function () {
@@ -159,6 +162,16 @@ var GameOptionsForm = Class.extend({
 
     /** Reads the <gameOption> elements of a GET /hall document and rebuilds the rows. */
     setRegistry: function (root) {
+        this.presets = [];
+        var presets = root.getElementsByTagName("rulePreset");
+        for (var p = 0; p < presets.length; p++) {
+            var elem = presets[p], values = {};
+            var entries = elem.getElementsByTagName("value");
+            for (var v = 0; v < entries.length; v++)
+                values[entries[v].getAttribute("id")] = entries[v].getAttribute("value");
+            this.presets.push({id: elem.getAttribute("id"), label: elem.getAttribute("label"),
+                format: elem.getAttribute("format"), help: elem.getAttribute("help"), values: values});
+        }
         var elems = root.getElementsByTagName("gameOption");
         var options = [];
         for (var i = 0; i < elems.length; i++) {
@@ -192,6 +205,19 @@ var GameOptionsForm = Class.extend({
         var that = this;
         this.container.empty();
         this.rows = {};
+        if (this.formatSelect && this.presets.length) {
+            this.presetRow = $("<div class='play-form-row game-rule-presets'></div>");
+            this.presetSelect = $("<select class='play-form-select' aria-label='Partial rules preset'></select>");
+            this.presetSelect.append($("<option value=''></option>").text("Custom / format defaults"));
+            $.each(this.presets, function (_, preset) {
+                that.presetSelect.append($("<option></option>").val(preset.id).text(preset.label));
+            });
+            this.presetNote = $("<span class='game-option-note'></span>");
+            this.presetRow.append($("<label class='play-form-label'></label>").text("Partial rules preset"))
+                .append(this.presetSelect).append(this.presetNote);
+            this.presetSelect.change(function () { that.applyPreset($(this).val()); });
+            this.container.append(this.presetRow);
+        }
         $.each(this.options, function (index, option) {
             var id = "game-option-" + option.id + "-" + Math.floor(Math.random() * 1e6);
             var row = $("<div class='play-form-row game-option-row'></div>").attr("data-option", option.id);
@@ -220,6 +246,7 @@ var GameOptionsForm = Class.extend({
                     clearTimeout(timer);
                 timer = setTimeout(function () {
                     timer = null;
+                    that.syncPreset();
                     if (that.onChange)
                         that.onChange(option.id);
                 }, option.type === "INTEGER" ? 400 : 0);
@@ -296,6 +323,50 @@ var GameOptionsForm = Class.extend({
                     this.setSaveNote("Using your saved settings for " + this.formatLabel() + ".");
             }
         }
+        this.syncPreset();
+    },
+
+    /** Fill ordinary controls. Format and deck checks still run through the existing creation path. */
+    applyPreset: function (id) {
+        if (this.locked || !this.formatSelect)
+            return false;
+        if (this.hasCustomPool()) {
+            this.presetNote.text("Turn off Custom card pool before choosing an approved partial preset. Your current choices are unchanged.");
+            return false;
+        }
+        var preset = this.presets.filter(function (p) { return p.id === id; })[0];
+        if (!preset) {
+            this.syncPreset();
+            return false;
+        }
+        var select = this.formatSelect();
+        if (!select || !select.find("option").filter(function () { return this.value === preset.format; }).length) {
+            this.presetNote.text("This preset's base format is not available here.");
+            return false;
+        }
+        select.val(preset.format).trigger("change");
+        this.setValues(preset.values);
+        this.syncPreset();
+        if (this.onChange)
+            this.onChange("projectiveTelepathy");
+        return true;
+    },
+
+    /** Reflect actual values after individual customization; no preset name is sent or trusted. */
+    syncPreset: function () {
+        if (!this.presetRow)
+            return;
+        this.presetRow.toggle(!this.locked);
+        this.presetSelect.prop("disabled", this.locked);
+        var that = this;
+        var match = this.presets.filter(function (p) {
+            if (that.hasCustomPool()) return false;
+            return p.format === that.formatCode() && Object.keys(p.values).every(function (id) {
+                return that.effective(id) === p.values[id];
+            });
+        })[0];
+        this.presetSelect.val(match ? match.id : "");
+        this.presetNote.text(match ? match.help : "Optional shortcuts for two rules only; other rules and card errata use the current engine.");
     },
 
     /** Puts saved values back into the rows after a refresh ({id: value}; unknown ids are ignored). */

@@ -85,4 +85,50 @@ public class ProjectiveTelepathyHallTests {
         assertEquals(chosen, queue.getGameSetup(formats));
         assertThrows(IllegalStateException.class, () -> queue.setGameSetup(chosen.with(GameOptions.PROJECTIVE_TELEPATHY, "current")));
     }
+    @Test
+    public void PartialPresetsReachActualTableCardsAndOperativeState() throws Exception {
+        for (var preset : com.gempukku.swccgo.game.setup.GameRulePresets.all()) {
+            var s = server();
+            var host = s.member(1, "presetHost");
+            var joiner = s.member(2, "presetJoiner");
+            var table = s.hallServer.createNewTable(preset.formatCode(), host, "light", false, "Partial", false, null,
+                    false, null, null, false, false, preset.values());
+            var visitor = mock(HallInfoVisitor.class);
+            s.hallServer.processHall(joiner, visitor);
+            var row = mockingDetails(visitor).getInvocations().stream()
+                    .filter(i -> i.getMethod().getName().equals("visitTable")).findFirst().orElseThrow();
+            assertTrue(((String) row.getArgument(20)).contains(preset.label()));
+            s.hallServer.joinTableAsPlayer(row.getArgument(0), joiner, "dark", false, null);
+            var game = s.swccgoServer.getGameById(table.getStartedGameId());
+            assertNotNull(game);
+            assertEquals(preset.id().equals("may-2001"), game.getGameState().isOperativeRuleEnabled());
+            var telepathy = game.getGameState().getAllPermanentCards().stream()
+                    .filter(c -> c.getTitle().equals("Projective Telepathy")).findFirst().orElseThrow();
+            assertEquals(preset.id().equals("early-operative") ? "5_149o" : "5_149", telepathy.getBlueprintId(true));
+            assertTrue(game.getGameRulesSummary().contains(preset.label()));
+            assertTrue(game.getGameRulesSummary().contains(com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION));
+        }
+    }
+
+    @Test
+    public void PartialPresetEventChoicesStayLockedAndQualifiedForEntrants() throws Exception {
+        for (var preset : com.gempukku.swccgo.game.setup.GameRulePresets.all()) {
+            var s = server();
+            var host = s.member(1, "presetOrganizer");
+            s.hallServer.createPlayerMadeQueue(host, "Partial", preset.formatCode(), "swiss", 4, 4, 0, false,
+                    "light", false, "dark", false, null, null, "constructed", null, null, 0, preset.values());
+            var field = HallServer.class.getDeclaredField("_tournamentQueues");field.setAccessible(true);
+            var queue = ((Map<?, ?>) field.get(s.hallServer)).values().stream()
+                    .filter(q -> q instanceof PlayerMadeQueue).map(q -> (PlayerMadeQueue) q).findFirst().orElseThrow();
+            var setup = queue.getGameSetup(VirtualTableScenario._formatLibrary);
+            assertEquals(setup, s.hallServer.getDeckPickerSetup(null, queue.getQueueId()));
+            assertTrue(s.hallServer.getEventRulesSummary(queue.getQueueId()).stream().anyMatch(line ->
+                    line.contains(preset.label()) && line.contains(com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION)));
+            assertTrue(s.hallServer.joinPlayerMadeQueue(queue.getQueueId(), s.member(2, "presetEntrant"),
+                    "light", false, "dark", false, null, null));
+            assertEquals(setup, queue.getGameSetup(VirtualTableScenario._formatLibrary));
+            assertThrows(IllegalStateException.class, () -> queue.setGameSetup(setup.with(GameOptions.OPERATIVE_RULE,
+                    preset.id().equals("early-operative") ? "true" : "false")));
+        }
+    }
 }

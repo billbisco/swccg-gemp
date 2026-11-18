@@ -146,9 +146,18 @@ public final class GameSetup {
         return String.join(" · ", chips());
     }
 
+    /** List text with a qualified bundle name when the actual choices match. */
+    public String chipsText(SwccgFormat format) {
+        var preset = format == null ? null : GameRulePresets.matching(this, format);
+        return preset == null ? chipsText() : preset.label() + " · " + chipsText();
+    }
+
     /** Every option that applies to the format, with its value in effect, for the full setup view. */
     public Map<String, String> describe(SwccgFormat format) {
         Map<String, String> result = new LinkedHashMap<>();
+        GameRulePresets.Preset preset = GameRulePresets.matching(this, format);
+        if (preset != null)
+            result.put("Partial rules bundle", preset.label() + " — " + GameRulePresets.LIMITATION);
         for (GameOption option : GameOptions.all()) {
             if (!option.isAvailable(format))
                 continue;

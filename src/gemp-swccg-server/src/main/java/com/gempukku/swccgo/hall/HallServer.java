@@ -1122,6 +1122,11 @@ public class HallServer extends AbstractServer {
             String chips = setupChips(setup);
             if (!chips.isEmpty())
                 lines.add("Options: " + chips);
+            if (format != null) {
+                var preset = com.gempukku.swccgo.game.setup.GameRulePresets.matching(setup, format);
+                if (preset != null)
+                    lines.add(preset.label() + ": " + com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION);
+            }
             lines.addAll(_formatLibrary.describePool(setup));
             return lines;
         } finally {
@@ -1630,7 +1635,7 @@ public class HallServer extends AbstractServer {
                         table.getLeague() != null ? null : table.getTableDesc(), players, null,
                         table.getPlayerNames().contains(player.getName()), null, hidePlayerId, _library,
                         table.getSwccgoFormat().isPlaytesting() && !playtestingVisible, true, true,
-                        table.getCreatedAt(), table.getGameSetup().chipsText(),
+                        table.getCreatedAt(), table.getGameSetup().chipsText(table.getSwccgoFormat()),
                         table.isInviteOnly(), table.isInvitee(player.getName()));
             }
 
@@ -2194,14 +2199,14 @@ public class HallServer extends AbstractServer {
     }
 
     /** The non-default game options of a tournament or queue, for lists (#116/#119). */
-    private static String setupChips(GameSetup setup) {
-        return setup != null ? setup.chipsText() : "";
+    private String setupChips(GameSetup setup) {
+        return setup != null ? setup.chipsText(_formatLibrary.getFormat(setup.getFormatCode())) : "";
     }
 
     /** The non-default game options of a running game, for the table list (#116). */
     private static String setupChips(SwccgGameMediator mediator) {
         GameSetup setup = mediator.getGameSetup();
-        return setup != null ? setup.chipsText() : "";
+        return setup != null ? setup.chipsText(mediator.getFormat()) : "";
     }
 
     /** Gives a league or tournament game its event's setup and the starting credits it sets (#119). */

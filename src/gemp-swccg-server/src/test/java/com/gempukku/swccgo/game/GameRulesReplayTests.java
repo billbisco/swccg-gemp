@@ -39,6 +39,24 @@ public class GameRulesReplayTests {
         checkReplay(setup);
     }
 
+    @Test
+    public void PartialEarlyOperativeBundleReplayFreezesItsQualificationAndActualChoices() throws Exception {
+        var preset = com.gempukku.swccgo.game.setup.GameRulePresets.all().get(0);
+        var format = VirtualTableScenario._formatLibrary.getFormat(preset.formatCode());
+        var setup = preset.setup(format, GameOption.Scope.CASUAL);
+        assertTrue(setup.summaryJson(format).contains(com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION));
+        checkReplay(setup);
+    }
+
+    @Test
+    public void PartialMayCheckpointBundleReplayFreezesItsQualificationAndActualChoices() throws Exception {
+        var preset = com.gempukku.swccgo.game.setup.GameRulePresets.all().get(1);
+        var format = VirtualTableScenario._formatLibrary.getFormat(preset.formatCode());
+        var setup = preset.setup(format, GameOption.Scope.CASUAL);
+        assertTrue(setup.summaryJson(format).contains(com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION));
+        checkReplay(setup);
+    }
+
     private void checkReplay(GameSetup setup) throws Exception {
         var format = VirtualTableScenario._formatLibrary.getFormat(setup.getFormatCode());
         String summary = setup.summaryJson(format);

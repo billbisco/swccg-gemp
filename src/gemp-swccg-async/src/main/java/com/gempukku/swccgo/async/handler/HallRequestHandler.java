@@ -352,6 +352,20 @@ public class HallRequestHandler extends SwccgoServerRequestHandler implements Ur
      * availability and defaults are attributes on each {@code <format>} ({@link #addFormatOptionAttributes}).
      */
     private void addGameOptionElements(Document doc, Element hall) {
+        for (var preset : com.gempukku.swccgo.game.setup.GameRulePresets.all()) {
+            Element elem = doc.createElement("rulePreset");
+            elem.setAttribute("id", preset.id());
+            elem.setAttribute("label", preset.label());
+            elem.setAttribute("format", preset.formatCode());
+            elem.setAttribute("help", preset.sourceNote() + " " + com.gempukku.swccgo.game.setup.GameRulePresets.LIMITATION);
+            for (var value : preset.values().entrySet()) {
+                Element choice = doc.createElement("value");
+                choice.setAttribute("id", value.getKey());
+                choice.setAttribute("value", value.getValue());
+                elem.appendChild(choice);
+            }
+            hall.appendChild(elem);
+        }
         for (com.gempukku.swccgo.game.setup.GameOption option : com.gempukku.swccgo.game.setup.GameOptions.all()) {
             Element optionElem = doc.createElement("gameOption");
             optionElem.setAttribute("id", option.getId());
