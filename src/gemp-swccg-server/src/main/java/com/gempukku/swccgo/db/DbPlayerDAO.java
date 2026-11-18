@@ -731,6 +731,69 @@ public class DbPlayerDAO implements PlayerDAO {
         }
     }
 
+    @Override
+    public int gamesOf(int playerId) throws SQLException {
+        try (Connection conn = _dbAccess.getDataSource().getConnection();
+             PreparedStatement st = conn.prepareStatement("SELECT COUNT(*) FROM game_history g JOIN player p ON p.id=?"
+                     + " WHERE g.winner_id=p.id OR g.loser_id=p.id"
+                     + " OR (g.winner_id IS NULL AND g.winner=p.name) OR (g.loser_id IS NULL AND g.loser=p.name)")) {
+            st.setInt(1, playerId);
+            try (ResultSet rs = st.executeQuery()) {
+                return rs.next() ? rs.getInt(1) : 0;
+            }
+        }
+    }
+
+    @Override
+    public synchronized String mergePlayer(int fromId, int toId) throws SQLException {
+        if (fromId == toId)
+            return "not_found";
+        try (Connection conn = _dbAccess.getDataSource().getConnection()) {
+            boolean autoCommit = conn.getAutoCommit();
+            conn.setAutoCommit(false);
+            try {
+                String fromName = null, toName = null;
+                try (PreparedStatement st = conn.prepareStatement("SELECT id, name FROM player WHERE id IN (?,?) ORDER BY id FOR UPDATE")) {
+                    st.setInt(1, fromId);
+                    st.setInt(2, toId);
+                    try (ResultSet rs = st.executeQuery()) {
+                        while (rs.next()) {
+                            if (rs.getInt(1) == fromId)
+                                fromName = rs.getString(2);
+                            else
+                                toName = rs.getString(2);
+                        }
+                    }
+                }
+                if (fromName == null || toName == null) {
+                    conn.rollback();
+                    return "not_found";
+                }
+                // Games: the seat becomes the target (id and name), and the name inside stored setups and saves.
+                exec(conn, "UPDATE game_history SET winner=?, winner_id=? WHERE winner_id=?", toName, toId, fromId);
+                exec(conn, "UPDATE game_history SET loser=?, loser_id=? WHERE loser_id=?", toName, toId, fromId);
+                rewriteGames(conn, fromName, toName);
+                // League, Tournament, transfers, saved games: by name. A row the target already has stays with the source.
+                for (String[] tc : RENAME_COLUMNS)
+                    exec(conn, "UPDATE IGNORE " + tc[0] + " SET " + tc[1] + "=? WHERE " + tc[1] + "=?", toName, fromName);
+                // Decks: a name the target already uses gets " (from #id)" (cut to fit 45 characters).
+                String suffix = " (from #" + fromId + ")";
+                exec(conn, "UPDATE deck SET name=CONCAT(LEFT(name, ?), ?) WHERE player_id=? AND name IN (SELECT n FROM (SELECT name AS n FROM deck WHERE player_id=?) t)",
+                        45 - suffix.length(), suffix, fromId, toId);
+                exec(conn, "UPDATE IGNORE deck SET player_id=? WHERE player_id=?", toId, fromId);
+                // Collections: only the kinds the target doesn't have.
+                exec(conn, "UPDATE IGNORE collection SET player_id=? WHERE player_id=?", toId, fromId);
+                conn.commit();
+                return null;
+            } catch (SQLException e) {
+                conn.rollback();
+                throw e;
+            } finally {
+                conn.setAutoCommit(autoCommit);
+            }
+        }
+    }
+
     /**
      * The old name in stored game setups and in other members' saved games becomes the placeholder (#524 follow-up).
      * A saved game whose header can't be read is deleted rather than left holding the name.

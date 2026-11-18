@@ -213,6 +213,21 @@ public interface PlayerDAO {
         throw new UnsupportedOperationException("erase");
     }
 
+    /** #247: how many games the player sat in (by id, or by name on rows from before ids were stored). */
+    default int gamesOf(int playerId) throws SQLException {
+        throw new UnsupportedOperationException("games");
+    }
+
+    /**
+     * #247 staff merge: in one transaction, the games, League and Tournament entries, transfers, saved games, decks
+     * and the collections the target lacks move from one player to the other (names and ids). Decks whose name the
+     * target already uses get " (from #id)". Whatever can't move stays with the source, for its close.
+     * @return null when done, else "not_found"
+     */
+    default String mergePlayer(int fromId, int toId) throws SQLException {
+        throw new UnsupportedOperationException("merge");
+    }
+
     /**
      * The replay files of every game the player sat in, both seats: {folder, recordingId} pairs, where folder is the
      * seat's account id (or the seat's name for bots and guests). For Close account (#524).
