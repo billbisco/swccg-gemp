@@ -61,6 +61,29 @@ public class PeriodBlankingBansTests {
         checkSnapshots("1220_164", 5);
     }
 
+    @Test
+    public void GardullaCannotBypassTheBlock74CutoffThroughHerPcIdOrAlias() throws Exception {
+        for (String card : new String[]{"601_151", "1274_1"}) {
+            for (int i = 0; i < PERIODS.length; i++) {
+                if (i < 3)
+                    rejects(PERIODS[i], card, "from set banned");
+                else
+                    accepts(PERIODS[i], card);
+            }
+            accepts("legacy", card);
+            accepts("anything_goes", card);
+        }
+    }
+
+    @Test
+    public void AdmiralMottiEarlyPcIdAndBlock1AliasRemainLegal() throws Exception {
+        for (String card : new String[]{"601_179", "1210_1"}) {
+            for (String period : PERIODS)
+                accepts(period, card);
+            accepts("legacy", card);
+        }
+    }
+
     private static void checkSnapshots(String card, int firstBanned) throws Exception {
         for (int i = 0; i < PERIODS.length; i++) {
             if (i < firstBanned)
@@ -88,7 +111,9 @@ public class PeriodBlankingBansTests {
 
     private static SwccgDeck deck(String card) {
         boolean shield = card.startsWith("1261_");
-        boolean dark = card.equals("1261_115") || card.equals("1261_116");
+        boolean dark = card.equals("1261_115") || card.equals("1261_116")
+                || card.equals("601_151") || card.equals("1274_1")
+                || card.equals("601_179") || card.equals("1210_1");
         SwccgDeck deck = new SwccgDeck("period blanking boundary");
         if (shield)
             deck.addCardOutsideDeck(card);
