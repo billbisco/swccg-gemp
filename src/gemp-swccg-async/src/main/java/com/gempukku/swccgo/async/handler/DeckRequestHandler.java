@@ -6,6 +6,10 @@ import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.game.*;
 import com.gempukku.swccgo.game.formats.DeckFormatIndex;
 import com.gempukku.swccgo.game.formats.SwccgoFormatLibrary;
+import com.gempukku.swccgo.game.setup.GameSetup;
+import com.gempukku.swccgo.game.setup.GameOptions;
+import com.gempukku.swccgo.game.setup.GameOption;
+import com.gempukku.swccgo.hall.HallServer;
 import com.gempukku.swccgo.logic.GameUtils;
 import com.gempukku.swccgo.logic.vo.SwccgDeck;
 import io.netty.handler.codec.http.HttpMethod;
@@ -33,6 +37,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
     private SwccgCardBlueprintLibrary _library;
     private SwccgoFormatLibrary _formatLibrary;
     private SwccgoServer _swccgoServer;
+    private HallServer _hallServer;
 
     private String selectedTextSummary(SwccgFormat format, SwccgDeck deck) {
         SwccgDeck resolved = format.resolveDeck(deck);
@@ -54,6 +59,7 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         _library = extractObject(context, SwccgCardBlueprintLibrary.class);
         _formatLibrary = extractObject(context, SwccgoFormatLibrary.class);
         _swccgoServer = extractObject(context, SwccgoServer.class);
+        _hallServer = (HallServer) context.get(HallServer.class);
     }
 
     /*
@@ -402,8 +408,11 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         Player resourceOwner = getResourceOwnerSafely(request, participantId);
         String format = getQueryParameterSafely(queryDecoder, "format");
         String collection = getQueryParameterSafely(queryDecoder, "collection");
-        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"));
-        writeFilteredDeckList(resourceOwner, format, collection, true, resourceOwner, anySize, responseWriter);
+        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"))
+                && getQueryParameterSafely(queryDecoder, "tableId") == null
+                && getQueryParameterSafely(queryDecoder, "eventId") == null;
+        writeFilteredDeckList(resourceOwner, format, collection, true, resourceOwner, anySize,
+                deckPickerSetup(queryDecoder, format), responseWriter);
     }
 
     private void listLibraryDecks(HttpRequest request, ResponseWriter responseWriter) throws Exception {
@@ -416,8 +425,37 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         }
         String format = getQueryParameterSafely(queryDecoder, "format");
         String collection = getQueryParameterSafely(queryDecoder, "collection");
-        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"));
-        writeFilteredDeckList(getLibrarian(), format, collection, false, requestingPlayer, anySize, responseWriter);
+        boolean anySize = Boolean.parseBoolean(getQueryParameterSafely(queryDecoder, "anySize"))
+                && getQueryParameterSafely(queryDecoder, "tableId") == null
+                && getQueryParameterSafely(queryDecoder, "eventId") == null;
+        writeFilteredDeckList(getLibrarian(), format, collection, false, requestingPlayer, anySize,
+                deckPickerSetup(queryDecoder, format), responseWriter);
+    }
+
+    private GameSetup deckPickerSetup(QueryStringDecoder query, String formatCode) throws HttpProcessingException {
+        String tableId = getQueryParameterSafely(query, "tableId");
+        String eventId = getQueryParameterSafely(query, "eventId");
+        if (tableId != null && eventId != null)
+            throw new HttpProcessingException(400);
+        if (tableId != null || eventId != null) {
+            GameSetup authoritative = _hallServer != null ? _hallServer.getDeckPickerSetup(tableId, eventId) : null;
+            if (authoritative == null)
+                throw new HttpProcessingException(404);
+            return authoritative;
+        }
+        Map<String, String> options = HallRequestHandler.parseGameOptions(getQueryParameterSafely(query, "gameOptions"));
+        if (options.isEmpty())
+            return null;
+        SwccgFormat format = _formatLibrary.getFormat(formatCode);
+        if (format == null)
+            throw new HttpProcessingException(400);
+        if (format.isDeckSizeChosen())
+            options.putIfAbsent(GameOptions.DECK_SIZE, String.valueOf(format.getRequiredDeckSize()));
+        try {
+            return GameSetup.of(_formatLibrary.getFormat(format.getBaseCode()), options, GameOption.Scope.CASUAL);
+        } catch (IllegalArgumentException e) {
+            throw new HttpProcessingException(400);
+        }
     }
 
     /**
@@ -425,18 +463,19 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
      *                carry a {@code deckSize} attribute so the setup form can pick that size
      */
     private void writeFilteredDeckList(Player deckOwner, String format, String collection, boolean persistIndex,
-            Player requestingPlayer, boolean anySize, ResponseWriter responseWriter) throws Exception {
+            Player requestingPlayer, boolean anySize, GameSetup pickerSetup, ResponseWriter responseWriter) throws Exception {
         List<String> darkDeckNames = new ArrayList<String>();
         List<String> lightDeckNames = new ArrayList<String>();
         List<String> otherDeckNames = new ArrayList<String>();
         Map<String, Integer> otherSizes = new HashMap<String, Integer>();
-        SwccgFormat listedFormat = format == null || format.isEmpty() ? null : _formatLibrary.getFormat(format);
+        SwccgFormat listedFormat = pickerSetup != null ? _formatLibrary.effectiveFormat(pickerSetup)
+                : format == null || format.isEmpty() ? null : _formatLibrary.getFormat(format);
         boolean listOtherSizes = anySize && listedFormat != null && !listedFormat.isDeckSizeChosen();
 
         boolean includePlaytesting = requestingPlayer != null
                 && (requestingPlayer.hasType(Player.Type.ADMIN) || requestingPlayer.hasType(Player.Type.PLAYTESTER));
-        if (format != null && !format.isEmpty()) {
-            SwccgFormat requestedFormat = _formatLibrary.getFormat(format);
+        if (listedFormat != null) {
+            SwccgFormat requestedFormat = listedFormat;
             if (requestedFormat != null && requestedFormat.isPlaytesting() && !includePlaytesting) {
                 writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, responseWriter);
                 return;
@@ -458,19 +497,27 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         for (SwccgDeck deck : decks) {
             if (deck == null)
                 continue;
-            if (format != null && !format.isEmpty()) {
-                ensureDeckIndex(deckOwner, deck, true, format);
-                if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), format, _formatLibrary.stampFor(format))) {
-                    String sizedCode = listOtherSizes ? otherSizeCode(listedFormat, deck) : null;
-                    if (sizedCode == null)
+            if (pickerSetup != null || (format != null && !format.isEmpty())) {
+                if (pickerSetup != null) {
+                    Integer matchingSize = pickerDeckSize(listedFormat, pickerSetup, deck, listOtherSizes);
+                    if (matchingSize == null)
                         continue;
-                    ensureDeckIndex(deckOwner, deck, true, sizedCode);
-                    if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), sizedCode, _formatLibrary.stampFor(sizedCode)))
-                        continue;
-                    otherSizes.put(deck.getDeckName(), deck.getCards().size());
+                    if (matchingSize > 0)
+                        otherSizes.put(deck.getDeckName(), matchingSize);
+                } else {
+                    ensureDeckIndex(deckOwner, deck, true, format);
+                    if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), format, _formatLibrary.stampFor(format))) {
+                        String sizedCode = listOtherSizes ? otherSizeCode(listedFormat, deck) : null;
+                        if (sizedCode == null)
+                            continue;
+                        ensureDeckIndex(deckOwner, deck, true, sizedCode);
+                        if (!DeckFormatIndex.isFreshPass(deck.getFormatIndex(), sizedCode, _formatLibrary.stampFor(sizedCode)))
+                            continue;
+                        otherSizes.put(deck.getDeckName(), deck.getCards().size());
+                    }
                 }
             }
-            if (!collectionAllowsDeck(deck, collection, leagueCards, persistIndex, deckOwner))
+            if (!collectionAllowsDeck(deck, collection, leagueCards, persistIndex && pickerSetup == null, deckOwner))
                 continue;
 
             Side side = deck.getSide(_library);
@@ -486,6 +533,24 @@ public class DeckRequestHandler extends SwccgoServerRequestHandler implements Ur
         Collections.sort(lightDeckNames);
         Collections.sort(otherDeckNames);
         writeDeckListXml(darkDeckNames, lightDeckNames, otherDeckNames, otherSizes, responseWriter);
+    }
+
+    /** Zero means the selected setup; a positive number labels another legal casual deck size. No index is written. */
+    private Integer pickerDeckSize(SwccgFormat format, GameSetup setup, SwccgDeck deck, boolean otherSizes) {
+        try {
+            format.validateDeck(deck);
+            return 0;
+        } catch (DeckInvalidException e) {
+            if (!otherSizes || otherSizeCode(format, deck) == null)
+                return null;
+            try {
+                _formatLibrary.effectiveFormat(setup.with(GameOptions.DECK_SIZE,
+                        String.valueOf(deck.getCards().size()))).validateDeck(deck);
+                return deck.getCards().size();
+            } catch (DeckInvalidException invalid) {
+                return null;
+            }
+        }
     }
 
     private String otherSizeCode(SwccgFormat format, SwccgDeck deck) {

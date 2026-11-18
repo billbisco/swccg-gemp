@@ -21,6 +21,10 @@ public final class GameResumer {
     /** Builds a fresh, started game from a header: same format, decks, seed, players and bots. */
     public interface GameFactory {
         SaveRoot newGame(GameSaveHeader header);
+
+        /** Reapply header setup omitted by snapshot service-reference serializers, before replaying any answers. */
+        default void restoreSetup(SaveRoot root, GameSaveHeader header) {
+        }
     }
 
     /** How the game was loaded. */
@@ -54,6 +58,7 @@ public final class GameResumer {
                 LOG.warn("Snapshot of game " + save.getHeader().gameId + " is unreadable, replaying the move log", e);
             }
             if (root != null) {
+                _factory.restoreSetup(root, save.getHeader());
                 replay(root, entries, save.getSnapshotLogSize());
                 return new Resumed(root, Method.SNAPSHOT);
             }

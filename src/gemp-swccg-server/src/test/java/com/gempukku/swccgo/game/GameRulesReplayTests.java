@@ -28,6 +28,19 @@ public class GameRulesReplayTests {
     public void GameRulesReplayStoresTheExactSetupAlongsidePlayableEvents() throws Exception {
         var format = VirtualTableScenario._formatLibrary.getFormat("open");
         var setup = GameSetup.of(format, Map.of(GameOptions.OPERATIVE_RULE, "false"), GameOption.Scope.CASUAL);
+        checkReplay(setup);
+    }
+
+    @Test
+    public void ProjectiveTelepathyGameRulesReplayRetainsTheDeliberatelySelectedText() throws Exception {
+        var format = VirtualTableScenario._formatLibrary.getFormat("open");
+        var setup = GameSetup.of(format, Map.of(GameOptions.PROJECTIVE_TELEPATHY, "printed"), GameOption.Scope.CASUAL);
+        assertTrue(setup.summaryJson(format).contains("Printed text"));
+        checkReplay(setup);
+    }
+
+    private void checkReplay(GameSetup setup) throws Exception {
+        var format = VirtualTableScenario._formatLibrary.getFormat(setup.getFormatCode());
         String summary = setup.summaryJson(format);
         var mediator = mock(SwccgGameMediator.class);
         when(mediator.getPlayersPlaying()).thenReturn(java.util.List.of(

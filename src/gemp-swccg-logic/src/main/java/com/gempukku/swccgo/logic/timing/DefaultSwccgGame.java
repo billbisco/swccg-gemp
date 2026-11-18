@@ -136,6 +136,13 @@ public class DefaultSwccgGame implements SwccgGame {
         ruleSet.applyRuleSet(this);
     }
 
+    /** Restore the header's effective setup before a resumed snapshot is published, without changing its base format. */
+    public void restoreGameFormat(SwccgFormat format) {
+        if (format == null || !Objects.equals(_format.getBaseCode(), format.getBaseCode()))
+            throw new IllegalArgumentException("A resumed setup must keep the saved game's base format");
+        _format = format;
+    }
+
     @Override
     public SwccgFormat getFormat() {
         return _format;

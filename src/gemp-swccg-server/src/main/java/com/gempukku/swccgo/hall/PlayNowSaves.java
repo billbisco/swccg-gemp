@@ -203,6 +203,12 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
                 startedAsGuest ? Collections.singletonMap(game.getSeatId(), account) : Collections.<String, String>emptyMap());
     }
 
+    @Override
+    public void restoreSetup(SaveRoot root, GameSaveHeader header) {
+        GameSetup setup = _formats.storedSetup(header.formatCode, header.gameSetup);
+        root.game().restoreGameFormat(_formats.effectiveFormat(setup));
+    }
+
     // GameResumer.GameFactory: rebuild a game from its header, when the snapshot can't be used (another build).
     @Override
     public SaveRoot newGame(GameSaveHeader header) {
@@ -212,7 +218,7 @@ final class PlayNowSaves implements SavedGameManager.LiveGameHooks, GameResumer.
         Map<String, Integer> clocks = new HashMap<>();
         Map<String, SwccgAiController> bots = new HashMap<>();
         for (GameSaveHeader.Seat seat : header.seats) {
-            decks.put(seat.playerId, seat.toDeck());
+            decks.put(seat.playerId, format.resolveDeck(seat.toDeck()));
             clocks.put(seat.playerId, 0);
             if (seat.bot != null) {
                 bots.put(seat.playerId, PlayNowBot.fromCode(seat.bot).newController());
