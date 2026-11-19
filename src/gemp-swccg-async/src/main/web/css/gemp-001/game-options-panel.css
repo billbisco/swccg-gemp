@@ -1,0 +1,38 @@
+/* Refined D: reserve the optional column before opening it, so Create Table never jumps. */
+.play-options-workspace { position: relative; z-index: 1; width: min(620px, calc(100vw - 32px)); }
+.play-options-workspace > .play-flow-panel { width: 100%; margin: 0; box-sizing: border-box; }
+.play-flow-league .play-options-workspace { width: min(720px, calc(100vw - 24px)); }
+.play-flow.play-flow-options { align-items: flex-start; padding-top: 24px; box-sizing: border-box; }
+.play-options-workspace.play-options-active {
+    width: min(1240px, calc(100vw - 32px));
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 12px;
+}
+.play-options-active > .play-flow-panel { min-width: 0; max-height: calc(100dvh - 48px); }
+.play-options-active > .play-flow-panel:first-child { grid-column: 1; }
+.play-options-panel[hidden], .play-options-error[hidden] { display: none !important; }
+.play-options-panel { display: flex; flex-direction: column; padding: 0; animation: options-reveal 140ms ease-out; }
+.play-options-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; gap: 12px; border-bottom: 1px solid #777; flex-shrink: 0; }
+.play-options-header h2 { font-size: 16px; margin: 0; }
+.play-options-body { min-height: 0; overflow: auto; padding: 0 14px 14px; }
+.play-options-body > p { color: #ccc; font-size: 12px; }
+.play-options-trigger { display: flex; justify-content: space-between; align-items: center; gap: 12px; width: 100%; padding: 10px; border: 1px solid #888; border-radius: 4px; background: #303030; color: white; text-align: left; cursor: pointer; font-weight: bold; }
+.play-options-trigger small { font-weight: normal; }
+.play-options-trigger[aria-expanded=true] { border-color: #c9a85e; }
+.play-options-status { display: block; font-size: 12px; font-weight: normal; margin-top: 4px; }
+.play-options-summary { display: flex; flex-wrap: wrap; gap: 5px; }
+.play-options-summary:empty { display: none; }
+.play-options-summary .game-option-chip { white-space: normal; }
+.play-options-error { background: #3a1818; border: 1px solid #b87373; color: #ffd0d0; padding: 8px; margin: 8px 0; }
+.game-options-save { gap: 6px; flex-wrap: wrap; }
+.play-options-trigger:focus-visible, .play-options-header button:focus-visible { outline: 2px solid #e9c16b; outline-offset: 2px; }
+@keyframes options-reveal { from { opacity: 0; transform: translateX(-4px); } to { opacity: 1; transform: translateX(0); } }
+@media (prefers-reduced-motion: reduce) { .play-options-panel { animation: none; } }
+@media (max-width: 1080px) {
+    .play-options-workspace.play-options-active { width: min(620px, calc(100vw - 24px)); display: flex; flex-direction: column; max-height: calc(100dvh - 48px); overflow: auto; border-radius: 8px; }
+    .play-options-active > .play-flow-panel { flex: none; max-height: none; }
+    .play-options-body { overflow: visible; }
+    .play-options-panel { overflow: visible; }
+}

@@ -849,7 +849,8 @@ var GempSwccgHallUI = Class.extend({
         this.libraryDeckRow.append(this.libraryDeckSelect);
 
         this.descRow = $("<div class='play-form-row'></div>");
-        this.descRow.append("<span class='play-form-label'>Description</span>");
+        this.tableDescInput.attr("id", "create-table-description");
+        this.descRow.append("<label class='play-form-label' for='create-table-description'>Description</label>");
         this.descRow.append(this.tableDescInput);
 
         // #116: game options (deck size, starting credits, timer, ...) come from the server's option registry
@@ -920,7 +921,6 @@ var GempSwccgHallUI = Class.extend({
         this.playFormFields.append(this.playerDeckRow);
         this.playFormFields.append(this.libraryDeckRow);
         this.playFormFields.append(this.descRow);
-        this.playFormFields.append(this.gameOptionsRows);
         this.playFormFields.append(this.inviteRow);
         this.playFormFields.append(this.inviteeRow);
         this.playFormFields.append(this.privateRow);
@@ -1238,6 +1238,8 @@ var GempSwccgHallUI = Class.extend({
 
         this.playOverlay.append(backdrop);
         this.playOverlay.append(panel);
+        this.gameOptionsPanel = new GameOptionsPanel(this.gameOptionsForm, panel, this.playOverlay);
+        this.libraryDeckRow.after(this.gameOptionsPanel.trigger, this.gameOptionsPanel.summary);
     },
 
 
@@ -1839,6 +1841,7 @@ var GempSwccgHallUI = Class.extend({
     },
 
     closePlayOverlay:function() {
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(false);
         if (this.playOverlay == null) {
             return;
         }
@@ -1920,6 +1923,7 @@ var GempSwccgHallUI = Class.extend({
     },
 
     showPlaySelection:function() {
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(false);
         this.playMode = null;
         this.playFormPanel.hide();
         if (this.playBotPanel != null) {
@@ -1951,6 +1955,7 @@ var GempSwccgHallUI = Class.extend({
     },
 
     showTournamentInfo:function() {
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(false);
         this.playMode = "tournament";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();
@@ -1971,6 +1976,7 @@ var GempSwccgHallUI = Class.extend({
     },
 
     showTournamentForm:function(type) {
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(false);
         this.playMode = "tournament";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();
@@ -2493,6 +2499,7 @@ var GempSwccgHallUI = Class.extend({
             return;
         }
         this.playMode = mode;
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(true);
         this.playSelectionPanel.hide();
         if (this.playTournamentPanel != null) {
             this.playTournamentPanel.hide();
@@ -2655,8 +2662,10 @@ var GempSwccgHallUI = Class.extend({
             return base;
         var message = this.gameOptionsForm.validate();
         if (message != null) {
-            if (report)
+            if (report) {
+                if (this.gameOptionsPanel) this.gameOptionsPanel.showValidation(message);
                 report(message);
+            }
             return report ? null : base;
         }
         return this.gameOptionsForm.deckListCode(base);
@@ -2747,8 +2756,6 @@ var GempSwccgHallUI = Class.extend({
             && this.isInviteOnlyCheckbox.find("input").is(":checked");
         if (inviteOn) {
             this.inviteeRow.show();
-            if (this.descRow)
-                this.descRow.hide();
         } else {
             this.inviteeRow.hide();
             if (this.descRow && this.playMode === "casual")
@@ -2972,6 +2979,7 @@ var GempSwccgHallUI = Class.extend({
 
     // Slice 1.5b — LOTR CreateLeagueTable parity: Open League Table + Join Leagues
     showLeaguePanel:function() {
+        if (this.gameOptionsPanel) this.gameOptionsPanel.activate(false);
         this.playMode = "league";
         this.playSelectionPanel.hide();
         this.playFormPanel.hide();

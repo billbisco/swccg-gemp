@@ -151,12 +151,33 @@ var GameOptionsForm = Class.extend({
             this.onChange("deckSize");
     },
 
-    /** Sets one option's value (for example the deck size of a picked deck). Returns false when the row is hidden. */
+    /** Reset this draft only; account settings and remembered timer preferences are retained. */
+    useFormatDefaults: function () {
+        var that = this;
+        $.each(this.rows, function (id, r) {
+            if (!r.input.prop("disabled"))
+                r.input.val(that.formatOption.attr("data-opt-" + id + "-default") || "").removeAttr("aria-invalid");
+        });
+        this.syncPreset();
+        this.setSaveNote("Using format defaults for this table. Your saved settings are kept.");
+        this.notifyPresentation();
+        if (this.onChange) {
+            this.onChange("deckSize");
+            this.onChange("sameSide");
+        }
+    },
+
+    notifyPresentation: function () {
+        this.container.trigger("gameoptionschange");
+    },
+
+    /** Sets one option's value (for example the deck size of a picked deck). Returns false when the option is unavailable. */
     setValue: function (id, value) {
         var r = this.rows[id];
         if (r == null || r.input.prop("disabled"))
             return false;
         r.input.val(String(value));
+        this.notifyPresentation();
         return true;
     },
 
@@ -240,6 +261,8 @@ var GameOptionsForm = Class.extend({
             row.append(input).append(note);
             var timer = null;
             input.on("input change", function () {
+                input.removeAttr("aria-invalid");
+                that.notifyPresentation();
                 if (that.remember[option.id])
                     try { $.cookie("game-option-" + option.id, input.val(), {expires: 365}); } catch (e) { }
                 if (timer != null)
@@ -257,11 +280,13 @@ var GameOptionsForm = Class.extend({
         if (this.saveKey) {
             var bar = $("<div class='play-form-row game-options-save'></div>");
             var save = $("<button type='button' class='game-options-save-button'>Save as my settings for this format</button>");
-            var reset = $("<button type='button' class='game-options-reset-button'>Reset to format defaults</button>");
+            var reset = $("<button type='button' class='game-options-reset-button'>Clear my saved settings for this format</button>");
+            var draftReset = $("<button type='button' class='game-options-defaults-button'>Use format defaults for this table</button>");
+            draftReset.click(function () { that.useFormatDefaults(); });
             save.click(function () { that.saveCurrent(); });
             reset.click(function () { that.resetToDefaults(); });
             this.saveNote = $("<span class='game-option-note game-options-save-note'></span>");
-            bar.append(save).append(" ").append(reset).append(" ").append(this.saveNote);
+            bar.append(draftReset).append(" ").append(save).append(" ").append(reset).append(" ").append(this.saveNote);
             this.saveBar = bar;
             this.container.append(bar);
         }
@@ -324,6 +349,7 @@ var GameOptionsForm = Class.extend({
             }
         }
         this.syncPreset();
+        this.notifyPresentation();
     },
 
     /** Fill ordinary controls. Format and deck checks still run through the existing creation path. */
@@ -377,6 +403,7 @@ var GameOptionsForm = Class.extend({
             if (r != null && !r.input.prop("disabled") && value != null && value !== "")
                 r.input.val(String(value));
         });
+        this.notifyPresentation();
     },
 
     /** The chosen value of one option, or "" when it is left at the default. */
@@ -393,7 +420,7 @@ var GameOptionsForm = Class.extend({
     effective: function (id) {
         var r = this.rows[id];
         var def = this.formatOption != null ? (this.formatOption.attr("data-opt-" + id + "-default") || "") : "";
-        if (r == null || r.input.prop("disabled") || !r.row.is(":visible"))
+        if (r == null || r.input.prop("disabled"))
             return def;
         var value = $.trim(r.input.val() || "");
         return value === "" ? def : value;
@@ -414,6 +441,7 @@ var GameOptionsForm = Class.extend({
     /** A message for the first value out of range, or null. The server checks again. */
     validate: function () {
         var message = null;
+        this.invalidInput = null;
         var that = this;
         $.each(this.rows, function (id, r) {
             if (message != null || r.input.prop("disabled") || r.option.type !== "INTEGER")
@@ -422,8 +450,10 @@ var GameOptionsForm = Class.extend({
             if (v === "")
                 return;
             var min = Number(r.input.attr("min")), max = Number(r.input.attr("max"));
-            if (!/^[0-9]{1,6}$/.test(v) || Number(v) < min || Number(v) > max)
+            if (!/^[0-9]{1,6}$/.test(v) || Number(v) < min || Number(v) > max) {
                 message = "\u201c" + r.option.label + "\u201d must be a whole number from " + min + " to " + max + ".";
+                that.invalidInput = r.input;
+            }
         });
         return message;
     },
