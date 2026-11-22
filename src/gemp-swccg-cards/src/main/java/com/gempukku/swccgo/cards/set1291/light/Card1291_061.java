@@ -51,11 +51,12 @@ public class Card1291_061 extends AbstractSite {
 
     @Override
     protected List<Modifier> getGameTextDarkSideWhileActiveModifiers(String playerOnDarkSideOfLocation, SwccgGame game, PhysicalCard self) {
-        // GEMP has no Presence Droid icon (E9); every card that prints it also has the Separatist icon.
+        // The Legacy [Presence Droid] icon is Decipher's [Presence] icon (Icon.PRESENCE; swccg-guild/work#348).
+        Filter presenceOrSeparatistCards = Filters.or(Icon.PRESENCE, Icon.SEPARATIST);
         Condition unlessOpponentControls = new UnlessCondition(new ControlsCondition(game.getOpponent(playerOnDarkSideOfLocation), self));
         List<Modifier> modifiers = new LinkedList<Modifier>();
-        modifiers.add(new MovesFreeToLocationModifier(self, Icon.SEPARATIST, unlessOpponentControls, self));
-        modifiers.add(new MovesFreeFromLocationModifier(self, Icon.SEPARATIST, unlessOpponentControls, self));
+        modifiers.add(new MovesFreeToLocationModifier(self, presenceOrSeparatistCards, unlessOpponentControls, self));
+        modifiers.add(new MovesFreeFromLocationModifier(self, presenceOrSeparatistCards, unlessOpponentControls, self));
         return modifiers;
     }
 }
