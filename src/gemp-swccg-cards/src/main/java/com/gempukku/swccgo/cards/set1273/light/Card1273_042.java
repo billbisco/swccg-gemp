@@ -28,6 +28,7 @@ import com.gempukku.swccgo.logic.modifiers.DeployCostModifier;
 import com.gempukku.swccgo.logic.modifiers.DestinyDrawForActionSourceModifier;
 import com.gempukku.swccgo.logic.modifiers.FireWeaponFiredByForFreeModifier;
 import com.gempukku.swccgo.logic.modifiers.KeywordModifier;
+import com.gempukku.swccgo.logic.modifiers.LegacyDestinyDrawForActionSourceMayNotBeFurtherReducedModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 
@@ -65,6 +66,8 @@ public class Card1273_042 extends AbstractObjective {
         modifiers.add(new KeywordModifier(self, Filters.Rogue_Squadron_pilot, Keyword.INSURGENT));
         modifiers.add(new FireWeaponFiredByForFreeModifier(self, Filters.Rogue_Squadron_pilot, Filters.blaster));
         modifiers.add(new DestinyDrawForActionSourceModifier(self, sabotage(), -1, playerId));
+        // "... and may not be further reduced." (swccg-guild/work#346)
+        modifiers.add(new LegacyDestinyDrawForActionSourceMayNotBeFurtherReducedModifier(self, sabotage(), 1, playerId));
         modifiers.add(new DeployCostModifier(self, Filters.and(Filters.your(playerId), Filters.character, Filters.abilityMoreThan(4)), 4));
         return modifiers;
     }

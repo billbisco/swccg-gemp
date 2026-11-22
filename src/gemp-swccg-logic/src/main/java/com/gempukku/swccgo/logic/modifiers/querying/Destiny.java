@@ -138,6 +138,7 @@ public interface Destiny extends BaseQuery {
                 && isDoubled(gameState, card)) {
             result *= 2;
         }
+        final float drawnValue = result;
 
         // Destiny draws for some action sources (for example, Sense and Alter) may not be modified
         if (destinyDrawActionSource != null
@@ -169,6 +170,8 @@ public interface Destiny extends BaseQuery {
                 }
             }
         }
+        // Center Of Tyranny: destiny draws for some action sources "may not be further reduced"
+        result = LegacyDestinyDrawForActionSourceMayNotBeFurtherReducedModifier.applyLimit(gameState, query(), card.getOwner(), destinyDrawActionSource, drawnValue, result);
 
         return result;
     }

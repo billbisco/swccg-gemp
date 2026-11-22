@@ -29,6 +29,8 @@ import com.gempukku.swccgo.logic.effects.choose.TakeCardIntoHandFromReserveDeckE
 import com.gempukku.swccgo.logic.modifiers.ForceDrainModifier;
 import com.gempukku.swccgo.logic.modifiers.ForceGenerationModifier;
 import com.gempukku.swccgo.logic.modifiers.Modifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import com.gempukku.swccgo.logic.modifiers.querying.ModifiersQuerying;
 import com.gempukku.swccgo.logic.timing.EffectResult;
 import com.gempukku.swccgo.logic.timing.results.LostFromTableResult;
@@ -65,6 +67,9 @@ public class Card1273_042_BACK extends AbstractObjective {
         List<Modifier> modifiers = new LinkedList<Modifier>();
         modifiers.add(new ForceGenerationModifier(self, Filters.Coruscant_system, 2, playerId));
         modifiers.add(new ForceDrainModifier(self, relatedBattlegroundSitesYouControlWithRogueSquadronPilot, youOccupyASystem, 1, playerId));
+        // "While this side up, '1' on Declaration of Rebellion is treated as '2'." (swccg-guild/work#346)
+        modifiers.add(new ModifyGameTextModifier(self, Filters.and(Filters.your(self), Filters.title(LegacyVb73Light.DECLARATION_OF_REBELLION)),
+                ModifyGameTextType.LEGACY__DECLARATION_OF_REBELLION__ONE_IS_TWO));
         return modifiers;
     }
 
