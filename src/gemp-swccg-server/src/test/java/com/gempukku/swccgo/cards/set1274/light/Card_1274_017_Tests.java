@@ -1,5 +1,6 @@
 package com.gempukku.swccgo.cards.set1274.light;
 
+import com.gempukku.swccgo.cards.GameConditions;
 import com.gempukku.swccgo.common.CardType;
 import com.gempukku.swccgo.common.ExpansionSet;
 import com.gempukku.swccgo.common.Icon;
@@ -105,6 +106,23 @@ public class Card_1274_017_Tests {
         scn.AttachCardsTo(r2x2, motivator);
         assertEquals(3, scn.GetPower(r2x2), scn.epsilon);
         assertEquals(1, scn.GetIconCount(r2x2, Icon.PRESENCE));
+    }
+
+    @Test
+    public void MotivatorDroidHasPresenceAndControlsASiteAlone() {
+        // swccg-guild/work#348: the Legacy [Presence Droid] icon Motivator grants is Icon.PRESENCE.
+        var scn = GetScenario();
+        var motivator = scn.GetLSCard("motivator");
+        var r2x2 = scn.GetLSCard("r2x2");
+        var site = scn.GetLSStartingLocation();
+
+        scn.StartGame();
+        scn.MoveCardsToLocation(site, r2x2);
+        assertFalse(GameConditions.controls(scn.game(), scn.LS, site));
+
+        scn.AttachCardsTo(r2x2, motivator);
+        assertTrue(scn.game().getModifiersQuerying().hasIcon(scn.gameState(), r2x2, Icon.PRESENCE));
+        assertTrue(GameConditions.controls(scn.game(), scn.LS, site));
     }
 
     @Test

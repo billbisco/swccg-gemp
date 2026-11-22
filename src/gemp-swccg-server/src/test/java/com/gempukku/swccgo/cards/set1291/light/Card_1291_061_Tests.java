@@ -31,10 +31,13 @@ public class Card_1291_061_Tests {
                     put("rogue", "3_66");
                     put("luke", "1_19");
                     put("cannon", "1220_168");
+                    put("motivator", "1274_17");
+                    put("r2x2", "1_24");
                 }},
                 new HashMap<>() {{
                     put("vader", "1_168");
                     put("grievous", "203_27");
+                    put("p59", "12_114");
                 }},
                 10, 10,
                 StartingSetup.DefaultLSGroundLocation,
@@ -189,5 +192,44 @@ public class Card_1291_061_Tests {
         scn.MoveCardsToLocation(harnaidan, luke);
 
         assertEquals(1, Math.round(mq.getMoveUsingLandspeedCost(scn.gameState(), grievous, site, harnaidan, false, 0)));
+    }
+
+    @Test
+    public void MuunilinstCityOfHarnaidanDarkPresenceDroidWithoutSeparatistIconMovesToAndFromHereForFree() {
+        // swccg-guild/work#348: the Legacy [Presence Droid] icon is Icon.PRESENCE. P-59 has Presence but not Separatist.
+        var scn = GetScenario();
+        var harnaidan = scn.GetLSCard("harnaidan");
+        var p59 = scn.GetDSCard("p59");
+        var site = scn.GetDSStartingLocation();
+        var mq = scn.game().getModifiersQuerying();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(scn.GetLSCard("muunilinst"));
+        scn.MoveLocationToTable(harnaidan);
+        scn.MoveCardsToLocation(site, p59);
+
+        assertTrue(p59.getBlueprint().hasIcon(Icon.PRESENCE));
+        assertFalse(p59.getBlueprint().hasIcon(Icon.SEPARATIST));
+        assertEquals(0, Math.round(mq.getMoveUsingLandspeedCost(scn.gameState(), p59, site, harnaidan, false, 0)));
+        assertEquals(0, Math.round(mq.getMoveUsingLandspeedCost(scn.gameState(), p59, harnaidan, site, false, 0)));
+    }
+
+    @Test
+    public void MuunilinstCityOfHarnaidanDarkDroidThatGainedPresenceFromMotivatorMovesHereForFree() {
+        var scn = GetScenario();
+        var harnaidan = scn.GetLSCard("harnaidan");
+        var motivator = scn.GetLSCard("motivator");
+        var r2x2 = scn.GetLSCard("r2x2");
+        var site = scn.GetLSStartingLocation();
+        var mq = scn.game().getModifiersQuerying();
+
+        scn.StartGame();
+        scn.MoveLocationToTable(scn.GetLSCard("muunilinst"));
+        scn.MoveLocationToTable(harnaidan);
+        scn.MoveCardsToLocation(site, r2x2);
+        assertEquals(1, Math.round(mq.getMoveUsingLandspeedCost(scn.gameState(), r2x2, site, harnaidan, false, 0)));
+
+        scn.AttachCardsTo(r2x2, motivator);
+        assertEquals(0, Math.round(mq.getMoveUsingLandspeedCost(scn.gameState(), r2x2, site, harnaidan, false, 0)));
     }
 }
