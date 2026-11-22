@@ -10,9 +10,12 @@ import com.gempukku.swccgo.common.Phase;
 import com.gempukku.swccgo.common.Rarity;
 import com.gempukku.swccgo.common.Side;
 import com.gempukku.swccgo.common.Zone;
+import com.gempukku.swccgo.filters.Filters;
 import com.gempukku.swccgo.framework.StartingSetup;
 import com.gempukku.swccgo.framework.VirtualTableScenario;
 import com.gempukku.swccgo.game.PhysicalCardImpl;
+import com.gempukku.swccgo.logic.modifiers.DestinyDrawForActionSourceModifier;
+import com.gempukku.swccgo.logic.modifiers.ModifyGameTextType;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -49,12 +52,17 @@ public class Card_1273_042_Tests {
                     put("blaster", "1_152");
                     put("rebel", "1_028");
                     put("redone", "1_144");
+                    put("sabotage", "1210_162");
+                    put("oldsabotage", "201_15");
+                    put("declaration", "1272_20");
                 }},
                 new HashMap<>() {{
                     put("black2", "1_299");
                     put("bast", "1_165");
                     put("dantooine", "1_282");
                     put("vader", "1_168");
+                    put("trooper", "1_194");
+                    put("blaster", "1_317");
                 }},
                 10, 10,
                 CenterOfTyrannyObjective,
@@ -334,5 +342,78 @@ public class Card_1273_042_Tests {
         }
         scn.PassAllResponses();
         assertTrue(scn.gameState().getHand(scn.LS).contains(black2));
+    }
+
+    // swccg-guild/work#346: "Your destiny draws for [Virtual Block 1] Sabotage are -1 and may not be further reduced."
+    // Sabotage (1210_162) targets the Imperial Blaster (destiny 3): lost if destiny < 3.
+    private void playSabotageOnBlaster(VirtualTableScenario scn, String sabotageName, int destiny) {
+        var sabotage = scn.GetLSCard(sabotageName);
+        var trooper = scn.GetDSCard("trooper");
+        var blaster = scn.GetDSCard("blaster");
+
+        scn.MoveCardsToLocation(scn.GetDSStartingLocation(), trooper);
+        scn.AttachCardsTo(trooper, blaster);
+        scn.MoveCardsToLSHand(sabotage);
+        scn.SkipToLSTurn(Phase.CONTROL);
+        scn.PrepareLSDestiny(destiny);
+        assertTrue(scn.LSCardPlayAvailable(sabotage));
+        scn.LSPlayCard(sabotage);
+        if (scn.LSDecisionAvailable("Choose an option") || (scn.LSGetMultipleChoices() != null && !scn.LSGetMultipleChoices().isEmpty())) {
+            scn.LSChooseOption(scn.LSGetMultipleChoices().get(0));
+        }
+        scn.LSChooseCard(blaster);
+        scn.PassAllResponses();
+    }
+
+    @Test
+    public void CenterOfTyrannySabotageDestinyIsMinusOne() {
+        var scn = GetScenario();
+        var blaster = scn.GetDSCard("blaster");
+
+        startGame(scn);
+        //test1: destiny 3 - 1 = 2 < 3, so the blaster is lost (without the -1 it would stay)
+        playSabotageOnBlaster(scn, "sabotage", 3);
+        assertTrue(blaster.getZone() == Zone.LOST_PILE || blaster.getZone() == Zone.TOP_OF_LOST_PILE);
+    }
+
+    @Test
+    public void CenterOfTyrannySabotageDestinyMayNotBeFurtherReduced() {
+        var scn = GetScenario();
+        var blaster = scn.GetDSCard("blaster");
+        var trooper = scn.GetDSCard("trooper");
+
+        startGame(scn);
+        scn.ApplyAdHocModifier(new DestinyDrawForActionSourceModifier(scn.GetLSCard("coruscant"), Filters.Sabotage, -2, scn.LS));
+        //test1: destiny 4, -1 from Center Of Tyranny and -2 from another card, but it may not go below 4 - 1 = 3: not < 3, blaster stays
+        playSabotageOnBlaster(scn, "sabotage", 4);
+        assertTrue(scn.IsAttachedTo(trooper, blaster));
+    }
+
+    @Test
+    public void CenterOfTyrannyDoesNotProtectOtherSabotageDestinyDraws() {
+        var scn = GetScenario();
+        var blaster = scn.GetDSCard("blaster");
+
+        startGame(scn);
+        scn.ApplyAdHocModifier(new DestinyDrawForActionSourceModifier(scn.GetLSCard("coruscant"), Filters.Sabotage, -2, scn.LS));
+        //test1: Virtual Set 1 Sabotage is not [Virtual Block 1]: destiny 4 - 2 = 2 < 3, blaster lost
+        playSabotageOnBlaster(scn, "oldsabotage", 4);
+        assertTrue(blaster.getZone() == Zone.LOST_PILE || blaster.getZone() == Zone.TOP_OF_LOST_PILE);
+    }
+
+    // swccg-guild/work#346: "While this side up, '1' on Declaration of Rebellion is treated as '2'."
+    @Test
+    public void ALiberatedWorldTreatsOneOnDeclarationOfRebellionAsTwo() {
+        var scn = GetScenario();
+        var declaration = scn.GetLSCard("declaration");
+
+        startGame(scn);
+        scn.MoveCardsToLSSideOfTable(declaration);
+        //test1: not while Center Of Tyranny is up
+        assertFalse(scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), declaration, ModifyGameTextType.LEGACY__DECLARATION_OF_REBELLION__ONE_IS_TWO));
+        disablePlanetaryShieldAndFlip(scn);
+        scn.PassAllResponses();
+        //test2: once A Liberated World is up
+        assertTrue(scn.game().getModifiersQuerying().hasGameTextModification(scn.gameState(), declaration, ModifyGameTextType.LEGACY__DECLARATION_OF_REBELLION__ONE_IS_TWO));
     }
 }
